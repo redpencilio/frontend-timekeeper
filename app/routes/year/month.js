@@ -1,6 +1,7 @@
 import Route from '@ember/routing/route';
 
 export default class YearMonthRoute extends Route {
+
   colorMap = {
     Loket: '#3B82F6',
     Kaleidos: '#22C55E',
@@ -223,6 +224,7 @@ export default class YearMonthRoute extends Route {
       borderColor: this.colorMap[project],
     }));
   }
+
   model(params) {
     const year = this.modelFor('year').year;
     return {

@@ -4,12 +4,15 @@
   aria-orientation="vertical"
   aria-labelledby="menu-button"
   tabindex="-1"
+  {{did-insert this.focusHoursInput}}
 >
   <div class="py-1" role="none">
     <form {{on "submit" this.submitLog}}>
       <div class="px-4 py-2">
-        <label for="hours" class="block text-sm font-medium text-gray-700">Hours
-          Worked</label>
+        <label
+          for="hours"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >Hours Worked</label>
         <input
           type="number"
           id="hours"
@@ -30,7 +33,7 @@
           id="project"
           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           rows="3"
-          value={{this.description}}
+          value={{this.project}}
           {{on "input" this.updateDescription}}
         ></textarea>
       </div>

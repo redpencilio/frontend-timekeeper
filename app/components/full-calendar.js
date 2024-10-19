@@ -34,6 +34,7 @@ export default class FullCalendarComponent extends Component {
       droppable: false, // Allows for drag and drop of external elements
       dateClick: this.onDateClick.bind(this), // Example of handling date clicks
       select: this.onDateSelect.bind(this),
+      unselect: this.onDateUnselect.bind(this),
       selectable: true,
       dayMaxEvents: 6,
       firstDay: 1,
@@ -74,6 +75,27 @@ export default class FullCalendarComponent extends Component {
   @action
   onDateSelect({ start, end }) {
     this.selectedRange = [start, end];
+  }
+
+  @action
+  onDateUnselect() {
+    this.clearSelectedRange();
+  }
+
+  @action
+  onEventsAdded({ hours, project }) {
+    let current = this.selectedRange[0];
+    const days = [];
+    while (current < this.selectedRange[1]) {
+      days.push(current);
+      current.setDate(current.getDate() + 1);
+    }
+
+    this.args.onEventsAdded?.({
+      hours,
+      project,
+      days,
+    });
   }
 
   @action

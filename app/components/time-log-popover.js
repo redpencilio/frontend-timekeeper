@@ -6,7 +6,7 @@ import { ref } from 'ember-ref-bucket';
 export default class TimeLogPopoverComponent extends Component {
   @tracked isPopoverOpen = false;
   @tracked hours = 8;
-  description = '';
+  @tracked project = '';
 
   @ref('hoursInput') hoursInput;
 
@@ -32,7 +32,7 @@ export default class TimeLogPopoverComponent extends Component {
 
   @action
   updateDescription(event) {
-    this.description = event.target.value;
+    this.project = event.target.value;
   }
 
   @action
@@ -40,11 +40,15 @@ export default class TimeLogPopoverComponent extends Component {
     event.preventDefault();
 
     // Log the time
-    console.log(`Logged ${this.hours} hours: ${this.description}`);
+    console.log(`Logged ${this.hours} hours: ${this.project}`);
+    this.args.onSave?.({
+      hours: this.hours,
+      project: this.project,
+    });
 
     // Reset fields
     this.hours = 8;
-    this.description = '';
+    this.project = '';
     this.closePopover();
   }
 
