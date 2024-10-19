@@ -1,0 +1,7 @@
+<div class="grid grid-cols-2 h-full">
+  <div class="p-8">
+    <FullCalendar @events={{@model.events}} @focusDate={{this.activeDate}} />
+  </div>
+  <Stats @hourLogs={{@model.hourLogs}} />
+  {{outlet}}
+</div>

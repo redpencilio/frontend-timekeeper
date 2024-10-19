@@ -1,0 +1,4 @@
+{{#if this.selectedRange}}
+  <TimeLogPopover @onCancel={{this.clearSelectedRange}} />
+{{/if}}
+<div class="full-calendar h-full" {{did-insert this.setupCalendar}}></div>
