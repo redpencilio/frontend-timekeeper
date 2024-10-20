@@ -1,0 +1,11 @@
+<ul class="flex flex-wrap gap-2 w-full">
+  {{#each @projects as |project index|}}
+    <li>
+      <ProjectPillRadioButton
+        @onSelectedChange={{fn this.onChangeSelected project}}
+        @project={{project}}
+        @checked={{eq index 0}}
+      />
+    </li>
+  {{/each}}
+</ul>

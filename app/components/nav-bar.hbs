@@ -1,0 +1,40 @@
+<div class="h-full w-64 bg-gray-800 text-white flex flex-col">
+  <div class="px-6 py-4 border-b border-gray-700">
+    <label for="year" class="block text-sm font-medium mb-1">Select Year</label>
+    <select id="year" class="bg-gray-700 text-white w-full p-2 rounded">
+      <option value="2024">2024</option>
+      <option value="2023">2023</option>
+      <option value="2022">2022</option>
+    </select>
+  </div>
+
+  <div class="flex-grow px-6 py-4 space-y-4">
+    <ul class="space-y-2">
+      {{#each this.monthData as |month index|}}
+        <li class="flex items-center justify-between">
+          <LinkTo
+            @route="year.month"
+            @model={{sum index 1}}
+          >{{month.name}}</LinkTo>
+          {{#if month.completed}}
+            <svg
+              class="h-5 w-5 text-green-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+
+</div>

@@ -1,7 +1,14 @@
-{{#if this.selectedRange}}
+{{#if this.clickedDate}}
   <TimeLogPopover
+    @screenPos={{this.clickedDateCoords}}
+    @projects={{@projects}}
     @onSave={{this.onEventsAdded}}
     @onCancel={{this.clearSelectedRange}}
   />
 {{/if}}
-<div class="full-calendar h-full" {{did-insert this.setupCalendar}}></div>
+<div
+  class="full-calendar h-full"
+  {{did-update this.updateAndRerenderCalendar @events @focusDate @projects}}
+  {{did-insert this.setupCalendar}}
+  {{create-ref "fullCalendar"}}
+></div>

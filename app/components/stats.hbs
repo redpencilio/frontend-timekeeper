@@ -1,4 +1,4 @@
-<div class="bg-gray-50 p-8">
+<div class="bg-gray-50 p-8 overflow-scroll h-full">
   <h1 class="text-2xl font-semibold text-gray-900 mb-6">Overview</h1>
 
   <ul class="space-y-6">
@@ -30,6 +30,11 @@
       </li>
     {{/each-in}}
   </ul>
+  <div class="h-0 mt-8 border-t-2 border-dashed"></div>
+  <div class="flex flex-center mt-4">
+    <span class="text-lg text-gray-700">Total</span>
+    <span class="ml-auto text-gray-600">{{this.totalHours}} hours</span>
+  </div>
   <div class="mt-10">
     <label class="flex items-center space-x-4">
       <input

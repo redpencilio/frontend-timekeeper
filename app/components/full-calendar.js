@@ -5,12 +5,16 @@ import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { service } from '@ember/service';
+import { ref } from 'ember-ref-bucket';
 
 export default class FullCalendarComponent extends Component {
   @service dateNavigation;
 
   @tracked calendar = null;
-  @tracked selectedRange = null;
+  @tracked clickedDate = null;
+  @tracked clickedDateCoords = null;
+
+  @ref('fullCalendar') calendarEl;
 
   @action
   setupCalendar(element) {
@@ -35,12 +39,18 @@ export default class FullCalendarComponent extends Component {
       dateClick: this.onDateClick.bind(this), // Example of handling date clicks
       select: this.onDateSelect.bind(this),
       unselect: this.onDateUnselect.bind(this),
-      selectable: true,
+      // selectable: true,
       dayMaxEvents: 6,
+      height: 'parent',
       firstDay: 1,
       businessHours: {
         // days of week. an array of zero-based day of week integers (0=Sunday)
         daysOfWeek: [1, 2, 3, 4, 5], // Monday - Thursday
+      },
+      headerToolbar: {
+        start: null,
+        center: 'title',
+        end: null,
       },
       selectConstraint: {
         start: firstDayOfMonth,
@@ -68,8 +78,10 @@ export default class FullCalendarComponent extends Component {
 
   @action
   onDateClick(info) {
-    // Handle the date click event here
-    console.log('Date clicked: ', info.dateStr);
+    if (info.date.getMonth() === this.args.focusDate.getMonth()) {
+      this.clickedDate = info.date;
+      this.calculatePopoverCoords(info.dateStr);
+    }
   }
 
   @action
@@ -79,28 +91,50 @@ export default class FullCalendarComponent extends Component {
 
   @action
   onDateUnselect() {
-    this.clearSelectedRange();
+    // this.clearSelectedRange();
   }
 
   @action
   onEventsAdded({ hours, project }) {
-    let current = this.selectedRange[0];
-    const days = [];
-    while (current < this.selectedRange[1]) {
-      days.push(current);
-      current.setDate(current.getDate() + 1);
-    }
-
-    this.args.onEventsAdded?.({
+    // let current = this.selectedRange[0];
+    // const days = [];
+    // while (current < this.selectedRange[1]) {
+    //   days.push(current);
+    //   current.setDate(current.getDate() + 1);
+    // }
+    const event = {
       hours,
       project,
-      days,
-    });
+      date: this.clickedDate,
+    };
+
+    this.args.onEventsAdded?.(event);
+    this.updateAndRerenderCalendar();
   }
 
   @action
   clearSelectedRange() {
     this.selectedRange = null;
+    this.clickedDate = null;
+  }
+
+  @action
+  updateAndRerenderCalendar() {
+    // TODO there has to be a better way than removing
+    // and adding the datasource
+    const sources = this.calendar.getEventSources();
+    const arraySource = sources[0];
+    arraySource.remove();
+    this.calendar.addEventSource(this.args.events);
+    this.calendar.gotoDate(this.args.focusDate);
+    this.calendar.render();
+  }
+
+  calculatePopoverCoords(dateStr) {
+    const cell = this.calendarEl.querySelector(`[data-date="${dateStr}"]`);
+    if (cell) {
+      this.clickedDateCoords = cell.getBoundingClientRect();
+    }
   }
 
   willDestroy() {

@@ -11,6 +11,10 @@ export default class StatsComponent extends Component {
     'Out of Office': 'bg-slate-400',
   };
 
+  get totalHours() {
+    return this.args.hourLogs.reduce((acc, { hours }) => acc + hours, 0);
+  }
+
   get projectData() {
     return this.args.hourLogs.reduce((acc, { hours, project, subproject }) => {
       if (Object.hasOwn(acc, project)) {
