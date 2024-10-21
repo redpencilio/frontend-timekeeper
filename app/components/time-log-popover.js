@@ -28,7 +28,7 @@ export default class TimeLogPopoverComponent extends Component {
 
   @action
   updateHours(event) {
-    this.hours = event.target.value;
+    this.hours = event.target.valueAsNumber;
   }
 
   @action
