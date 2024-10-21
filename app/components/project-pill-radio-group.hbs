@@ -1,10 +1,10 @@
 <ul class="flex flex-wrap gap-2 w-full">
-  {{#each @projects as |project index|}}
+  {{#each @projects as |project|}}
     <li>
       <ProjectPillRadioButton
         @onSelectedChange={{fn this.onChangeSelected project}}
         @project={{project}}
-        @checked={{eq index 0}}
+        @checked={{eq project @selectedProject}}
       />
     </li>
   {{/each}}

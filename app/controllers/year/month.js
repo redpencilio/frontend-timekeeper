@@ -6,6 +6,7 @@ export default class YearMonthContoller extends Controller {
   @service mockData;
 
   projects = this.mockData.projects;
+  favoriteProjects = this.mockData.projects.slice(0, 3);
 
   get activeDate() {
     return new Date(this.model.year, this.model.month);

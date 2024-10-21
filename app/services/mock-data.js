@@ -212,6 +212,14 @@ export default class MockDataService extends Service {
     'Out of Office': '#94a3b8',
   };
 
+  colorMapTailwind = {
+    Loket: 'bg-blue-500',
+    Kaleidos: 'bg-green-500',
+    Nove: 'bg-yellow-500',
+    GN: 'bg-red-500',
+    'Out of Office': 'bg-slate-400',
+  };
+
   get events() {
     let id = 0;
     return this.hourLogs.map(({ hours, project, date, subproject }) => ({
