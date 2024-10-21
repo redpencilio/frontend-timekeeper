@@ -227,9 +227,6 @@ export default class MockDataService extends Service {
   projects = ['Loket', 'Kaleidos', 'Nove', 'GN', 'Out of Office'];
 
   addHourLog(hourLog) {
-    this.hourLogs = [
-      ...this.hourLogs,
-      hourLog
-    ];
+    this.hourLogs = [...this.hourLogs, hourLog];
   }
 }

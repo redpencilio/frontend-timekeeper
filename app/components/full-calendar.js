@@ -5,19 +5,19 @@ import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { service } from '@ember/service';
-import { ref } from 'ember-ref-bucket';
 
 export default class FullCalendarComponent extends Component {
   @service dateNavigation;
 
   @tracked calendar = null;
+  calendarEl = null;
   @tracked clickedDate = null;
   @tracked clickedDateCoords = null;
 
-  @ref('fullCalendar') calendarEl;
-
   @action
   setupCalendar(element) {
+    this.calendarEl = element;
+
     const focusDate = this.args.focusDate;
     const firstDayOfMonth = new Date(
       focusDate.getFullYear(),
@@ -109,7 +109,6 @@ export default class FullCalendarComponent extends Component {
     };
 
     this.args.onEventsAdded?.(event);
-    this.updateAndRerenderCalendar();
   }
 
   @action
@@ -120,14 +119,15 @@ export default class FullCalendarComponent extends Component {
 
   @action
   updateAndRerenderCalendar() {
-    // TODO there has to be a better way than removing
-    // and adding the datasource
     const sources = this.calendar.getEventSources();
-    const arraySource = sources[0];
-    arraySource.remove();
+    sources.forEach((source) => source.remove());
     this.calendar.addEventSource(this.args.events);
-    this.calendar.gotoDate(this.args.focusDate);
     this.calendar.render();
+  }
+
+  @action
+  gotoFocusDate() {
+    this.calendar.gotoDate(this.args.focusDate);
   }
 
   calculatePopoverCoords(dateStr) {

@@ -8,7 +8,7 @@
 {{/if}}
 <div
   class="full-calendar h-full"
-  {{did-update this.updateAndRerenderCalendar @events @focusDate @projects}}
+  {{did-update this.updateAndRerenderCalendar @events}}
+  {{did-update this.gotoFocusDate @focusDate}}
   {{did-insert this.setupCalendar}}
-  {{create-ref "fullCalendar"}}
 ></div>
