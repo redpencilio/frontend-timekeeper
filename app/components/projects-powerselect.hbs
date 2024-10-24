@@ -1,10 +1,15 @@
 <PowerSelect
-  class="h-full border-gray-200 -rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+  class="h-full border-none rounded focus:ring-indigo-500 focus:border-indigo-500"
   @searchEnabled={{true}}
   @options={{this.projects}}
   @selected={{this.selectedProject}}
   @searchField="name"
   @onChange={{this.onChange}}
+  {{!-- @onFocus={{this.onFocus}} --}}
+  {{!-- @onClose={{@onClose}} --}}
+  {{!-- @onBlur={{this.onBlur}} --}}
+  @onKeydown={{this.onKeydown}}
+  @placeholder="Type to search"
   as |project|
 >
   <div class="flex items-center text-sm h-8">

@@ -5,6 +5,6 @@ export default class SandboxRoute extends Route {
     return {
       now: new Date(),
       projects: [],
-    }
+    };
   }
 }

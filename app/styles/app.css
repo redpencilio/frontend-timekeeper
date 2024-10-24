@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .ember-power-select-selected-item {
-  margin-left: 0px; 
+  margin-left: 0px;
 }

@@ -1,6 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./app/**/*.{gjs,gts,hbs,html,js,ts}'],
+  safelist: [
+    {
+      pattern: /^fill-(green|red|blue|yellow|gray)-\d{3}$/,
+    },
+  ],
   theme: {
     extend: {
       keyframes: {

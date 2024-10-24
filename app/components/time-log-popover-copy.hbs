@@ -1,0 +1,107 @@
+<div
+  class="transform transition-all ease-in-out animate-fly-right absolute z-10 mt-2 w-80 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5"
+  role="menu"
+  aria-orientation="vertical"
+  aria-labelledby="menu-button"
+  tabindex="-1"
+  {{did-insert this.onInsert}}
+  {{did-update this.onUpdate @screenPos}}
+>
+  <div class="py-1" role="none">
+    <form class="px-4 py-2" {{on "submit" this.submitLog}}>
+      <ul class="divide-y divide-dotted">
+        {{#each @favoriteProjects as |project index|}}
+          <li>
+            <div class="mt-2 mb-2">
+              <div class="mt-1 flex justify-between">
+                <div class="flex items-center">
+                  <span class="inline-block w-5 h-5 mr-3">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      class={{concat "fill-" (this.rawColorFor project)}}
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+                      />
+                    </svg>
+                  </span>
+                  <span class="text-gray-700">{{project}}</span>
+                </div>
+                <input
+                  type="number"
+                  id={{concat "hours_" project}}
+                  min={{0}}
+                  class="h-10 w-20 mt-1 block border-gray-200 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  value={{0}}
+                  {{on "click" (fn this.onHoursClick project)}}
+                  {{focus (eq index 0)}}
+                />
+              </div>
+            </div>
+          </li>
+        {{/each}}
+        {{#each this.addedInputs as |addedInput index|}}
+          <li>
+            <div class="mt-2 mb-2">
+              <div class="mt-1 flex justify-between content-center">
+                {{#let (unique-id) as |inputId|}}
+                  <div class="block h-10 flex-grow mr-2">
+                    <ProjectsPowerselect
+                      @selectedProject={{addedInput.project}}
+                      @onChange={{fn this.changeInput index inputId}}
+                    />
+                  </div>
+                  <input
+                    type="number"
+                    min={{0}}
+                    id={{inputId}}
+                    class="h-10 w-20 block border-gray-200 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    value={{get (get this.addedInputs index) "hours"}}
+                    {{did-insert (fn this.maybeFocus index)}}
+                    {{on "change" (fn this.onAddedProjectsChange index)}}
+                    {{on "click" (fn this.onHoursClick null)}}
+                  />
+                {{/let}}
+              </div>
+            </div>
+          </li>
+        {{/each}}
+        <li>
+          <div class="mt-2 mb-2">
+            <div class="mt-1 flex justify-between content-center">
+              <div class="block h-10 flex-grow mr-2">
+                <ProjectsPowerselect @onChange={{this.addInput}} />
+              </div>
+              <input
+                type="number"
+                min={{0}}
+                class="h-10 w-20 block border-gray-200 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                value={{0}}
+                {{on "click" (fn this.onHoursClick null)}}
+              />
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="flex justify-between mt-4">
+        <button
+          type="button"
+          class="mr-2 inline-flex justify-center px-4 py-2 text-gray-500 font-medium"
+          {{on "click" this.closePopover}}
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

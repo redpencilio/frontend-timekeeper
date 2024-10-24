@@ -1,5 +1,20 @@
 {{page-title "Sandbox"}}
-<FullCalendar 
-  @focusDate={{this.focusDate}}
-  @events={{this.events}}
-/>
+<PowerSelect
+  @searchEnabled={{true}}
+  @options={{this.projects}}
+  @selected={{this.selectedProject}}
+  @onChange={{this.onChange}}
+  @onFocus={{this.onFocus}}
+  {{!-- @onClose={{@onClose}} --}}
+  {{!-- @onBlur={{@onBlur}} --}}
+  {{!-- @onKeydown={{this.onKeydown}} --}}
+  @placeholder="Type to search"
+  as |project|
+>
+  <div class="flex items-center text-sm h-8">
+    <span
+      class={{concat "inline-block w-3 h-3 rounded-full mr-3 " project.color}}
+    ></span>
+    <span class="text-gray-700">{{project}}</span>
+  </div>
+</PowerSelect>
