@@ -1,5 +1,6 @@
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
 
 export default class MockDataService extends Service {
   @tracked hourLogs = [
@@ -202,7 +203,10 @@ export default class MockDataService extends Service {
       project: 'GN',
       date: '2024-09-30',
     },
-  ];
+  ].map((hourLog, index) => {
+    hourLog.id = index;
+    return hourLog;
+  });
 
   colorMap = {
     Loket: '#3B82F6',
@@ -229,20 +233,52 @@ export default class MockDataService extends Service {
   };
 
   get events() {
-    let id = 0;
-    return this.hourLogs.map(({ hours, project, date, subproject }) => ({
-      id: id++,
-      title: `${hours}h: ${subproject ?? project}`,
-      start: date,
-      allDay: true,
-      backgroundColor: this.colorMap[project],
-      borderColor: this.colorMap[project],
-    }));
+    return this.hourLogs.map((hourLog) => {
+      const { hours, project, date, subproject, id } = hourLog;
+      return {
+        id,
+        title: `${hours}h: ${subproject ?? project}`,
+        start: date,
+        allDay: true,
+        backgroundColor: this.colorMap[project],
+        borderColor: this.colorMap[project],
+        extendedProps: {
+          hourLog,
+        },
+      };
+    });
   }
 
   projects = ['Loket', 'Kaleidos', 'Nove', 'GN', 'Out of Office'];
 
   addHourLog(hourLog) {
     this.hourLogs = [...this.hourLogs, hourLog];
+  }
+
+  @action
+  updateHourLogById(id, newLog) {
+    const index = this.hourLogs.findIndex((log) => log.id === id);
+    if (index === -1) {
+      return;
+    }
+
+    this.hourLogs = [
+      ...this.hourLogs.slice(0, index),
+      { ...newLog, id: index },
+      ...this.hourLogs.slice(index + 1),
+    ];
+  }
+
+  @action
+  deleteHourLogById(id) {
+    const index = this.hourLogs.findIndex((log) => log.id === id);
+    if (index === -1) {
+      return;
+    }
+
+    this.hourLogs = [
+      ...this.hourLogs.slice(0, index),
+      ...this.hourLogs.slice(index + 1),
+    ];
   }
 }
