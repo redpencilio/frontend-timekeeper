@@ -209,7 +209,7 @@ export default class MockDataService extends Service {
   });
 
   colorMap = {
-    Loket: '#3B82F6',
+    Loket: '#6366f1',
     Kaleidos: '#22C55E',
     Nove: '#EAB308',
     GN: '#EF4444',
@@ -217,7 +217,7 @@ export default class MockDataService extends Service {
   };
 
   colorMapTailwind = {
-    Loket: 'bg-blue-500',
+    Loket: 'bg-indigo-500',
     Kaleidos: 'bg-green-500',
     Nove: 'bg-yellow-500',
     GN: 'bg-red-500',
@@ -225,7 +225,7 @@ export default class MockDataService extends Service {
   };
 
   colorMapTailwindRaw = {
-    Loket: 'blue-500',
+    Loket: 'indigo-500',
     Kaleidos: 'green-500',
     Nove: 'yellow-500',
     GN: 'red-500',

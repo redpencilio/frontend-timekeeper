@@ -4,7 +4,7 @@ import { tracked } from '@glimmer/tracking';
 
 export default class StatsComponent extends Component {
   colorMap = {
-    Loket: 'bg-blue-500',
+    Loket: 'bg-indigo-500',
     Kaleidos: 'bg-green-500',
     Nove: 'bg-yellow-500',
     GN: 'bg-red-500',

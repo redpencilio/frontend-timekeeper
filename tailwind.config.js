@@ -3,7 +3,7 @@ module.exports = {
   content: ['./app/**/*.{gjs,gts,hbs,html,js,ts}'],
   safelist: [
     {
-      pattern: /^fill-(green|red|blue|yellow|gray)-\d{3}$/,
+      pattern: /^fill-(green|red|blue|yellow|gray|indigo)-\d{3}$/,
     },
   ],
   theme: {
