@@ -27,17 +27,17 @@ export default class ProjectsPowerselectComponent extends Component {
 
   @action
   onKeydown(api, event) {
-    // Bit hacky, we want to open the searchbox
-    // as soon as the user starts typing
-    // if (!api.isOpen && isLetter(event.key)) {
-    //     api.actions.open();
-    //     api.actions.search(event.key);
-    // }
-    if (event.key === 'Enter') {
-      event.preventDefault();
+    if (!api.isOpen && isLetter(event.key)) {
+      api.actions.open();
+      api.actions.search(event.key);
+      return false;
     }
 
-    return false;
+    if (event.key === 'Enter') {
+      event.preventDefault(); // We don't want to trigger a submit
+    }
+
+    return true;
   }
 
   @action
