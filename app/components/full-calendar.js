@@ -8,11 +8,13 @@ import { service } from '@ember/service';
 
 export default class FullCalendarComponent extends Component {
   @service dateNavigation;
+  @service mockData;
 
   @tracked calendar = null;
   calendarEl = null;
-  @tracked clickedDate = null;
-  @tracked clickedDateElement = null;
+
+  @tracked clickedEventInfo = null;
+  @tracked clickedDateInfo = null;
 
   @action
   setupCalendar(element) {
@@ -34,11 +36,9 @@ export default class FullCalendarComponent extends Component {
       plugins: [interactionPlugin, dayGridPlugin],
       initialView: 'dayGridMonth', // Sets the default view to month grid
       events: this.args.events || [], // Pass the events from parent as an argument
-      editable: false,
       droppable: false, // Allows for drag and drop of external elements
       dateClick: this.onDateClick.bind(this), // Example of handling date clicks
-      select: this.onDateSelect.bind(this),
-      unselect: this.onDateUnselect.bind(this),
+      eventClick: this.onEventClick.bind(this),
       eventDisplay: 'list-item',
       // selectable: true,
       dayMaxEvents: 6,
@@ -57,6 +57,15 @@ export default class FullCalendarComponent extends Component {
         start: firstDayOfMonth,
         end: lastDayOfMonth,
       },
+
+      // Drag and Drop
+      editable: true, // Allows for drag and drop of internal events
+      eventConstraint: {
+        // Where events can be dragged to
+        start: firstDayOfMonth,
+        end: lastDayOfMonth,
+      },
+      eventDrop: this.onEventDrop.bind(this),
       customButtons: {
         prev: {
           text: 'Previous',
@@ -77,24 +86,35 @@ export default class FullCalendarComponent extends Component {
     this.calendar.render(); // Renders the calendar
   }
 
+  onEventClick(info) {
+    this.clickedDateInfo = false;
+    this.clickedEventInfo = info;
+  }
+
+  onEventDrop(info) {
+    const newLog = {
+      ...info.oldEvent.extendedProps.hourLog,
+      date: info.event.startStr,
+    };
+    this.mockData.updateHourLogById(
+      info.oldEvent.extendedProps.hourLog.id,
+      newLog,
+    );
+  }
+
+  get clickedDateElement() {
+    const dateStr = this.clickedEventInfo
+      ? this.clickedEventInfo.event.startStr
+      : this.clickedDateInfo.dateStr;
+    return this.calendarEl.querySelector(`[data-date="${dateStr}"]`);
+  }
+
   @action
   onDateClick(info) {
+    this.clickedEventInfo = null;
     if (info.date.getMonth() === this.args.focusDate.getMonth()) {
-      this.clickedDate = info.date;
-      this.clickedDateElement = this.calendarEl.querySelector(
-        `[data-date="${info.dateStr}"]`,
-      );
+      this.clickedDateInfo = info;
     }
-  }
-
-  @action
-  onDateSelect({ start, end }) {
-    this.selectedRange = [start, end];
-  }
-
-  @action
-  onDateUnselect() {
-    // this.clearSelectedRange();
   }
 
   @action
@@ -115,9 +135,13 @@ export default class FullCalendarComponent extends Component {
   }
 
   @action
-  clearSelectedRange() {
-    this.selectedRange = null;
-    this.clickedDate = null;
+  onCancel() {
+    this.clearPopovers();
+  }
+
+  clearPopovers() {
+    this.clickedDateInfo = null;
+    this.clickedEventInfo = null;
   }
 
   @action
@@ -126,6 +150,23 @@ export default class FullCalendarComponent extends Component {
     sources.forEach((source) => source.remove());
     this.calendar.addEventSource(this.args.events);
     this.calendar.render();
+  }
+
+  @action
+  editHourLog(hourLog, { hours, project }) {
+    const newLog = { ...hourLog, hours, project };
+    this.mockData.updateHourLogById(hourLog.id, newLog);
+    this.clearPopovers();
+  }
+
+  @action
+  deleteHourLog(hourLog) {
+    this.mockData.deleteHourLogById(hourLog.id);
+    this.clearPopovers();
+  }
+
+  get clickedHourLog() {
+    return this.clickedEventInfo?.event.extendedProps.hourLog;
   }
 
   @action

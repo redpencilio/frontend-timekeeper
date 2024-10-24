@@ -1,4 +1,11 @@
 <div role="none">
+  {{#if @allowDelete}}
+    <div class="flex justify-end">
+      <button type="button" {{on "click" @onDelete}}>
+        <TrashIcon class="size-5 stroke-red-500" />
+      </button>
+    </div>
+  {{/if}}
   <form {{on "submit" this.submitLog}}>
     <div>
       <label

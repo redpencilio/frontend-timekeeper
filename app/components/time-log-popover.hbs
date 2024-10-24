@@ -1,14 +1,6 @@
-<div
-  class="transform transition-all ease-in-out animate-fly-right animate-fly-left-out absolute z-10 w-80 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5"
-  role="menu"
-  aria-orientation="vertical"
-  aria-labelledby="menu-button"
-  tabindex="-1"
-  {{did-insert this.onInsert}}
-  {{floating-ui-auto-update @anchorElement this.moveToScreenPos}}
->
-  <div class="mx-4 mb-2">
-    <div class="flex justify-end my-4">
+<Popover @anchorElement={{@anchorElement}}>
+  <div class="mx-4 mb-3">
+    <div class="flex justify-end mt-4 mb-2">
       <Toggle::Small
         @checked={{this.localStorage.useAdvancedLogPopover}}
         @onToggle={{this.onToggle}}
@@ -16,7 +8,6 @@
     </div>
     {{#if this.localStorage.useAdvancedLogPopover}}
       <TimeLogPopover::Multi
-        @anchorElement={{@anchorElement}}
         @projects={{@projects}}
         @favoriteProjects={{@favoriteProjects}}
         @onSave={{@onSave}}
@@ -24,7 +15,6 @@
       />
     {{else}}
       <TimeLogPopover::Simple
-        @anchorElement={{@anchorElement}}
         @projects={{@projects}}
         @favoriteProjects={{@favoriteProjects}}
         @onSave={{@onSave}}
@@ -32,4 +22,4 @@
       />
     {{/if}}
   </div>
-</div>
+</Popover>

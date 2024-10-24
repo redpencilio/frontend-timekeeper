@@ -1,0 +1,13 @@
+<Popover @anchorElement={{@anchorElement}}>
+  <div class="mx-4 mb-3 mt-4">
+    <TimeLogPopover::Simple
+      @selectedHourLog={{@selectedHourLog}}
+      @projects={{@projects}}
+      @favoriteProjects={{@favoriteProjects}}
+      @onSave={{@onSave}}
+      @onCancel={{@onCancel}}
+      @onDelete={{@onDelete}}
+      @allowDelete={{true}}
+    />
+  </div>
+</Popover>

@@ -1,10 +1,21 @@
-{{#if this.clickedDate}}
+{{#if this.clickedDateInfo}}
   <TimeLogPopover
     @anchorElement={{this.clickedDateElement}}
     @projects={{@projects}}
     @favoriteProjects={{@favoriteProjects}}
     @onSave={{this.onEventsAdded}}
-    @onCancel={{this.clearSelectedRange}}
+    @onCancel={{this.onCancel}}
+  />
+{{/if}}
+{{#if this.clickedEventInfo}}
+  <TimeEditPopover
+    @anchorElement={{this.clickedDateElement}}
+    @projects={{@projects}}
+    @favoriteProjects={{@favoriteProjects}}
+    @selectedHourLog={{this.clickedHourLog}}
+    @onSave={{fn this.editHourLog this.clickedHourLog}}
+    @onCancel={{this.onCancel}}
+    @onDelete={{fn this.deleteHourLog this.clickedHourLog}}
   />
 {{/if}}
 <div

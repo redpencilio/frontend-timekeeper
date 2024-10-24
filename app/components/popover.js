@@ -22,13 +22,13 @@ export default class TimeLogPopoverComponent extends Component {
   @action
   moveToScreenPos() {
     computePosition(this.args.anchorElement, this.elementRef, {
-      placement: this.args.placement ?? 'right-start',
+      placement: 'right-start',
       middleware: [
         offset({
           mainAxis: 8,
           crossAxis: -8,
         }),
-        shift(),
+        shift({ padding: 5 }),
       ],
     }).then(({ x, y }) => {
       Object.assign(this.elementRef.style, {

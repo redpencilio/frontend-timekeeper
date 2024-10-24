@@ -1,28 +1,24 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { ref } from 'ember-ref-bucket';
+import { trackedReset } from 'tracked-toolbox';
 
 export default class TimeLogPopoverComponent extends Component {
-  @tracked isPopoverOpen = false;
-  @tracked hours = 8;
-  @tracked project = this.args.projects[0];
-  elementRef = null;
+  @trackedReset({
+    memo: 'args.selectedHourLog',
+    update() {
+      return this.args.selectedHourLog.hours;
+    },
+  })
+  hours = 8;
 
-  @action
-  togglePopover() {
-    this.isPopoverOpen = !this.isPopoverOpen;
-    if (this.isPopoverOpen) {
-      // Focus on the hours input when the popover opens
-      this.focusHoursInput();
-    }
-  }
-
-  @action
-  closePopover() {
-    this.isPopoverOpen = false;
-    this.args.onCancel?.();
-  }
+  @trackedReset({
+    memo: 'args.selectedHourLog',
+    update() {
+      return this.args.selectedHourLog.project;
+    },
+  })
+  project = this.args.projects[0];
 
   @action
   updateHours(event) {
@@ -35,59 +31,17 @@ export default class TimeLogPopoverComponent extends Component {
   }
 
   @action
+  closePopover() {
+    this.args.onCancel?.();
+  }
+
+  @action
   submitLog(event) {
     event.preventDefault();
 
-    // Log the time
-    console.log(`Logged ${this.hours} hours: ${this.project}`);
     this.args.onSave?.({
       hours: this.hours,
       project: this.project,
     });
-
-    this.resetFields();
-    this.closePopover();
-  }
-
-  resetFields() {
-    // Reset fields
-    this.hours = 8;
-    this.project = this.args.projects[1];
-  }
-
-  @action
-  focusHoursInput() {
-    if (this.hoursInput) {
-      this.hoursInput.focus();
-      this.hoursInput.select();
-    }
-  }
-
-  @action
-  onInsert(el) {
-    this.elementRef = el;
-    this.focusHoursInput();
-    this.moveToScreenPos(el);
-  }
-
-  @action
-  onUpdate(el) {
-    this.focus;
-    this.moveToScreenPos(el);
-    this.resetFields();
-    this.focusHoursInput();
-  }
-
-  moveToScreenPos(el) {
-    const { right, top } = this.args.screenPos;
-    const popoverBox = el.getBoundingClientRect();
-    el.style.left = `${right + 5}px`;
-    const maybeNewTop = top - 10;
-    const maybeNewBottom = maybeNewTop + popoverBox.height;
-    const bottomOverlap =
-      maybeNewBottom > window.screen.availHeight
-        ? maybeNewBottom - window.screen.availHeight
-        : 0;
-    el.style.top = `${maybeNewTop - bottomOverlap}px`;
   }
 }
