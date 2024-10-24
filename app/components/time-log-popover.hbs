@@ -1,6 +1,6 @@
 <Popover @anchorElement={{@anchorElement}}>
   <div class="mx-4 mb-3">
-    <div class="flex justify-end mt-4 mb-2">
+    <div class="flex justify-end mt-4 mb-4">
       <Toggle::Small
         @checked={{this.localStorage.useAdvancedLogPopover}}
         @onToggle={{this.onToggle}}
@@ -10,14 +10,14 @@
       <TimeLogPopover::Multi
         @projects={{@projects}}
         @favoriteProjects={{@favoriteProjects}}
-        @onSave={{@onSave}}
+        @onSave={{@onSaveMulti}}
         @onCancel={{@onCancel}}
       />
     {{else}}
       <TimeLogPopover::Simple
         @projects={{@projects}}
         @favoriteProjects={{@favoriteProjects}}
-        @onSave={{@onSave}}
+        @onSave={{@onSaveSimple}}
         @onCancel={{@onCancel}}
       />
     {{/if}}

@@ -7,34 +7,8 @@ import { service } from '@ember/service';
 export default class TimeLogPopoverComponent extends Component {
   @service localStorage;
 
-  elementRef = null;
-
-  @action
-  onInsert(el) {
-    this.elementRef = el;
-  }
-
   @action
   onToggle(value) {
     this.localStorage.useAdvancedLogPopover = value;
-  }
-
-  @action
-  moveToScreenPos() {
-    computePosition(this.args.anchorElement, this.elementRef, {
-      placement: this.args.placement ?? 'right-start',
-      middleware: [
-        offset({
-          mainAxis: 8,
-          crossAxis: -8,
-        }),
-        shift(),
-      ],
-    }).then(({ x, y }) => {
-      Object.assign(this.elementRef.style, {
-        left: `${x}px`,
-        top: `${y}px`,
-      });
-    });
   }
 }

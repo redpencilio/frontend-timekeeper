@@ -2,16 +2,25 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
+import { trackedReset } from 'tracked-toolbox';
 
 export default class TimeLogPopoverComponent extends Component {
   @service mockData;
 
   @tracked hours = 8;
-  @tracked project = this.args.projects[0];
   @tracked focusHoursInput = null;
-  @tracked addedInputs = [];
+  @trackedReset({
+    memo: 'args.favoriteProjects',
+    update() {
+      return this.args.favoriteProjects.map((project) => ({
+        project,
+        hours: 0,
+      }));
+    },
+  })
+  favoriteProjects = [];
 
-  elementRef = null;
+  @tracked addedInputs = [];
 
   colorFor = (project) => this.mockData.colorMapTailwind[project];
   rawColorFor = (project) => this.mockData.colorMapTailwindRaw[project];
@@ -22,49 +31,27 @@ export default class TimeLogPopoverComponent extends Component {
   }
 
   @action
-  updateHours(event) {
-    this.hours = event.target.valueAsNumber;
-  }
-
-  @action
   updateDescription(event) {
     this.project = event.target.value;
   }
 
   @action
-  onAddedProjectsChange(index, event) {
-    this.addedInputs[index].hours = event.target.valueAsNumber;
+  onHoursChange(index, isFavorite, event) {
+    const editArray = isFavorite ? this.favoriteProjects : this.addedInputs;
+    editArray[index].hours = event.target.valueAsNumber;
   }
 
   @action
   submitLog(event) {
     event.preventDefault();
-    // this.args.onSave?.([
-    //   {
-    //     hours: this.hours,
-    //     project: this.project,
-    //   },
-    // ]);
-
-    // this.resetFields();
-    // this.closePopover();
-  }
-
-  resetFields() {
-    // Reset fields
-    this.hours = 8;
-    this.project = this.args.projects[1];
-  }
-
-  @action
-  onInsert(el) {
-    this.moveToScreenPos(el);
-  }
-
-  @action
-  onUpdate(el) {
-    this.moveToScreenPos(el);
-    this.resetFields();
+    const hourProjectPairs = [
+      ...this.favoriteProjects.map(({ hours, project }) => ({
+        hours,
+        project,
+      })),
+      ...this.addedInputs.map(({ hours, project }) => ({ hours, project })),
+    ].filter(({ hours }) => hours > 0);
+    this.args.onSave?.(hourProjectPairs);
   }
 
   @action
@@ -93,18 +80,5 @@ export default class TimeLogPopoverComponent extends Component {
   addInput(project) {
     this.addedInputs = [...this.addedInputs, { project, hours: 0 }];
     this.focusHoursInput = this.addedInputs.length - 1;
-  }
-
-  moveToScreenPos(el) {
-    const { right, top } = this.args.screenPos;
-    const popoverBox = el.getBoundingClientRect();
-    el.style.left = `${right + 5}px`;
-    const maybeNewTop = top - 10;
-    const maybeNewBottom = maybeNewTop + popoverBox.height;
-    const bottomOverlap =
-      maybeNewBottom > window.screen.availHeight
-        ? maybeNewBottom - window.screen.availHeight
-        : 0;
-    el.style.top = `${maybeNewTop - bottomOverlap}px`;
   }
 }

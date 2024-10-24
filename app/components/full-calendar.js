@@ -86,6 +86,30 @@ export default class FullCalendarComponent extends Component {
     this.calendar.render(); // Renders the calendar
   }
 
+  @action
+  onSaveSimple({ hours, project }) {
+    const hourLog = {
+      hours,
+      project,
+      date: this.clickedDateInfo.dateStr,
+    };
+    this.mockData.addHourLog(hourLog);
+    this.clearPopovers();
+  }
+
+  @action
+  onSaveMulti(hourProjectPairs) {
+    hourProjectPairs.forEach(({ hours, project }) => {
+      const hourLog = {
+        hours,
+        project,
+        date: this.clickedDateInfo.dateStr,
+      };
+      this.mockData.addHourLog(hourLog);
+    });
+    this.clearPopovers();
+  }
+
   onEventClick(info) {
     this.clickedDateInfo = false;
     this.clickedEventInfo = info;
