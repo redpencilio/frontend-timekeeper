@@ -12,7 +12,7 @@ export default class FullCalendarComponent extends Component {
   @tracked calendar = null;
   calendarEl = null;
   @tracked clickedDate = null;
-  @tracked clickedDateCoords = null;
+  @tracked clickedDateElement = null;
 
   @action
   setupCalendar(element) {
@@ -80,7 +80,9 @@ export default class FullCalendarComponent extends Component {
   onDateClick(info) {
     if (info.date.getMonth() === this.args.focusDate.getMonth()) {
       this.clickedDate = info.date;
-      this.calculatePopoverCoords(info.dateStr);
+      this.clickedDateElement = this.calendarEl.querySelector(
+        `[data-date="${info.dateStr}"]`,
+      );
     }
   }
 
@@ -128,13 +130,6 @@ export default class FullCalendarComponent extends Component {
   @action
   gotoFocusDate() {
     this.calendar.gotoDate(this.args.focusDate);
-  }
-
-  calculatePopoverCoords(dateStr) {
-    const cell = this.calendarEl.querySelector(`[data-date="${dateStr}"]`);
-    if (cell) {
-      this.clickedDateCoords = cell.getBoundingClientRect();
-    }
   }
 
   willDestroy() {

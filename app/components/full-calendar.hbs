@@ -1,6 +1,6 @@
 {{#if this.clickedDate}}
-  <TimeLogPopoverCopy
-    @screenPos={{this.clickedDateCoords}}
+  <TimeLogPopover
+    @anchorElement={{this.clickedDateElement}}
     @projects={{@projects}}
     @favoriteProjects={{@favoriteProjects}}
     @onSave={{this.onEventsAdded}}

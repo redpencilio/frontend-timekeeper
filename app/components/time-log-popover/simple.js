@@ -1,23 +1,26 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { service } from '@ember/service';
+import { ref } from 'ember-ref-bucket';
 
 export default class TimeLogPopoverComponent extends Component {
-  @service mockData;
-
+  @tracked isPopoverOpen = false;
   @tracked hours = 8;
   @tracked project = this.args.projects[0];
-  @tracked focusHoursInput = null;
-  @tracked addedInputs = [];
-
   elementRef = null;
 
-  colorFor = (project) => this.mockData.colorMapTailwind[project];
-  rawColorFor = (project) => this.mockData.colorMapTailwindRaw[project];
+  @action
+  togglePopover() {
+    this.isPopoverOpen = !this.isPopoverOpen;
+    if (this.isPopoverOpen) {
+      // Focus on the hours input when the popover opens
+      this.focusHoursInput();
+    }
+  }
 
   @action
   closePopover() {
+    this.isPopoverOpen = false;
     this.args.onCancel?.();
   }
 
@@ -32,23 +35,18 @@ export default class TimeLogPopoverComponent extends Component {
   }
 
   @action
-  onAddedProjectsChange(index, event) {
-    this.addedInputs[index].hours = event.target.valueAsNumber;
-  }
-
-  @action
   submitLog(event) {
     event.preventDefault();
-    debugger;
-    // this.args.onSave?.([
-    //   {
-    //     hours: this.hours,
-    //     project: this.project,
-    //   },
-    // ]);
 
-    // this.resetFields();
-    // this.closePopover();
+    // Log the time
+    console.log(`Logged ${this.hours} hours: ${this.project}`);
+    this.args.onSave?.({
+      hours: this.hours,
+      project: this.project,
+    });
+
+    this.resetFields();
+    this.closePopover();
   }
 
   resetFields() {
@@ -58,42 +56,26 @@ export default class TimeLogPopoverComponent extends Component {
   }
 
   @action
+  focusHoursInput() {
+    if (this.hoursInput) {
+      this.hoursInput.focus();
+      this.hoursInput.select();
+    }
+  }
+
+  @action
   onInsert(el) {
+    this.elementRef = el;
+    this.focusHoursInput();
     this.moveToScreenPos(el);
   }
 
   @action
   onUpdate(el) {
+    this.focus;
     this.moveToScreenPos(el);
     this.resetFields();
-  }
-
-  @action
-  onHoursClick(project, event) {
-    const target = event.target;
-    target.select();
-  }
-
-  @action
-  changeInput(index, hoursInputId, project, api, event) {
-    const { hours } = this.addedInputs[index];
-    this.addedInputs[index] = { project, hours };
-    this.addedInputs = this.addedInputs;
-    this.focusHoursInput = index;
-  }
-
-  @action
-  maybeFocus(index, element) {
-    if (index === this.focusHoursInput) {
-      element.focus();
-      element.select();
-    }
-  }
-
-  @action
-  addInput(project) {
-    this.addedInputs = [...this.addedInputs, { project, hours: 0 }];
-    this.focusHoursInput = this.addedInputs.length - 1;
+    this.focusHoursInput();
   }
 
   moveToScreenPos(el) {

@@ -1,64 +1,35 @@
 <div
-  class="transform transition-all ease-in-out animate-fly-right absolute z-10 mt-2 w-80 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5"
+  class="transform transition-all ease-in-out animate-fly-right animate-fly-left-out absolute z-10 w-80 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5"
   role="menu"
   aria-orientation="vertical"
   aria-labelledby="menu-button"
   tabindex="-1"
   {{did-insert this.onInsert}}
-  {{did-update this.onUpdate @screenPos}}
+  {{floating-ui-auto-update @anchorElement this.moveToScreenPos}}
 >
-  <div class="py-1" role="none">
-    <form class="px-4 py-2" {{on "submit" this.submitLog}}>
-      <div>
-        <label
-          for="hours"
-          class="block text-sm font-semibold leading-6 text-gray-700"
-        >Hours Worked</label>
-        <input
-          type="number"
-          id="hours"
-          min={{0}}
-          class="h-10 mt-1 block w-full border-gray-200 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          value={{this.hours}}
-          {{create-ref "hoursInput"}}
-          {{on "input" this.updateHours}}
-        />
-      </div>
-
-      <div class="mt-2">
-        <label
-          for="project"
-          class="block text-sm font-semibold text-gray-700"
-        >Project</label>
-        <div class="mt-1">
-          <ProjectPillRadioGroup
-            @onChangeSelected={{set this "project"}}
-            @projects={{@favoriteProjects}}
-            @selectedProject={{this.project}}
-          />
-        </div>
-      </div>
-      <div class="block h-10 mt-2">
-        <ProjectsPowerselect
-          @onChange={{set this "project"}}
-          @selectedProject={{this.project}}
-        />
-      </div>
-      <div class="flex justify-between mt-4">
-        <button
-          type="button"
-          class="mr-2 inline-flex justify-center px-4 py-2 text-gray-500 font-medium"
-          {{on "click" this.closePopover}}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          class="inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Save
-        </button>
-      </div>
-    </form>
+  <div class="mx-4 mb-2">
+    <div class="flex justify-end my-4">
+      <Toggle::Small
+        @checked={{this.localStorage.useAdvancedLogPopover}}
+        @onToggle={{this.onToggle}}
+      >Advanced</Toggle::Small>
+    </div>
+    {{#if this.localStorage.useAdvancedLogPopover}}
+      <TimeLogPopover::Multi
+        @anchorElement={{@anchorElement}}
+        @projects={{@projects}}
+        @favoriteProjects={{@favoriteProjects}}
+        @onSave={{@onSave}}
+        @onCancel={{@onCancel}}
+      />
+    {{else}}
+      <TimeLogPopover::Simple
+        @anchorElement={{@anchorElement}}
+        @projects={{@projects}}
+        @favoriteProjects={{@favoriteProjects}}
+        @onSave={{@onSave}}
+        @onCancel={{@onCancel}}
+      />
+    {{/if}}
   </div>
 </div>
