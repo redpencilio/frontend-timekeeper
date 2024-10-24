@@ -39,6 +39,7 @@ export default class FullCalendarComponent extends Component {
       dateClick: this.onDateClick.bind(this), // Example of handling date clicks
       select: this.onDateSelect.bind(this),
       unselect: this.onDateUnselect.bind(this),
+      eventDisplay: 'list-item',
       // selectable: true,
       dayMaxEvents: 6,
       height: 'parent',

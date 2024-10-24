@@ -5,3 +5,7 @@
 .ember-power-select-selected-item {
   margin-left: 0;
 }
+
+.fc-event-title {
+  font-weight: 500 !important;
+}
