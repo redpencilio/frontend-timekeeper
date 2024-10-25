@@ -5,10 +5,15 @@ import { tracked } from '@glimmer/tracking';
 import { A } from '@ember/array';
 
 export default class YearMonthContoller extends Controller {
-  untrackedValue = false;
+  @tracked selectedProject;
 
   constructor() {
     super(...arguments);
     // setTimeout(() => (this.test = true), 1000);
+  }
+
+  @action
+  addInput(value) {
+    this.selectedProject = value;
   }
 }

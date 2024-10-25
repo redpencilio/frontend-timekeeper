@@ -1,4 +1,4 @@
-<div role="none">
+<div role="none" {{on "keydown" this.handleKeydown}}>
   <form {{on "submit" this.submitLog}}>
     <ul class="divide-y divide-dotted">
       {{#each this.favoriteProjects as |project index|}}
@@ -28,9 +28,10 @@
                   min={{0}}
                   class="h-10 w-20 mt-1 block border-gray-200 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   value={{get (get this.favoriteProjects index) "hours"}}
-                  {{on "click" (fn this.onHoursClick project.project)}}
                   {{on "change" (fn this.onHoursChange index true)}}
-                  {{focus (eq index 0)}}
+                  {{focus-select (eq index 0)}}
+                  {{select-on "click"}}
+                  required
                 />
               {{/let}}
             </div>
@@ -41,24 +42,24 @@
         <li>
           <div class="mt-2 mb-2">
             <div class="mt-1 flex justify-between content-center">
-              {{#let (unique-id) as |inputId|}}
-                <div class="block h-10 flex-grow mr-2">
-                  <ProjectsPowerselect
-                    @selectedProject={{addedInput.project}}
-                    @onChange={{fn this.changeInput index inputId}}
-                  />
-                </div>
-                <input
-                  type="number"
-                  min={{0}}
-                  id={{inputId}}
-                  class="h-10 w-20 block border-gray-200 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  value={{get (get this.addedInputs index) "hours"}}
-                  {{did-insert (fn this.maybeFocus index)}}
-                  {{on "change" (fn this.onHoursChange index false)}}
-                  {{on "click" (fn this.onHoursClick null)}}
+              <div class="block h-10 flex-grow mr-2">
+                <ProjectsPowerselect
+                  @selectedProject={{addedInput.project}}
+                  @onChange={{fn this.changeInput index addedInput.elementId}}
                 />
-              {{/let}}
+              </div>
+              <input
+                type="number"
+                min={{0}}
+                id={{addedInput.elementId}}
+                class="h-10 w-20 block border-gray-200 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                value={{get (get this.addedInputs index) "hours"}}
+                {{on "change" (fn this.onHoursChange index false)}}
+                {{focus-select (eq index this.focusHoursInput)}}
+                {{clear-value this "focusHoursInput"}}
+                {{select-on "click"}}
+                required
+              />
             </div>
           </div>
         </li>
@@ -67,7 +68,11 @@
         <div class="mt-2 mb-2">
           <div class="mt-1 flex justify-between content-center">
             <div class="block h-10 flex-grow mr-2">
-              <ProjectsPowerselect @onChange={{this.addInput}} />
+              <ProjectsPowerselect
+                {{focus this.focusNewPowerSelect}}
+                {{clear-value this "focusNewPowerSelect"}}
+                @onChange={{this.addInput}}
+              />
             </div>
             {{#let (unique-id) as |inputId|}}
               <input
@@ -76,7 +81,7 @@
                 id={{inputId}}
                 class="h-10 w-20 block border-gray-200 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 value={{0}}
-                {{on "click" (fn this.onHoursClick null)}}
+                {{select-on "click"}}
               />
             {{/let}}
           </div>

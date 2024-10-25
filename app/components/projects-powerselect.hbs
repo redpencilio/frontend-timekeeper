@@ -9,7 +9,8 @@
   {{!-- @onClose={{@onClose}} --}}
   {{!-- @onBlur={{this.onBlur}} --}}
   @onKeydown={{this.onKeydown}}
-  @placeholder="Type to search"
+  @placeholder="Type '/' to search"
+  ...attributes
   as |project|
 >
   <div class="flex items-center text-sm h-8">

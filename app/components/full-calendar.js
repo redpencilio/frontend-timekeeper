@@ -84,6 +84,9 @@ export default class FullCalendarComponent extends Component {
 
     this.calendar.gotoDate(focusDate);
     this.calendar.render(); // Renders the calendar
+    // TODO improve by putting addEventListener and removeEventListener
+    // together
+    document.addEventListener('keydown', this.handleKeydown.bind(this));
   }
 
   @action
@@ -198,8 +201,15 @@ export default class FullCalendarComponent extends Component {
     this.calendar.gotoDate(this.args.focusDate);
   }
 
+  handleKeydown(event) {
+    if (event.key === 'Escape' || event.key === 'Esc') {
+      this.clearPopovers();
+    }
+  }
+
   willDestroy() {
     super.willDestroy(...arguments);
+    document.removeEventListener('keydown', this.handleKeydown.bind(this));
     this.calendar?.destroy();
   }
 }
