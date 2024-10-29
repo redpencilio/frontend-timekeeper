@@ -59,8 +59,7 @@
           <div class="mt-1 flex justify-between content-center">
             <div class="block h-10 flex-grow mr-2">
               <ProjectsPowerselect
-                {{focus this.focusNewPowerSelect}}
-                {{clear-value this "focusNewPowerSelect"}}
+                @registerAPI={{this.registerNewProjectPowerSelect}}
                 @onChange={{this.addInput}}
               />
             </div>
