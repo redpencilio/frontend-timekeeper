@@ -22,16 +22,11 @@
                 <span class="text-gray-700">{{project.project}}</span>
               </div>
               {{#let (unique-id) as |inputId|}}
-                <input
-                  type="number"
+                <HourInput
                   id={{inputId}}
-                  min={{0}}
-                  class="h-10 w-20 mt-1 block border-gray-200 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  value={{get (get this.favoriteProjects index) "hours"}}
-                  {{on "change" (fn this.onHoursChange index true)}}
+                  @value={{get (get this.favoriteProjects index) "hours"}}
+                  @onChange={{fn this.onHoursChange index true}}
                   {{focus-select (eq index 0)}}
-                  {{select-on "click"}}
-                  required
                 />
               {{/let}}
             </div>
@@ -48,17 +43,12 @@
                   @onChange={{fn this.changeInput index addedInput.elementId}}
                 />
               </div>
-              <input
-                type="number"
-                min={{0}}
+              <HourInput
                 id={{addedInput.elementId}}
-                class="h-10 w-20 block border-gray-200 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                value={{get (get this.addedInputs index) "hours"}}
-                {{on "change" (fn this.onHoursChange index false)}}
+                @value={{get (get this.addedInputs index) "hours"}}
+                @onChange={{fn this.onHoursChange index false}}
                 {{focus-select (eq index this.focusHoursInput)}}
                 {{clear-value this "focusHoursInput"}}
-                {{select-on "click"}}
-                required
               />
             </div>
           </div>
@@ -74,16 +64,6 @@
                 @onChange={{this.addInput}}
               />
             </div>
-            {{#let (unique-id) as |inputId|}}
-              <input
-                type="number"
-                min={{0}}
-                id={{inputId}}
-                class="h-10 w-20 block border-gray-200 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                value={{0}}
-                {{select-on "click"}}
-              />
-            {{/let}}
           </div>
         </div>
       </li>
