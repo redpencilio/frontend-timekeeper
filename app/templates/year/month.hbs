@@ -1,13 +1,13 @@
 <div class="p-4 grow">
-  <FullCalendar
+  {{!-- <FullCalendar
     @onEventsAdded={{this.addEvent}}
     @events={{this.mockData.events}}
     @focusDate={{this.activeDate}}
     @projects={{this.projects}}
     @favoriteProjects={{this.favoriteProjects}}
-  />
+  /> --}}
 </div>
 <div class="min-w-96">
-  <Stats @month={{@model.month}} @hourLogs={{this.mockData.hourLogs}} />
+  <Stats @timeLogs={{this.mockData.timeLogs}} />
 </div>
 {{outlet}}

@@ -1,38 +1,46 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
+import { service } from '@ember/service';
+import { htmlSafe } from '@ember/template';
 
 export default class StatsComponent extends Component {
-  colorMap = {
-    Loket: 'bg-indigo-500',
-    Kaleidos: 'bg-green-500',
-    Nove: 'bg-yellow-500',
-    GN: 'bg-red-500',
-    'Out of Office': 'bg-slate-400',
-  };
+  @service store;
+
+  htmlSafe = htmlSafe;
+
+  getProjectNameById = (id) => this.store.peekRecord('project', id).name;
 
   get totalHours() {
-    return this.args.hourLogs.reduce((acc, { hours }) => acc + hours, 0);
+    return this.args.timeLogs.reduce((acc, { hours }) => acc + hours, 0);
   }
 
   get projectData() {
-    return this.args.hourLogs.reduce((acc, { hours, project, subproject }) => {
-      if (Object.hasOwn(acc, project)) {
-        acc[project].totalHours += hours;
+    return this.args.timeLogs.reduce((acc, timeLog) => {
+      // We assume only one level in the project hierarchy
+      const timeLogProject = timeLog.belongsTo('project')?.value();
+      const parent = timeLogProject.belongsTo('parent')?.value();
+
+      const project = parent ?? timeLogProject;
+      const subproject = parent ? timeLogProject : null;
+
+      if (Object.hasOwn(acc, project.id)) {
+        acc[project.id].totalHours += timeLog.hours;
       } else {
-        acc[project] = {
-          totalHours: hours,
-          color: this.colorMap[project].toLowerCase(),
+        acc[project.id] = {
+          totalHours: timeLog.hours,
+          color: project.color,
           subprojects: {},
         };
       }
 
       if (subproject) {
-        if (Object.hasOwn(acc[project].subprojects, subproject)) {
-          acc[project].subprojects[subproject].totalHours += hours;
+        if (Object.hasOwn(acc[project.id].subprojects, subproject.id)) {
+          acc[project.id].subprojects[subproject.id].totalHours +=
+            timeLog.hours;
         } else {
-          acc[project].subprojects[subproject] = {
-            totalHours: hours,
+          acc[project.id].subprojects[subproject.id] = {
+            totalHours: timeLog.hours,
           };
         }
       }

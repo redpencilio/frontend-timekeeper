@@ -2,25 +2,27 @@
   <h1 class="text-2xl font-semibold text-gray-900 mb-6">Overview</h1>
 
   <ul class="space-y-6">
-    {{#each-in this.projectData as |project data|}}
+    {{#each-in this.projectData as |projectId data|}}
       <li>
         <div class="flex items-center">
           <span
-            class={{concat
-              "inline-block w-3 h-3 rounded-full mr-3 "
-              data.color
-            }}
+            class="inline-block w-3 h-3 rounded-full mr-3"
+            style={{this.htmlSafe (concat "background-color: " data.color ";")}}
           ></span>
-          <span class="text-lg text-gray-700">{{project}}</span>
+          <span class="text-lg text-gray-700">{{this.getProjectNameById
+              projectId
+            }}</span>
           <span class="ml-auto text-gray-600">{{data.totalHours}} hours</span>
         </div>
 
         {{#if data.subprojects}}
           <ul class="ml-6 mt-2 space-y-2">
-            {{#each-in data.subprojects as |subproject subdata|}}
+            {{#each-in data.subprojects as |subprojectId subdata|}}
               <li class="flex items-center">
                 <span class="mr-3 text-gray-500">•</span>
-                <span class="text-sm text-gray-600">{{subproject}}</span>
+                <span class="text-sm text-gray-600">{{this.getProjectNameById
+                    subprojectId
+                  }}</span>
                 <span class="ml-auto text-gray-500">{{subdata.totalHours}}
                   hours</span>
               </li>

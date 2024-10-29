@@ -12,7 +12,7 @@ export default class YearMonthRoute extends Route {
       events: this.mockData.events.filter(({ start }) => {
         return new Date(start).getMonth() == params.month - 1;
       }),
-      hourLogs: this.mockData.hourLogs.filter(({ date }) => {
+      hourLogs: this.mockData.timeLogs.filter(({ date }) => {
         return new Date(date).getMonth() == params.month - 1;
       }),
     };
