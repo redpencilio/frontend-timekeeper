@@ -2,21 +2,16 @@ import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 
 export default class YearMonthRoute extends Route {
-  @service mockData;
+  @service store;
 
-  model(params) {
-    const year = this.modelFor('year').year;
-    const model = {
-      year,
-      month: params.month - 1,
-      events: this.mockData.events.filter(({ start }) => {
-        return new Date(start).getMonth() == params.month - 1;
-      }),
-      hourLogs: this.mockData.timeLogs.filter(({ date }) => {
-        return new Date(date).getMonth() == params.month - 1;
-      }),
+  async model(params) {
+    const projects = await this.store.findAll('project', { include: 'parent' });
+    const timeLogs = await this.store.findAll('time-log', {
+      include: 'project',
+    });
+    return {
+      projects,
+      timeLogs,
     };
-
-    return model;
   }
 }
