@@ -5,6 +5,6 @@ export default class ProjectModel extends Model {
   @attr name;
   @attr displayColor;
 
-  @belongsTo('project', { async: true, inverse: 'subprojects' }) parent;
-  @hasMany('project', { async: true, inverse: 'parent' }) subprojects;
+  @hasMany('sub-project', { async: true, inverse: 'parent' }) subProjects;
+  @belongsTo('customer', { async: true, inverse: 'projects' }) customer;
 }
