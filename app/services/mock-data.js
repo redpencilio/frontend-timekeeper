@@ -7,7 +7,7 @@ import { service } from '@ember/service';
 export default class MockDataService extends Service {
   @service store;
 
-  @tracked timeLogs = createMockData(this.store);
+  @tracked workLogs = createMockData(this.store);
 
   colorMap = {
     Loket: '#6366f1',
@@ -34,7 +34,7 @@ export default class MockDataService extends Service {
   };
 
   get events() {
-    return this.timeLogs.map((hourLog) => {
+    return this.workLogs.map((hourLog) => {
       const { hours, project, date, subproject, id } = hourLog;
       return {
         id,
@@ -61,33 +61,33 @@ export default class MockDataService extends Service {
     });
     record.id = createUuid();
 
-    this.timeLogs = [...this.timeLogs, record];
+    this.workLogs = [...this.workLogs, record];
   }
 
   @action
   updateHourLogById(id, newLog) {
-    const index = this.timeLogs.findIndex((log) => log.id === id);
+    const index = this.workLogs.findIndex((log) => log.id === id);
     if (index === -1) {
       return;
     }
 
-    this.timeLogs = [
-      ...this.timeLogs.slice(0, index),
+    this.workLogs = [
+      ...this.workLogs.slice(0, index),
       { ...newLog, id: createUuid() },
-      ...this.timeLogs.slice(index + 1),
+      ...this.workLogs.slice(index + 1),
     ];
   }
 
   @action
   deleteHourLogById(id) {
-    const index = this.timeLogs.findIndex((log) => log.id === id);
+    const index = this.workLogs.findIndex((log) => log.id === id);
     if (index === -1) {
       return;
     }
 
-    this.timeLogs = [
-      ...this.timeLogs.slice(0, index),
-      ...this.timeLogs.slice(index + 1),
+    this.workLogs = [
+      ...this.workLogs.slice(0, index),
+      ...this.workLogs.slice(index + 1),
     ];
   }
 }

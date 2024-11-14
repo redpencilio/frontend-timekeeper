@@ -12,15 +12,15 @@ export default class StatsComponent extends Component {
   getProjectNameById = (id) => this.store.peekRecord('project', id).name;
 
   get totalHours() {
-    if (!this.args.timeLogs) {
+    if (!this.args.workLogs) {
       return 0;
     }
 
-    return this.args.timeLogs.reduce((acc, { hours }) => acc + hours, 0);
+    return this.args.workLogs.reduce((acc, { hours }) => acc + hours, 0);
   }
 
   get projectData() {
-    return this.args.timeLogs.reduce((acc, timeLog) => {
+    return this.args.workLogs.reduce((acc, timeLog) => {
       // We assume only one level in the project hierarchy
       const timeLogProject = timeLog.belongsTo('project')?.value();
       const parent = timeLogProject.belongsTo('parent')?.value();
