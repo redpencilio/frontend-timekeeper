@@ -11,4 +11,5 @@ Router.map(function () {
     this.route('month', { path: '/:month' });
   });
   this.route('sandbox');
+  this.route('404');
 });
