@@ -22,15 +22,14 @@ export default class YearMonthRoute extends Route {
     const monthNumber = Number(params.month) - 1;
     const firstOfMonth = new Date(year, monthNumber);
     const lastOfMonth = new Date(year, monthNumber + 1, 0);
-    const subProjects = await this.store.findAll('sub-project');
-    debugger
-    // const subProjects = await this.store.query('sub-project', {
+    // const projects = await this.store.findAll('project', {
+    //   include: 'sub-projects',
+    // });
+    const projects = await this.store.find('project', '123');
+    // const workLogs = await this.store.queryAll('work-log', {
     //   'filter[:gte:]': formatDate(firstOfMonth),
     //   'filter[:lte:]': formatDate(lastOfMonth),
-    //   include: 'parent',
-    // });
-    // const workLogs = await this.store.findAll('time-log', {
-    //   include: 'project',
+    //   include: 'sub-project',
     // });
     return {
       // projects,
