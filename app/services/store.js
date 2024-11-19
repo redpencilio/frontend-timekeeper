@@ -17,37 +17,40 @@ export default class ExtendedStoreService extends Store {
     return null;
   }
 
-  // async queryAll(modelName, query, options) {
-  //   query = query || {}; // eslint-disable-line no-param-reassign
-  //   const batchSize = query.page?.size || 100;
+  async queryAll(modelName, query, options) {
+    query = query || {}; // eslint-disable-line no-param-reassign
+    const batchSize = query.page?.size || 100;
 
-  //   const firstBatch = this.query(modelName, Object.assign({}, query, {
-  //     'page[size]': batchSize,
-  //     'page[number]': 0,
-  //   }));
+    const firstBatch = this.query(
+      modelName,
+      Object.assign({}, query, {
+        'page[size]': batchSize,
+        'page[number]': 0,
+      }),
+    );
 
-  //   const batches = [firstBatch];
-  //   const result = await firstBatch;
-  //   const count = result.meta.count;
+    const batches = [firstBatch];
+    const result = await firstBatch;
+    const count = result.meta.count;
 
-  //   const nbOfBatches = Math.ceil(count / batchSize);
-  //   for (let i = 1; i < nbOfBatches; i++) {
-  //     const queryForBatch = Object.assign({}, query, {
-  //       'page[size]': batchSize,
-  //       'page[number]': i,
-  //     });
-  //     const batch = this.query(modelName, queryForBatch, options);
-  //     batches.push(batch);
-  //   }
+    const nbOfBatches = Math.ceil(count / batchSize);
+    for (let i = 1; i < nbOfBatches; i++) {
+      const queryForBatch = Object.assign({}, query, {
+        'page[size]': batchSize,
+        'page[number]': i,
+      });
+      const batch = this.query(modelName, queryForBatch, options);
+      batches.push(batch);
+    }
 
-  //   const results = await Promise.all(batches);
-  //   return ArrayProxy.create({
-  //     content: results.map((result) => result.slice()).flat(),
-  //     meta: {
-  //       count
-  //     }
-  //   });
-  // }
+    const results = await Promise.all(batches);
+    return ArrayProxy.create({
+      content: results.map((result) => result.slice()).flat(),
+      meta: {
+        count,
+      },
+    });
+  }
 
   // async count(modelName, query, options) {
   //   query = query || {}; // eslint-disable-line no-param-reassign

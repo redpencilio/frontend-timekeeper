@@ -20,20 +20,19 @@ export default class YearMonthRoute extends Route {
   async model(params) {
     const { year } = this.modelFor('year');
     const monthNumber = Number(params.month) - 1;
-    const firstOfMonth = new Date(year, monthNumber);
-    const lastOfMonth = new Date(year, monthNumber + 1, 0);
-    // const projects = await this.store.findAll('project', {
-    //   include: 'sub-projects',
-    // });
-    const projects = await this.store.findAll('project');
-    // const workLogs = await this.store.queryAll('work-log', {
-    //   'filter[:gte:]': formatDate(firstOfMonth),
-    //   'filter[:lte:]': formatDate(lastOfMonth),
-    //   include: 'sub-project',
-    // });
+    const firstOfMonth = new Date(Date.UTC(year, monthNumber));
+    const lastOfMonth = new Date(Date.UTC(year, monthNumber + 1, 0));
+    const subProjects = await this.store.queryAll('sub-project', {
+      include: 'parent',
+    });
+    const workLogs = await this.store.queryAll('work-log', {
+      'filter[:gte:date]': formatDate(firstOfMonth),
+      'filter[:lte:date]': formatDate(lastOfMonth),
+      include: 'sub-project',
+    });
     return {
-      // projects,
-      // workLogs,
+      subProjects,
+      workLogs,
     };
   }
 }
