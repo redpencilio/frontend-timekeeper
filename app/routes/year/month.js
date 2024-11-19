@@ -25,7 +25,7 @@ export default class YearMonthRoute extends Route {
     // const projects = await this.store.findAll('project', {
     //   include: 'sub-projects',
     // });
-    const projects = await this.store.find('project', '123');
+    const projects = await this.store.findAll('project');
     // const workLogs = await this.store.queryAll('work-log', {
     //   'filter[:gte:]': formatDate(firstOfMonth),
     //   'filter[:lte:]': formatDate(lastOfMonth),

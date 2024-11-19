@@ -1,21 +1,21 @@
-import Store from '@ember-data/store';
+import Store from 'ember-data/store';
 import ArrayProxy from '@ember/array/proxy';
 
 export default class ExtendedStoreService extends Store {
-  // /*
-  //  * Executes regulare "query"-method. Queries for only one result and returns that if any.
-  //  */
-  // async queryOne(modelName, query, options) {
-  //   query = query || {}; // eslint-disable-line no-param-reassign
-  //   if (!(query['page[size]'] || (query.page && query.page.size))) {
-  //     query['page[size]'] = 1;
-  //   }
-  //   const results = await this.query(modelName, query, options);
-  //   if (results.length) {
-  //     return results[0];
-  //   }
-  //   return null;
-  // }
+  /*
+   * Executes regulare "query"-method. Queries for only one result and returns that if any.
+   */
+  async queryOne(modelName, query, options) {
+    query = query || {}; // eslint-disable-line no-param-reassign
+    if (!(query['page[size]'] || (query.page && query.page.size))) {
+      query['page[size]'] = 1;
+    }
+    const results = await this.query(modelName, query, options);
+    if (results.length) {
+      return results[0];
+    }
+    return null;
+  }
 
   // async queryAll(modelName, query, options) {
   //   query = query || {}; // eslint-disable-line no-param-reassign
