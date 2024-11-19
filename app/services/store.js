@@ -52,25 +52,25 @@ export default class ExtendedStoreService extends Store {
     });
   }
 
-  // async count(modelName, query, options) {
-  //   query = query || {}; // eslint-disable-line no-param-reassign
-  //   if (!(query['page[size]'] || (query.page && query.page.size))) {
-  //     query['page[size]'] = 1;
-  //   }
-  //   const results = await this.query(modelName, query, options);
-  //   const count = results.meta.count;
-  //   return count;
-  // }
+  async count(modelName, query, options) {
+    query = query || {}; // eslint-disable-line no-param-reassign
+    if (!(query['page[size]'] || (query.page && query.page.size))) {
+      query['page[size]'] = 1;
+    }
+    const results = await this.query(modelName, query, options);
+    const count = results.meta.count;
+    return count;
+  }
 
-  // findRecordByUri(modelName, uri) {
-  //   const cachedRecord = this.peekAll(modelName).find(
-  //     (model) => model.uri === uri
-  //   );
-  //   if (cachedRecord) {
-  //     return cachedRecord;
-  //   }
-  //   return this.queryOne(modelName, {
-  //     'filter[:uri:]': uri,
-  //   });
-  // }
+  findRecordByUri(modelName, uri) {
+    const cachedRecord = this.peekAll(modelName).find(
+      (model) => model.uri === uri,
+    );
+    if (cachedRecord) {
+      return cachedRecord;
+    }
+    return this.queryOne(modelName, {
+      'filter[:uri:]': uri,
+    });
+  }
 }

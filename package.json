@@ -83,6 +83,7 @@
     "stylelint-config-standard": "^34.0.0",
     "stylelint-prettier": "^4.1.0",
     "tailwindcss": "^3.4.14",
+    "tinyduration": "^3.3.1",
     "tracked-built-ins": "^3.3.0",
     "tracked-toolbox": "^2.0.0",
     "uuid": "^10.0.0",

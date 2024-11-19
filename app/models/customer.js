@@ -4,5 +4,5 @@ export default class CustomerModel extends Model {
   @attr name;
   @attr color;
 
-  @hasMany('project', { async: true, inverse: 'customer'}) projects;
+  @hasMany('project', { async: true, inverse: 'customer' }) projects;
 }

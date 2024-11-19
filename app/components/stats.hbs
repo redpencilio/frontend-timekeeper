@@ -17,12 +17,12 @@
             <span class="ml-auto text-gray-600">{{data.totalHours}} hours</span>
           </div>
 
-          {{#if data.subprojects}}
+          {{#if data.subProjects}}
             <ul class="ml-6 mt-2 space-y-2">
-              {{#each-in data.subprojects as |subprojectId subdata|}}
+              {{#each-in data.subProjects as |subprojectId subdata|}}
                 <li class="flex items-center">
                   <span class="mr-3 text-gray-500">•</span>
-                  <span class="text-sm text-gray-600">{{this.getProjectNameById
+                  <span class="text-sm text-gray-600">{{this.getSubProjectNameById
                       subprojectId
                     }}</span>
                   <span class="ml-auto text-gray-500">{{subdata.totalHours}}
