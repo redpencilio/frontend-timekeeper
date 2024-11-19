@@ -33,6 +33,8 @@ export default class YearMonthRoute extends Route {
     return {
       subProjects,
       workLogs,
+      year,
+      monthNumber
     };
   }
 }

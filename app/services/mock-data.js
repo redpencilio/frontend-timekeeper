@@ -33,23 +33,6 @@ export default class MockDataService extends Service {
     'Out of Office': 'slate-400',
   };
 
-  get events() {
-    return this.workLogs.map((hourLog) => {
-      const { hours, project, date, subproject, id } = hourLog;
-      return {
-        id,
-        title: `${hours}h: ${subproject ?? project}`,
-        start: date,
-        allDay: true,
-        backgroundColor: this.colorMap[project],
-        borderColor: this.colorMap[project],
-        extendedProps: {
-          hourLog,
-        },
-      };
-    });
-  }
-
   projects = ['Loket', 'Kaleidos', 'Nove', 'GN', 'Out of Office'];
 
   addHourLog({ date, hours, minutes = 0, project }) {
