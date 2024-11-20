@@ -10,15 +10,17 @@ export default class YearMonthContoller extends Controller {
         date,
         id,
       } = workLog;
-      const subProject = workLog.belongsTo('subProject')?.value();
+      // TODO: use trackedFunction of https://github.com/NullVoxPopuli/ember-resources
+      // instead of fetching async data in a getter
+      const subProject = workLog.belongsTo('task')?.value();
       const parent = subProject?.belongsTo('parent')?.value();
       return {
         id,
         title: `${hours}h: ${subProject.name}`,
         start: date,
         allDay: true,
-        backgroundColor: parent.color,
-        borderColor: parent.color,
+        backgroundColor: parent?.color,
+        borderColor: parent?.color,
         extendedProps: {
           workLog,
         },
