@@ -15,7 +15,10 @@ export default class StatsComponent extends Component {
       return 0;
     }
 
-    return this.args.workLogs.reduce((acc, workLog) => acc + workLog.duration.hours, 0);
+    return this.args.workLogs.reduce(
+      (acc, workLog) => acc + workLog.duration.hours,
+      0,
+    );
   }
 
   get projectData() {
@@ -23,8 +26,9 @@ export default class StatsComponent extends Component {
       const subProject = workLog.belongsTo('subProject')?.value();
       const parent = subProject.belongsTo('parent')?.value();
 
-      const hours = workLog.duration.hours ?? 0;
-      const minutes = workLog.duration.minutes ?? 0;
+      const {
+        duration: { hours, minutes },
+      } = workLog;
 
       if (Object.hasOwn(acc, parent.id)) {
         acc[parent.id].totalHours += hours;
@@ -40,8 +44,7 @@ export default class StatsComponent extends Component {
 
       if (subProject) {
         if (Object.hasOwn(acc[parent.id].subProjects, subProject.id)) {
-          acc[parent.id].subProjects[subProject.id].totalHours +=
-            hours;
+          acc[parent.id].subProjects[subProject.id].totalHours += hours;
         } else {
           acc[parent.id].subProjects[subProject.id] = {
             totalHours: hours,

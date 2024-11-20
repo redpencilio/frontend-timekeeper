@@ -6,7 +6,7 @@ export default class DurationTransform {
       return null;
     }
 
-    return parse(serialized);
+    return { minutes: 0, hours: 0, ...parse(serialized) };
   }
 
   serialize(deserialized) {
