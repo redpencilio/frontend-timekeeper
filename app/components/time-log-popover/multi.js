@@ -10,6 +10,7 @@ export default class TimeLogPopoverComponent extends Component {
 
   @tracked hours = 8;
   @tracked focusHoursInput = null;
+
   @trackedReset({
     memo: 'args.favoriteProjects',
     update() {
@@ -24,9 +25,6 @@ export default class TimeLogPopoverComponent extends Component {
   @tracked addedInputs = [];
 
   newProjectPowerSelectApi = null;
-
-  colorFor = (project) => this.mockData.colorMapTailwind[project];
-  rawColorFor = (project) => this.mockData.colorMapTailwindRaw[project];
 
   @action
   closePopover() {

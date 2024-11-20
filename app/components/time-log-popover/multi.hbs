@@ -1,3 +1,4 @@
+{{!-- template-lint-disable no-invalid-interactive --}}
 <div role="none" {{on "keydown" this.handleKeydown}}>
   <form {{on "submit" this.submitLog}}>
     <ul class="divide-y divide-dotted">
@@ -10,7 +11,7 @@
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
-                    class={{concat "fill-" (this.rawColorFor project.project)}}
+                    {{fill-color project.project.parent.color}}
                   >
                     <path
                       stroke-linecap="round"
@@ -19,7 +20,7 @@
                     />
                   </svg>
                 </span>
-                <span class="text-gray-700">{{project.project}}</span>
+                <span class="text-gray-700">{{project.project.name}}</span>
               </div>
               {{#let (unique-id) as |inputId|}}
                 <HourInput
@@ -39,6 +40,7 @@
             <div class="mt-1 flex justify-between content-center">
               <div class="block h-10 flex-grow mr-2">
                 <ProjectsPowerselect
+                  @subProjects={{@projects}}
                   @selectedProject={{addedInput.project}}
                   @onChange={{fn this.changeInput index addedInput.elementId}}
                 />
@@ -59,6 +61,7 @@
           <div class="mt-1 flex justify-between content-center">
             <div class="block h-10 flex-grow mr-2">
               <ProjectsPowerselect
+                @subProjects={{@projects}}
                 @registerAPI={{this.registerNewProjectPowerSelect}}
                 @onChange={{this.addInput}}
               />

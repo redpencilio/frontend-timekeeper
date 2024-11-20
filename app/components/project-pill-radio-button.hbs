@@ -13,8 +13,9 @@
 >
   <div class="flex items-center">
     <span
-      class={{concat "inline-block w-3 h-3 rounded-full mr-3 " this.color}}
+      class="inline-block w-3 h-3 rounded-full mr-3"
+      {{bg-color @project.parent.color}}
     ></span>
-    <span class="text-gray-700">{{@project}}</span>
+    <span class="text-gray-700">{{@project.name}}</span>
   </div>
 </label>

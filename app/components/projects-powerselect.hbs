@@ -1,10 +1,10 @@
 <PowerSelect
   class="h-full border-none rounded focus:ring-blue-500 focus:border-indigo-500"
   @searchEnabled={{true}}
-  @options={{this.projects}}
-  @selected={{this.selectedProject}}
+  @options={{@subProjects}}
+  @selected={{@selectedProject}}
   @searchField="name"
-  @onChange={{this.onChange}}
+  @onChange={{@onChange}}
   {{!-- @onFocus={{this.onFocus}} --}}
   {{!-- @onClose={{@onClose}} --}}
   {{!-- @onBlur={{this.onBlur}} --}}
@@ -12,12 +12,13 @@
   @placeholder="Type '/' to search"
   @registerAPI={{@registerAPI}}
   ...attributes
-  as |project|
+  as |subProject|
 >
   <div class="flex items-center text-sm h-8">
     <span
-      class={{concat "inline-block w-3 h-3 rounded-full mr-3 " project.color}}
+      class="inline-block w-3 h-3 rounded-full mr-3"
+      {{bg-color subProject.parent.color}}
     ></span>
-    <span class="text-gray-700">{{project.name}}</span>
+    <span class="text-gray-700">{{subProject.name}}</span>
   </div>
 </PowerSelect>

@@ -34,7 +34,7 @@ export default class YearMonthRoute extends Route {
       subProjects,
       workLogs,
       year,
-      monthNumber
+      monthNumber,
     };
   }
 }

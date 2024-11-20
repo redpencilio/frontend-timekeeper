@@ -1,11 +1,8 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
-import { htmlSafe } from '@ember/template';
 
 export default class StatsComponent extends Component {
   @service store;
-
-  htmlSafe = htmlSafe;
 
   getProjectNameById = (id) => this.store.peekRecord('project', id).name;
   getSubProjectNameById = (id) => this.store.peekRecord('sub-project', id).name;

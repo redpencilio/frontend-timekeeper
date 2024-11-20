@@ -27,7 +27,7 @@ export default class YearMonthContoller extends Controller {
   }
 
   get favoriteProjects() {
-    return this.model.projects.slice(0, 3);
+    return this.model.subProjects.slice(0, 3);
   }
 
   get activeDate() {
