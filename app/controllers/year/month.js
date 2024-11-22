@@ -33,9 +33,4 @@ export default class YearMonthContoller extends Controller {
   get activeDate() {
     return new Date(this.model.year, this.model.monthNumber);
   }
-
-  @action
-  addEvent(hourLog) {
-    // this.mockData.addHourLog(hourLog);
-  }
 }

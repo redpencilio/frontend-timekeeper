@@ -2,9 +2,9 @@
   {{#each @projects as |project|}}
     <li>
       <ProjectPillRadioButton
-        @onSelectedChange={{@onChangeSelected}}
+        @onClick={{fn @onChange project}}
         @project={{project}}
-        @checked={{eq project @selectedProject}}
+        @checked={{eq project.id @selectedProject.id}}
       />
     </li>
   {{/each}}

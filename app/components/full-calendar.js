@@ -5,10 +5,11 @@ import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { service } from '@ember/service';
+import { task } from 'ember-concurrency';
 
 export default class FullCalendarComponent extends Component {
   @service dateNavigation;
-  @service mockData;
+  @service store;
 
   @tracked calendar = null;
   calendarEl = null;
@@ -89,29 +90,29 @@ export default class FullCalendarComponent extends Component {
     document.addEventListener('keydown', this.handleKeydown.bind(this));
   }
 
-  @action
-  onSaveSimple({ hours, project }) {
-    const hourLog = {
-      hours,
-      project,
-      date: this.clickedDateInfo.dateStr,
-    };
-    this.mockData.addHourLog(hourLog);
-    this.clearPopovers();
-  }
-
-  @action
-  onSaveMulti(hourProjectPairs) {
-    hourProjectPairs.forEach(({ hours, project }) => {
-      const hourLog = {
-        hours,
-        project,
-        date: this.clickedDateInfo.dateStr,
-      };
-      this.mockData.addHourLog(hourLog);
+  onSaveSimple = task(async ({ duration, project }) => {
+    const workLog = this.store.createRecord('work-log', {
+      duration,
+      date: this.clickedDateInfo.date,
+      subProject: project,
     });
+    await workLog.save();
     this.clearPopovers();
-  }
+  });
+
+  onSaveMulti = task(async (hourProjectPairs) => {
+    await Promise.all(
+      hourProjectPairs.map(async ({ duration, subProject }) => {
+        const workLog = this.store.createRecord('work-log', {
+          duration,
+          date: this.clickedDateInfo.date,
+          subProject,
+        });
+        await workLog.save();
+      }),
+    );
+    this.clearPopovers();
+  });
 
   onEventClick(info) {
     this.clickedDateInfo = false;
@@ -180,20 +181,21 @@ export default class FullCalendarComponent extends Component {
   }
 
   @action
-  editHourLog(hourLog, { hours, project }) {
-    const newLog = { ...hourLog, hours, project };
-    this.mockData.updateHourLogById(hourLog.id, newLog);
+  editWorkLog(workLog, { hours, project }) {
+    workLog.duration = { hours };
+    workLog.subProject = project;
+    workLog.save();
     this.clearPopovers();
   }
 
   @action
-  deleteHourLog(hourLog) {
-    this.mockData.deleteHourLogById(hourLog.id);
+  deleteWorkLog(workLog) {
+    workLog.destroyRecord();
     this.clearPopovers();
   }
 
-  get clickedHourLog() {
-    return this.clickedEventInfo?.event.extendedProps.hourLog;
+  get clickedWorkLog() {
+    return this.clickedEventInfo?.event.extendedProps.workLog;
   }
 
   @action

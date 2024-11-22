@@ -1,13 +1,10 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { service } from '@ember/service';
 import { trackedReset } from 'tracked-toolbox';
 import { v4 as uuidv4 } from 'uuid';
 
 export default class TimeLogPopoverComponent extends Component {
-  @service mockData;
-
   @tracked hours = 8;
   @tracked focusHoursInput = null;
 
@@ -47,12 +44,15 @@ export default class TimeLogPopoverComponent extends Component {
     event.preventDefault();
     const hourProjectPairs = [
       ...this.favoriteProjects.map(({ hours, project }) => ({
-        hours,
-        project,
+        duration: { hours },
+        subProject: project,
       })),
-      ...this.addedInputs.map(({ hours, project }) => ({ hours, project })),
-    ].filter(({ hours }) => hours > 0);
-    this.args.onSave?.(hourProjectPairs);
+      ...this.addedInputs.map(({ hours, project }) => ({
+        duration: { hours },
+        subProject: project,
+      })),
+    ].filter(({ duration: { hours } }) => hours > 0);
+    this.args.onSave?.perform(hourProjectPairs);
   }
 
   @action

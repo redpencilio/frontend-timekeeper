@@ -18,7 +18,7 @@ export default class TimeLogPopoverComponent extends Component {
       return this.args.selectedHourLog.project;
     },
   })
-  project = this.args.projects[0];
+  project = this.args.projects.get('firstObject');
 
   @action
   updateHours(event) {
@@ -38,9 +38,10 @@ export default class TimeLogPopoverComponent extends Component {
   @action
   submitLog(event) {
     event.preventDefault();
-
-    this.args.onSave?.({
-      hours: this.hours,
+    this.args.onSave?.perform({
+      duration: {
+        hours: this.hours,
+      },
       project: this.project,
     });
   }
