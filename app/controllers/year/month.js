@@ -12,11 +12,11 @@ export default class YearMonthContoller extends Controller {
       } = workLog;
       // TODO: use trackedFunction of https://github.com/NullVoxPopuli/ember-resources
       // instead of fetching async data in a getter
-      const subProject = workLog.belongsTo('task')?.value();
-      const parent = subProject?.belongsTo('parent')?.value();
+      const task = workLog.belongsTo('task')?.value();
+      const parent = task?.belongsTo('parent')?.value() ?? task;
       return {
         id,
-        title: `${hours}h: ${subProject.name}`,
+        title: `${hours}h: ${task.name}`,
         start: date,
         allDay: true,
         backgroundColor: parent?.color,
@@ -29,7 +29,7 @@ export default class YearMonthContoller extends Controller {
   }
 
   get favoriteProjects() {
-    return this.model.subProjects.slice(0, 3);
+    return this.model.tasks.slice(0, 3);
   }
 
   get activeDate() {

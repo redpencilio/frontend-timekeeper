@@ -22,7 +22,7 @@ export default class YearMonthRoute extends Route {
     const monthNumber = Number(params.month) - 1;
     const firstOfMonth = new Date(Date.UTC(year, monthNumber));
     const lastOfMonth = new Date(Date.UTC(year, monthNumber + 1, 0));
-    const subProjects = await this.store.queryAll('task', {
+    const tasks = await this.store.queryAll('task', {
       'filter[:has:parent]': 't',
       include: 'parent',
     });
@@ -33,7 +33,7 @@ export default class YearMonthRoute extends Route {
     });
 
     return {
-      subProjects,
+      tasks,
       workLogs,
       year,
       monthNumber,

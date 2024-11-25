@@ -7,7 +7,7 @@ export default class TimeLogPopoverComponent extends Component {
   @trackedReset({
     memo: 'args.selectedHourLog',
     update() {
-      return this.args.selectedHourLog.hours;
+      return this.args.selectedHourLog.duration.hours;
     },
   })
   hours = 8;
@@ -15,7 +15,7 @@ export default class TimeLogPopoverComponent extends Component {
   @trackedReset({
     memo: 'args.selectedHourLog',
     update() {
-      return this.args.selectedHourLog.project;
+      return this.args.selectedHourLog.task;
     },
   })
   project = this.args.projects.get('firstObject');

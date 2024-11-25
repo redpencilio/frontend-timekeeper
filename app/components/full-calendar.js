@@ -106,7 +106,7 @@ export default class FullCalendarComponent extends Component {
         const workLog = this.store.createRecord('work-log', {
           duration,
           date: this.clickedDateInfo.date,
-          subProject,
+          task: subProject,
         });
         await workLog.save();
       }),
@@ -147,12 +147,6 @@ export default class FullCalendarComponent extends Component {
 
   @action
   onEventsAdded({ hours, project }) {
-    // let current = this.selectedRange[0];
-    // const days = [];
-    // while (current < this.selectedRange[1]) {
-    //   days.push(current);
-    //   current.setDate(current.getDate() + 1);
-    // }
     const event = {
       hours,
       project,
@@ -183,7 +177,7 @@ export default class FullCalendarComponent extends Component {
   @action
   editWorkLog(workLog, { hours, project }) {
     workLog.duration = { hours };
-    workLog.subProject = project;
+    workLog.task = project;
     workLog.save();
     this.clearPopovers();
   }
