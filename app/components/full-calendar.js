@@ -35,10 +35,10 @@ export default class FullCalendarComponent extends Component {
 
     this.calendar = new Calendar(element, {
       plugins: [interactionPlugin, dayGridPlugin],
-      initialView: 'dayGridMonth', // Sets the default view to month grid
-      events: this.args.events || [], // Pass the events from parent as an argument
+      initialView: 'dayGridMonth',
+      events: this.args.events || [],
       droppable: false, // Allows for drag and drop of external elements
-      dateClick: this.onDateClick.bind(this), // Example of handling date clicks
+      dateClick: this.onDateClick.bind(this),
       eventClick: this.onEventClick.bind(this),
       eventDisplay: 'list-item',
       // selectable: true,
@@ -84,7 +84,7 @@ export default class FullCalendarComponent extends Component {
     });
 
     this.calendar.gotoDate(focusDate);
-    this.calendar.render(); // Renders the calendar
+    this.calendar.render();
     // TODO improve by putting addEventListener and removeEventListener
     // together
     document.addEventListener('keydown', this.handleKeydown.bind(this));
@@ -94,7 +94,7 @@ export default class FullCalendarComponent extends Component {
     const workLog = this.store.createRecord('work-log', {
       duration,
       date: this.clickedDateInfo.date,
-      subProject: project,
+      task: project,
     });
     await workLog.save();
     this.clearPopovers();
