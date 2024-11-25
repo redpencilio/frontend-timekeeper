@@ -11,8 +11,8 @@ export default class TimeLogPopoverComponent extends Component {
   @trackedReset({
     memo: 'args.favoriteProjects',
     update() {
-      return this.args.favoriteProjects.map((project) => ({
-        project,
+      return this.args.favoriteProjects.map((task) => ({
+        task,
         hours: 0,
       }));
     },
