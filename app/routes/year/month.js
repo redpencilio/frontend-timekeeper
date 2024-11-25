@@ -10,8 +10,6 @@ export default class YearMonthRoute extends Route {
     // Check if month is a valid number
     let { month } = this.paramsFor(this.routeName);
     month = Number(month);
-    month--;
-
     if (isNaN(month) || month < 1 || month > 12) {
       this.router.transitionTo('404');
     }
