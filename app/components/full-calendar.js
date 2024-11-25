@@ -10,6 +10,7 @@ import { task } from 'ember-concurrency';
 export default class FullCalendarComponent extends Component {
   @service dateNavigation;
   @service store;
+  @service router;
 
   @tracked calendar = null;
   calendarEl = null;
@@ -98,6 +99,7 @@ export default class FullCalendarComponent extends Component {
     });
     await workLog.save();
     this.clearPopovers();
+    this.router.refresh();
   });
 
   onSaveMulti = task(async (hourProjectPairs) => {
@@ -112,6 +114,7 @@ export default class FullCalendarComponent extends Component {
       }),
     );
     this.clearPopovers();
+    this.router.refresh();
   });
 
   onEventClick(info) {
@@ -146,17 +149,6 @@ export default class FullCalendarComponent extends Component {
   }
 
   @action
-  onEventsAdded({ hours, project }) {
-    const event = {
-      hours,
-      project,
-      date: this.clickedDate,
-    };
-
-    this.args.onEventsAdded?.(event);
-  }
-
-  @action
   onCancel() {
     this.clearPopovers();
   }
@@ -174,18 +166,19 @@ export default class FullCalendarComponent extends Component {
     this.calendar.render();
   }
 
-  @action
-  editWorkLog(workLog, { hours, project }) {
-    workLog.duration = { hours };
+  editWorkLog = task(async ({ duration, project }) => {
+    const workLog = this.clickedWorkLog;
+    workLog.duration = duration;
     workLog.task = project;
-    workLog.save();
+    await workLog.save();
     this.clearPopovers();
-  }
+  });
 
   @action
-  deleteWorkLog(workLog) {
-    workLog.destroyRecord();
+  async deleteWorkLog(workLog) {
+    await workLog.destroyRecord();
     this.clearPopovers();
+    this.router.refresh();
   }
 
   get clickedWorkLog() {
