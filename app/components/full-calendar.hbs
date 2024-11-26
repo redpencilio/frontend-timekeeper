@@ -1,7 +1,6 @@
 {{#if this.clickedDateInfo}}
   <TimeLogPopover
     @anchorElement={{this.clickedDateElement}}
-    @projects={{@projects}}
     @favoriteProjects={{@favoriteProjects}}
     @onSaveSimple={{this.onSaveSimple}}
     @onSaveMulti={{this.onSaveMulti}}
@@ -11,7 +10,6 @@
 {{#if this.clickedEventInfo}}
   <TimeEditPopover
     @anchorElement={{this.clickedDateElement}}
-    @projects={{@projects}}
     @favoriteProjects={{@favoriteProjects}}
     @selectedHourLog={{this.clickedWorkLog}}
     @onSave={{this.editWorkLog}}

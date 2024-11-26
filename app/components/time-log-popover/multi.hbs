@@ -41,8 +41,7 @@
           <div class="mt-2 mb-2">
             <div class="mt-1 flex justify-between content-center">
               <div class="block h-10 flex-grow mr-2">
-                <ProjectsPowerselect
-                  @subProjects={{@projects}}
+                <TaskPowerSelect
                   @selectedProject={{addedInput.project}}
                   @onChange={{fn this.changeInput index addedInput.elementId}}
                 />
@@ -62,8 +61,7 @@
         <div class="mt-2 mb-2">
           <div class="mt-1 flex justify-between content-center">
             <div class="block h-10 flex-grow mr-2">
-              <ProjectsPowerselect
-                @subProjects={{@projects}}
+              <TaskPowerSelect
                 @registerAPI={{this.registerNewProjectPowerSelect}}
                 @onChange={{this.addInput}}
               />

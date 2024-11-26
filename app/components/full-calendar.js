@@ -50,7 +50,7 @@ export default class FullCalendarComponent extends Component {
       firstDay: 1,
       businessHours: {
         // days of week. an array of zero-based day of week integers (0=Sunday)
-        daysOfWeek: [1, 2, 3, 4, 5], // Monday - Thursday
+        daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday
       },
       headerToolbar: {
         start: null,

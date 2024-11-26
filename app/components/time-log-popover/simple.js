@@ -17,7 +17,7 @@ export default class TimeLogPopoverComponent extends Component {
       return this.args.selectedHourLog.task;
     },
   })
-  project = this.args.projects.get('firstObject');
+  project = null;
 
   @action
   updateHours(event) {

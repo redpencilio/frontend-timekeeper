@@ -1,5 +1,5 @@
 import Controller from '@ember/controller';
-import { action } from '@ember/object';
+import taskName from '../../helpers/task-name';
 
 export default class YearMonthContoller extends Controller {
   get events() {
@@ -12,9 +12,7 @@ export default class YearMonthContoller extends Controller {
       // TODO: use trackedFunction of https://github.com/NullVoxPopuli/ember-resources
       // instead of fetching async data in a getter
       const task = workLog.belongsTo('task')?.value();
-      const project = task?.belongsTo('parent')?.value() ?? task;
-      // TODO create helper/util to construct name
-      const name = task.name == 'General' ? project?.name : `${task.name} (${project.name})`;
+      const name = taskName(task);
       return {
         id,
         title: `${hours}h: ${name}`,
