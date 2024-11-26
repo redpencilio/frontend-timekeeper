@@ -27,10 +27,6 @@ export default class YearMonthContoller extends Controller {
     });
   }
 
-  get favoriteProjects() {
-    return this.model.tasks.slice(0, 3);
-  }
-
   get activeDate() {
     return new Date(this.model.year, this.model.monthNumber);
   }

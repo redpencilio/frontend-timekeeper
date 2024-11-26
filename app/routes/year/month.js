@@ -21,10 +21,6 @@ export default class YearMonthRoute extends Route {
     // E.g. https://date-fns.org/v4.1.0/docs/startOfMonth
     const firstOfMonth = new Date(Date.UTC(year, monthNumber));
     const lastOfMonth = new Date(Date.UTC(year, monthNumber + 1, 0));
-    const tasks = await this.store.queryAll('task', {
-      'filter[:has:parent]': 't',
-      include: 'parent',
-    });
     const workLogs = await this.store.queryAll('work-log', {
       'filter[:gte:date]': formatDate(firstOfMonth),
       'filter[:lte:date]': formatDate(lastOfMonth),
@@ -32,7 +28,6 @@ export default class YearMonthRoute extends Route {
     });
 
     return {
-      tasks,
       workLogs,
       year,
       monthNumber,

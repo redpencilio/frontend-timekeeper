@@ -1,0 +1,11 @@
+<ul class="flex flex-wrap gap-2 w-full">
+  {{#each this.options as |task|}}
+    <li>
+      <TaskPillRadioButton
+        @onClick={{fn @onChange task}}
+        @task={{task}}
+        @checked={{eq task.id @selectedTask.id}}
+      />
+    </li>
+  {{/each}}
+</ul>
