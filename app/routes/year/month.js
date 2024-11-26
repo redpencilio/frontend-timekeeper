@@ -21,7 +21,7 @@ export default class YearMonthRoute extends Route {
     const firstOfMonth = new Date(Date.UTC(year, monthNumber));
     const lastOfMonth = new Date(Date.UTC(year, monthNumber + 1, 0));
     const tasks = await this.store.queryAll('task', {
-      // 'filter[:has:parent]': 't',
+      'filter[:has:parent]': 't',
       include: 'parent',
     });
     const workLogs = await this.store.queryAll('work-log', {
