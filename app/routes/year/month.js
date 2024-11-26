@@ -17,6 +17,8 @@ export default class YearMonthRoute extends Route {
   async model(params) {
     const { year } = this.modelFor('year');
     const monthNumber = Number(params.month) - 1;
+    // TODO use date-fns lib to avoid edge cases / timezone issue
+    // E.g. https://date-fns.org/v4.1.0/docs/startOfMonth
     const firstOfMonth = new Date(Date.UTC(year, monthNumber));
     const lastOfMonth = new Date(Date.UTC(year, monthNumber + 1, 0));
     const tasks = await this.store.queryAll('task', {

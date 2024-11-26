@@ -1,3 +1,4 @@
+// TODO can be replaced with https://date-fns.org/v4.1.0/docs/formatISO using { representation: 'date' }
 function formatDate(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() is zero-based

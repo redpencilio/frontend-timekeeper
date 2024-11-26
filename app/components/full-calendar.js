@@ -23,6 +23,8 @@ export default class FullCalendarComponent extends Component {
     this.calendarEl = element;
 
     const focusDate = this.args.focusDate;
+    // TODO use date-fns lib to avoid edge cases / timezone issue
+    // E.g. https://date-fns.org/v4.1.0/docs/startOfMonth
     const firstDayOfMonth = new Date(
       focusDate.getFullYear(),
       focusDate.getMonth(),
