@@ -9,7 +9,6 @@ import { task } from 'ember-concurrency';
 export default class TimeLogPopoverComponent extends Component {
   @service store;
 
-  @tracked hours = 8;
   @tracked focusHoursInput = null;
   @tracked favouriteTasks = [];
 
@@ -41,9 +40,9 @@ export default class TimeLogPopoverComponent extends Component {
       }));
     },
   })
-  favouriteTaskWrappers = [];
+  favouriteTaskWorkLogs = [];
 
-  @tracked addedInputs = [];
+  @tracked addedWorkLogs = [];
 
   newProjectPowerSelectApi = null;
 
@@ -53,38 +52,32 @@ export default class TimeLogPopoverComponent extends Component {
   }
 
   @action
-  updateDescription(event) {
-    this.project = event.target.value;
+  updateHours(workLog, event) {
+    workLog.hours = event.target.valueAsNumber;
   }
 
   @action
-  updateHours(index, isFavorite, event) {
-    const editArray = isFavorite ? this.favouriteTaskWrappers : this.addedInputs;
-    editArray[index].hours = event.target.valueAsNumber;
-  }
-
-  @action
-  updateTask(index, task) {
-    this.addedInputs[index].task = task;
-    this.focusHoursInput = index;
+  updateTask(workLog) {
+    workLog.task = task;
+    this.focusHoursInput = this.addedWorkLogs.indexOf(workLog);
   }
 
   @action
   addTaskToList(task) {
     const newEntry = { task, hours: 0, elementId: uuidv4() };
-    this.addedInputs = [...this.addedInputs, newEntry];
-    this.focusHoursInput = this.addedInputs.length - 1;
+    this.addedWorkLogs = [...this.addedWorkLogs, newEntry];
+    this.focusHoursInput = this.addedWorkLogs.length - 1;
   }
 
   @action
-  submitLog(event) {
+  submitWorkLogs(event) {
     event.preventDefault();
     const hourProjectPairs = [
-      ...this.favouriteTaskWrappers.map(({ hours, task }) => ({
+      ...this.favouriteTaskWorkLogs.map(({ hours, task }) => ({
         duration: { hours },
         task,
       })),
-      ...this.addedInputs.map(({ hours, task }) => ({
+      ...this.addedWorkLogs.map(({ hours, task }) => ({
         duration: { hours },
         task,
       })),
