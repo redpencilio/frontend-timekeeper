@@ -1,5 +1,6 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
+import { startOfMonth, addMonths } from 'date-fns';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 
 export default class YearMonthRoute extends Route {
@@ -17,13 +18,11 @@ export default class YearMonthRoute extends Route {
   async model(params) {
     const { year } = this.modelFor('year');
     const monthNumber = Number(params.month) - 1;
-    // TODO use date-fns lib to avoid edge cases / timezone issue
-    // E.g. https://date-fns.org/v4.1.0/docs/startOfMonth
-    const firstOfMonth = new Date(Date.UTC(year, monthNumber));
-    const lastOfMonth = new Date(Date.UTC(year, monthNumber + 1, 0));
+    const firstOfMonth = startOfMonth(Date.UTC(year, monthNumber));
+    const firstOfNextMonth = addMonths(firstOfMonth, 1);
     const workLogs = await this.store.queryAll('work-log', {
       'filter[:gte:date]': formatDate(firstOfMonth),
-      'filter[:lte:date]': formatDate(lastOfMonth),
+      'filter[:lt:date]': formatDate(firstOfNextMonth),
       include: 'task',
     });
 
