@@ -49,6 +49,10 @@ module.exports = function (defaults) {
                 },
               ],
             },
+            {
+              test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+              type: 'asset/resource',
+            },
           ],
         },
       },
