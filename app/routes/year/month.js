@@ -29,6 +29,7 @@ export default class YearMonthRoute extends Route {
     return {
       workLogs,
       year,
+      month: params.month,
       monthNumber,
     };
   }

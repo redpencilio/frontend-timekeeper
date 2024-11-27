@@ -1,10 +1,15 @@
-<div class="p-4 grow">
-  <FullCalendar
-    @events={{this.events}}
-    @focusDate={{this.activeDate}}
-  />
+<div class="flex h-full">
+  <div class="h-full overflow-scroll">
+    <NavBar @year={{this.model.year}} @month={{this.model.month}} />
+  </div>
+  <div class="p-4 grow">
+    <FullCalendar
+      @events={{this.events}}
+      @focusDate={{this.activeDate}}
+    />
+  </div>
+  <div>
+    <Stats @workLogs={{@model.workLogs}} />
+  </div>
+  {{outlet}}
 </div>
-<div>
-  <Stats @workLogs={{@model.workLogs}} />
-</div>
-{{outlet}}
