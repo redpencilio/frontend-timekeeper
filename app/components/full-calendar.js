@@ -104,13 +104,13 @@ export default class FullCalendarComponent extends Component {
     this.router.refresh();
   });
 
-  onSaveMulti = task(async (hourProjectPairs) => {
+  onSaveMulti = task(async (hourTaskPairs) => {
     await Promise.all(
-      hourProjectPairs.map(async ({ duration, subProject }) => {
+      hourTaskPairs.map(async ({ duration, task }) => {
         const workLog = this.store.createRecord('work-log', {
           duration,
+          task,
           date: this.clickedDateInfo.date,
-          task: subProject,
         });
         await workLog.save();
       }),

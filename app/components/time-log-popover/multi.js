@@ -58,9 +58,22 @@ export default class TimeLogPopoverComponent extends Component {
   }
 
   @action
-  onHoursChange(index, isFavorite, event) {
+  updateHours(index, isFavorite, event) {
     const editArray = isFavorite ? this.favouriteTaskWrappers : this.addedInputs;
     editArray[index].hours = event.target.valueAsNumber;
+  }
+
+  @action
+  updateTask(index, task) {
+    this.addedInputs[index].task = task;
+    this.focusHoursInput = index;
+  }
+
+  @action
+  addTaskToList(task) {
+    const newEntry = { task, hours: 0, elementId: uuidv4() };
+    this.addedInputs = [...this.addedInputs, newEntry];
+    this.focusHoursInput = this.addedInputs.length - 1;
   }
 
   @action
@@ -69,29 +82,14 @@ export default class TimeLogPopoverComponent extends Component {
     const hourProjectPairs = [
       ...this.favouriteTaskWrappers.map(({ hours, task }) => ({
         duration: { hours },
-        subProject: task,
+        task,
       })),
       ...this.addedInputs.map(({ hours, task }) => ({
         duration: { hours },
-        subProject: task,
+        task,
       })),
     ].filter(({ duration: { hours } }) => hours > 0);
     this.args.onSave?.perform(hourProjectPairs);
-  }
-
-  @action
-  changeInput(index, hoursInputId, project, api, event) {
-    const { hours } = this.addedInputs[index];
-    this.addedInputs[index] = { project, hours };
-    this.addedInputs = this.addedInputs;
-    this.focusHoursInput = index;
-  }
-
-  @action
-  addInput(project) {
-    const newEntry = { project, hours: 0, elementId: uuidv4() };
-    this.addedInputs = [...this.addedInputs, newEntry];
-    this.focusHoursInput = this.addedInputs.length - 1;
   }
 
   @action

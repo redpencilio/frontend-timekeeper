@@ -26,8 +26,8 @@
                 {{#let (unique-id) as |inputId|}}
                   <HourInput
                     id={{inputId}}
-                    @value={{get (get this.favouriteTaskWrappers index) "hours"}}
-                    @onChange={{fn this.onHoursChange index true}}
+                    @value={{taskWrapper.hours}}
+                    @onChange={{fn this.updateHours index true}}
                     {{focus-select (eq index 0)}}
                   />
                 {{/let}}
@@ -42,14 +42,14 @@
             <div class="mt-1 flex justify-between content-center">
               <div class="block h-10 flex-grow mr-2">
                 <TaskPowerSelect
-                  @selectedProject={{addedInput.project}}
-                  @onChange={{fn this.changeInput index addedInput.elementId}}
+                  @selectedTask={{addedInput.task}}
+                  @onChange={{fn this.updateTask index}}
                 />
               </div>
               <HourInput
                 id={{addedInput.elementId}}
-                @value={{get (get this.addedInputs index) "hours"}}
-                @onChange={{fn this.onHoursChange index false}}
+                @value={{addedInput.hours}}
+                @onChange={{fn this.updateHours index false}}
                 {{focus-select (eq index this.focusHoursInput)}}
                 {{clear-value this "focusHoursInput"}}
               />
@@ -63,7 +63,7 @@
             <div class="block h-10 flex-grow mr-2">
               <TaskPowerSelect
                 @registerAPI={{this.registerNewProjectPowerSelect}}
-                @onChange={{this.addInput}}
+                @onChange={{this.addTaskToList}}
               />
             </div>
           </div>
