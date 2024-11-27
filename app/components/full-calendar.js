@@ -93,11 +93,11 @@ export default class FullCalendarComponent extends Component {
     document.addEventListener('keydown', this.handleKeydown.bind(this));
   }
 
-  onSaveSimple = task(async ({ duration, project }) => {
+  onSaveSimple = task(async ({ duration, task }) => {
     const workLog = this.store.createRecord('work-log', {
       duration,
+      task,
       date: this.clickedDateInfo.date,
-      task: project,
     });
     await workLog.save();
     this.clearPopovers();
@@ -117,6 +117,14 @@ export default class FullCalendarComponent extends Component {
     );
     this.clearPopovers();
     this.router.refresh();
+  });
+
+  editWorkLog = task(async ({ duration, task }) => {
+    const workLog = this.clickedWorkLog;
+    workLog.duration = duration;
+    workLog.task = task;
+    await workLog.save();
+    this.clearPopovers();
   });
 
   onEventClick(info) {
@@ -167,14 +175,6 @@ export default class FullCalendarComponent extends Component {
     this.calendar.addEventSource(this.args.events);
     this.calendar.render();
   }
-
-  editWorkLog = task(async ({ duration, project }) => {
-    const workLog = this.clickedWorkLog;
-    workLog.duration = duration;
-    workLog.task = project;
-    await workLog.save();
-    this.clearPopovers();
-  });
 
   @action
   async deleteWorkLog(workLog) {

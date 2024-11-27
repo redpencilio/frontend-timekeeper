@@ -6,7 +6,7 @@
       </button>
     </div>
   {{/if}}
-  <form {{on "submit" this.submitLog}}>
+  <form {{on "submit" this.submitWorkLog}}>
     <div>
       <label
         for="hours"
@@ -26,20 +26,20 @@
 
     <div class="mt-2">
       <label
-        for="project"
+        for="task"
         class="block text-sm font-semibold text-gray-700"
-      >Project</label>
+      >Task</label>
       <div class="mt-1">
         <FavouriteTasksRadioGroup
-          @onChange={{set this "project"}}
-          @selectedTask={{this.project}}
+          @onChange={{set this "task"}}
+          @selectedTask={{this.task}}
         />
       </div>
     </div>
     <div class="block h-10 mt-2">
       <TaskPowerSelect
-        @onChange={{set this "project"}}
-        @selectedTask={{this.project}}
+        @onChange={{set this "task"}}
+        @selectedTask={{this.task}}
       />
     </div>
     <div class="flex justify-between mt-4">
