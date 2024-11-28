@@ -1,5 +1,6 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
+import { startOfMonth, addMonths } from 'date-fns';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 
 export default class YearMonthRoute extends Route {
@@ -8,8 +9,7 @@ export default class YearMonthRoute extends Route {
 
   beforeModel(transition) {
     // Check if month is a valid number
-    let { month } = this.paramsFor(this.routeName);
-    month = Number(month);
+    const month = Number(transition.to.params.month);
     if (isNaN(month) || month < 1 || month > 12) {
       this.router.transitionTo('404');
     }
@@ -18,22 +18,18 @@ export default class YearMonthRoute extends Route {
   async model(params) {
     const { year } = this.modelFor('year');
     const monthNumber = Number(params.month) - 1;
-    const firstOfMonth = new Date(Date.UTC(year, monthNumber));
-    const lastOfMonth = new Date(Date.UTC(year, monthNumber + 1, 0));
-    const tasks = await this.store.queryAll('task', {
-      'filter[:has:parent]': 't',
-      include: 'parent',
-    });
+    const firstOfMonth = startOfMonth(Date.UTC(year, monthNumber));
+    const firstOfNextMonth = addMonths(firstOfMonth, 1);
     const workLogs = await this.store.queryAll('work-log', {
       'filter[:gte:date]': formatDate(firstOfMonth),
-      'filter[:lte:date]': formatDate(lastOfMonth),
+      'filter[:lt:date]': formatDate(firstOfNextMonth),
       include: 'task',
     });
 
     return {
-      tasks,
       workLogs,
       year,
+      month: params.month,
       monthNumber,
     };
   }

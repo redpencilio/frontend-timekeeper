@@ -8,15 +8,11 @@
     </div>
     {{#if this.localStorage.useAdvancedLogPopover}}
       <TimeLogPopover::Multi
-        @projects={{@projects}}
-        @favoriteProjects={{@favoriteProjects}}
         @onSave={{@onSaveMulti}}
         @onCancel={{@onCancel}}
       />
     {{else}}
       <TimeLogPopover::Simple
-        @projects={{@projects}}
-        @favoriteProjects={{@favoriteProjects}}
         @onSave={{@onSaveSimple}}
         @onCancel={{@onCancel}}
       />

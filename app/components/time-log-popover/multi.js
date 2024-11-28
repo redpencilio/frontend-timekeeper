@@ -1,25 +1,48 @@
 import Component from '@glimmer/component';
+import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { trackedReset } from 'tracked-toolbox';
 import { v4 as uuidv4 } from 'uuid';
+import { task } from 'ember-concurrency';
 
 export default class TimeLogPopoverComponent extends Component {
-  @tracked hours = 8;
+  @service store;
+
   @tracked focusHoursInput = null;
+  @tracked favouriteTasks = [];
+
+  constructor() {
+    super(...arguments);
+    this.loadData.perform();
+  }
+
+  loadData = task(async () => {
+    // TODO update query to make a smarter selection of favourite tasks
+    // and share logic with FavouriteTasksRadioGroup component
+    const leafTasks = await this.store.query('task', {
+      'filter[:has:parent]': 't',
+      include: 'parent',
+      page: {
+        size: 3,
+      },
+    });
+
+    this.favouriteTasks = leafTasks;
+  });
 
   @trackedReset({
-    memo: 'args.favoriteProjects',
+    memo: 'favouriteTasks',
     update() {
-      return this.args.favoriteProjects.map((task) => ({
+      return this.favouriteTasks.map((task) => ({
         task,
         hours: 0,
       }));
     },
   })
-  favoriteProjects = [];
+  favouriteTaskWorkLogs = [];
 
-  @tracked addedInputs = [];
+  @tracked addedWorkLogs = [];
 
   newProjectPowerSelectApi = null;
 
@@ -29,45 +52,37 @@ export default class TimeLogPopoverComponent extends Component {
   }
 
   @action
-  updateDescription(event) {
-    this.project = event.target.value;
+  updateHours(workLog, event) {
+    workLog.hours = event.target.valueAsNumber;
   }
 
   @action
-  onHoursChange(index, isFavorite, event) {
-    const editArray = isFavorite ? this.favoriteProjects : this.addedInputs;
-    editArray[index].hours = event.target.valueAsNumber;
+  updateTask(workLog) {
+    workLog.task = task;
+    this.focusHoursInput = this.addedWorkLogs.indexOf(workLog);
   }
 
   @action
-  submitLog(event) {
+  addTaskToList(task) {
+    const newEntry = { task, hours: 0, elementId: uuidv4() };
+    this.addedWorkLogs = [...this.addedWorkLogs, newEntry];
+    this.focusHoursInput = this.addedWorkLogs.length - 1;
+  }
+
+  @action
+  submitWorkLogs(event) {
     event.preventDefault();
     const hourProjectPairs = [
-      ...this.favoriteProjects.map(({ hours, task }) => ({
+      ...this.favouriteTaskWorkLogs.map(({ hours, task }) => ({
         duration: { hours },
-        subProject: task,
+        task,
       })),
-      ...this.addedInputs.map(({ hours, task }) => ({
+      ...this.addedWorkLogs.map(({ hours, task }) => ({
         duration: { hours },
-        subProject: task,
+        task,
       })),
     ].filter(({ duration: { hours } }) => hours > 0);
     this.args.onSave?.perform(hourProjectPairs);
-  }
-
-  @action
-  changeInput(index, hoursInputId, project, api, event) {
-    const { hours } = this.addedInputs[index];
-    this.addedInputs[index] = { project, hours };
-    this.addedInputs = this.addedInputs;
-    this.focusHoursInput = index;
-  }
-
-  @action
-  addInput(project) {
-    const newEntry = { project, hours: 0, elementId: uuidv4() };
-    this.addedInputs = [...this.addedInputs, newEntry];
-    this.focusHoursInput = this.addedInputs.length - 1;
   }
 
   @action

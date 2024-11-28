@@ -4,6 +4,11 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
   const app = new EmberApp(defaults, {
+    svgJar: {
+      sourceDirs: [
+        'node_modules/bootstrap-icons/icons',
+      ],
+    },
     babel: {
       plugins: [
         // ... any other plugins
@@ -43,6 +48,10 @@ module.exports = function (defaults) {
                   },
                 },
               ],
+            },
+            {
+              test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+              type: 'asset/resource',
             },
           ],
         },

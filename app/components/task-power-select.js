@@ -1,9 +1,28 @@
 import Component from '@glimmer/component';
+import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { service } from '@ember/service';
+import { task } from 'ember-concurrency';
 
-export default class ProjectsPowerselectComponent extends Component {
+export default class TaskPowerSelectComponent extends Component {
+  @service store;
+  @tracked options;
+
+  constructor() {
+    super(...arguments);
+    this.loadData.perform();
+  }
+
+  loadData = task(async () => {
+    const leafTasks = await this.store.queryAll('task', {
+      'filter[:has:parent]': 't',
+      include: 'parent',
+      sort: 'parent.customer.name,parent.name',
+    });
+
+    this.options = leafTasks;
+  });
+
   @action
   onKeydown(api, event) {
     if (!api.isOpen && isLetter(event.key)) {

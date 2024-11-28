@@ -1,4 +1,5 @@
-/** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 module.exports = {
   content: ['./app/**/*.{gjs,gts,hbs,html,js,ts}'],
   safelist: [
@@ -8,6 +9,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Lexend Deca', ...defaultTheme.fontFamily.sans],
+      },
       keyframes: {
         flyInFromLeft: {
           '0%': { transform: 'translateX(-100%)', opacity: '0' },

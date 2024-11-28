@@ -1,28 +1,20 @@
 import Component from '@glimmer/component';
-import { action } from '@ember/object';
+import { monthsInYear } from 'date-fns/constants';
+import { format } from 'date-fns';
 
 export default class ProjectPillRadioGroupComponent extends Component {
-  get monthData() {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-
-    return months.map((month, index) => {
-      return {
-        name: month,
-        completed: index < 10, // TODO use actual data
-      };
-    });
+  // TODO fetch timesheet status for each month
+  get months() {
+    const items = [];
+    for (let i = 0; i < monthsInYear; i++) {
+      const dateInMonth = new Date(this.args.year, i, 1);
+      items.push({
+        number: i,
+        humanNumber: i + 1,
+        label: format(dateInMonth, 'LLLL'),
+        status: null,
+      });
+    }
+    return items;
   }
 }

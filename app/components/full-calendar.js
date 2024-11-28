@@ -23,6 +23,8 @@ export default class FullCalendarComponent extends Component {
     this.calendarEl = element;
 
     const focusDate = this.args.focusDate;
+    // TODO use date-fns lib to avoid edge cases / timezone issue
+    // E.g. https://date-fns.org/v4.1.0/docs/startOfMonth
     const firstDayOfMonth = new Date(
       focusDate.getFullYear(),
       focusDate.getMonth(),
@@ -48,7 +50,7 @@ export default class FullCalendarComponent extends Component {
       firstDay: 1,
       businessHours: {
         // days of week. an array of zero-based day of week integers (0=Sunday)
-        daysOfWeek: [1, 2, 3, 4, 5], // Monday - Thursday
+        daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday
       },
       headerToolbar: {
         start: null,
@@ -91,30 +93,38 @@ export default class FullCalendarComponent extends Component {
     document.addEventListener('keydown', this.handleKeydown.bind(this));
   }
 
-  onSaveSimple = task(async ({ duration, project }) => {
+  onSaveSimple = task(async ({ duration, task }) => {
     const workLog = this.store.createRecord('work-log', {
       duration,
+      task,
       date: this.clickedDateInfo.date,
-      task: project,
     });
     await workLog.save();
     this.clearPopovers();
     this.router.refresh();
   });
 
-  onSaveMulti = task(async (hourProjectPairs) => {
+  onSaveMulti = task(async (hourTaskPairs) => {
     await Promise.all(
-      hourProjectPairs.map(async ({ duration, subProject }) => {
+      hourTaskPairs.map(async ({ duration, task }) => {
         const workLog = this.store.createRecord('work-log', {
           duration,
+          task,
           date: this.clickedDateInfo.date,
-          task: subProject,
         });
         await workLog.save();
       }),
     );
     this.clearPopovers();
     this.router.refresh();
+  });
+
+  editWorkLog = task(async ({ duration, task }) => {
+    const workLog = this.clickedWorkLog;
+    workLog.duration = duration;
+    workLog.task = task;
+    await workLog.save();
+    this.clearPopovers();
   });
 
   onEventClick(info) {
@@ -165,14 +175,6 @@ export default class FullCalendarComponent extends Component {
     this.calendar.addEventSource(this.args.events);
     this.calendar.render();
   }
-
-  editWorkLog = task(async ({ duration, project }) => {
-    const workLog = this.clickedWorkLog;
-    workLog.duration = duration;
-    workLog.task = project;
-    await workLog.save();
-    this.clearPopovers();
-  });
 
   @action
   async deleteWorkLog(workLog) {

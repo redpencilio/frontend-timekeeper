@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { tracked } from '@glimmer/tracking';
 import { trackedReset } from 'tracked-toolbox';
 
 export default class TimeLogPopoverComponent extends Component {
@@ -18,16 +17,11 @@ export default class TimeLogPopoverComponent extends Component {
       return this.args.selectedHourLog.task;
     },
   })
-  project = this.args.projects.get('firstObject');
+  task = null;
 
   @action
   updateHours(event) {
     this.hours = event.target.valueAsNumber;
-  }
-
-  @action
-  updateDescription(event) {
-    this.project = event.target.value;
   }
 
   @action
@@ -36,13 +30,13 @@ export default class TimeLogPopoverComponent extends Component {
   }
 
   @action
-  submitLog(event) {
+  submitWorkLog(event) {
     event.preventDefault();
     this.args.onSave?.perform({
       duration: {
         hours: this.hours,
       },
-      project: this.project,
+      task: this.task,
     });
   }
 }

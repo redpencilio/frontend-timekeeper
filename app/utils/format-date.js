@@ -1,9 +1,7 @@
-function formatDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() is zero-based
-  const day = String(date.getDate()).padStart(2, '0');
+import { formatISO } from 'date-fns';
 
-  return `${year}-${month}-${day}`;
+function formatDate(date) {
+  return formatISO(date, { representation: 'date' });
 }
 
 export { formatDate };
