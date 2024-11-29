@@ -13,7 +13,7 @@ export default class UserProfileService extends Service {
       const sessionData = authenticatedData.data.relationships;
       const accountId = sessionData.account?.data.id;
       this.account = await this.store.findRecord('account', accountId, {
-        include: 'user.organization',
+        include: 'person',
       });
       this.user = await this.account.user;
     } else {
