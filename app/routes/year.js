@@ -3,6 +3,11 @@ import { service } from '@ember/service';
 
 export default class YearRoute extends Route {
   @service router;
+  @service session;
+
+  beforeModel(transition) {
+    this.session.requireAuthentication(transition, 'login');
+  }
 
   model(params) {
     return {
