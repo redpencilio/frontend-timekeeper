@@ -7,7 +7,7 @@
  */
 
 .fc .fc-event-title {
-  @apply !font-normal;
+  @apply !font-light;
 }
 
 .fc .fc-col-header-cell-cushion {
