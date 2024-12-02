@@ -9,7 +9,7 @@ export default class HourInput extends Component {
     const cancel = 'text-gray-500';
     const primary =
       'border border-transparent rounded-md shadow-sm text-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500';
-    if (this.args.skin === 'cancel') {
+    if (this.args.skin === 'mute') {
       return [base, cancel].join(' ');
     } else {
       return [base, primary].join(' ');
