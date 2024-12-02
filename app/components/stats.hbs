@@ -6,7 +6,10 @@
         <li>
           <div class="flex items-center justify-between space-x-4">
             <div class="flex items-center space-x-2">
-              <span class="inline-block w-2 h-2 rounded-full" {{bg-color data.color}}></span>
+              <span
+                class="inline-block w-2 h-2 rounded-full"
+                {{bg-color data.color}}
+              ></span>
               <span class="text-sm font-normal">
                 {{this.getProjectNameById projectId}}
               </span>
@@ -22,7 +25,8 @@
                     {{this.getSubProjectNameById subprojectId}}
                   </span>
                   <span class="text-sm text-gray-700">
-                    {{subdata.totalHours}} hours
+                    {{subdata.totalDuration.hours}}h
+                    {{subdata.totalDuration.minutes}}m
                   </span>
                 </li>
               {{/each-in}}

@@ -5,7 +5,7 @@ export default class YearMonthContoller extends Controller {
   get events() {
     return this.model.workLogs.map((workLog) => {
       const {
-        duration: { hours },
+        duration: { hours, minutes },
         date,
         id,
       } = workLog;
@@ -15,7 +15,7 @@ export default class YearMonthContoller extends Controller {
       const name = taskName(task);
       return {
         id,
-        title: `${hours}h: ${name}`,
+        title: `${hours > 0 ? `${hours}h` : ''}${minutes > 0 ? `${minutes}m` : ''}: ${name}`,
         start: date,
         allDay: true,
         backgroundColor: task?.color,

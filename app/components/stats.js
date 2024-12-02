@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
+import { normalizeDuration } from '../utils/normalize-duration';
 
 export default class StatsComponent extends Component {
   @service store;
@@ -27,25 +28,33 @@ export default class StatsComponent extends Component {
       } = workLog;
 
       if (Object.hasOwn(acc, parent.id)) {
-        acc[parent.id].totalHours += hours;
-        acc[parent.id].totalMinutes += minutes;
+        acc[parent.id].totalDuration.hours += hours;
+        acc[parent.id].totalDuration.minutes += minutes;
       } else {
         acc[parent.id] = {
-          totalHours: hours,
-          totalMinutes: minutes,
+          totalDuration: { hours, minutes },
           color: parent?.color,
           subProjects: {},
         };
       }
 
+      acc[parent.id].totalDuration = normalizeDuration(
+        acc[parent.id].totalDuration,
+      );
+
       if (task) {
         if (Object.hasOwn(acc[parent.id].subProjects, task.id)) {
-          acc[parent.id].subProjects[task.id].totalHours += hours;
+          acc[parent.id].subProjects[task.id].totalDuration.hours += hours;
+          acc[parent.id].subProjects[task.id].totalDuration.minutes += minutes;
         } else {
           acc[parent.id].subProjects[task.id] = {
-            totalHours: hours,
+            totalDuration: { hours, minutes },
           };
         }
+
+        acc[parent.id].subProjects[task.id].totalDuration = normalizeDuration(
+          acc[parent.id].subProjects[task.id].totalDuration,
+        );
       }
 
       return acc;

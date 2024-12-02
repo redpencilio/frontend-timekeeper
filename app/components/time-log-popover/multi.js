@@ -21,7 +21,7 @@ export default class TimeLogPopoverComponent extends Component {
     update() {
       return this.userProfile.favoriteTasks.map((task) => ({
         task,
-        hours: 0,
+        duration: { hours: 0, minutes: 0 },
       }));
     },
   })
@@ -37,8 +37,8 @@ export default class TimeLogPopoverComponent extends Component {
   }
 
   @action
-  updateHours(workLog, event) {
-    workLog.hours = event.target.valueAsNumber;
+  updateDuration(workLog, duration) {
+    workLog.duration = duration;
   }
 
   @action
@@ -49,7 +49,11 @@ export default class TimeLogPopoverComponent extends Component {
 
   @action
   addTaskToList(task) {
-    const newEntry = { task, hours: 0, elementId: uuidv4() };
+    const newEntry = {
+      task,
+      duration: { hours: 0, minutes: 0 },
+      elementId: uuidv4(),
+    };
     this.addedWorkLogs = [...this.addedWorkLogs, newEntry];
     this.focusHoursInput = this.addedWorkLogs.length - 1;
   }
@@ -58,15 +62,15 @@ export default class TimeLogPopoverComponent extends Component {
   submitWorkLogs(event) {
     event.preventDefault();
     const hourProjectPairs = [
-      ...this.favoriteTaskWorkLogs.map(({ hours, task }) => ({
-        duration: { hours },
+      ...this.favoriteTaskWorkLogs.map(({ duration, task }) => ({
+        duration,
         task,
       })),
-      ...this.addedWorkLogs.map(({ hours, task }) => ({
-        duration: { hours },
+      ...this.addedWorkLogs.map(({ duration, task }) => ({
+        duration,
         task,
       })),
-    ].filter(({ duration: { hours } }) => hours > 0);
+    ].filter(({ duration: { hours, minutes } }) => hours > 0 || minutes > 0);
     this.args.onSave?.perform(hourProjectPairs);
   }
 

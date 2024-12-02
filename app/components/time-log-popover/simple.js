@@ -9,10 +9,10 @@ export default class TimeLogPopoverComponent extends Component {
   @trackedReset({
     memo: 'args.selectedHourLog',
     update() {
-      return this.args.selectedHourLog.duration.hours;
+      return this.args.selectedHourLog.duration;
     },
   })
-  hours = 8;
+  duration = { hours: 8, minutes: 0 };
 
   @trackedReset({
     memo: 'args.selectedHourLog',
@@ -23,8 +23,8 @@ export default class TimeLogPopoverComponent extends Component {
   task = this.userProfile.favoriteTasks[0];
 
   @action
-  updateHours(event) {
-    this.hours = event.target.valueAsNumber;
+  updateDuration(duration) {
+    this.duration = duration;
   }
 
   @action
@@ -36,9 +36,7 @@ export default class TimeLogPopoverComponent extends Component {
   submitWorkLog(event) {
     event.preventDefault();
     this.args.onSave?.perform({
-      duration: {
-        hours: this.hours,
-      },
+      duration: this.duration,
       task: this.task,
     });
   }

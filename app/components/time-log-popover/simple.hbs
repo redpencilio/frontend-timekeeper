@@ -1,7 +1,11 @@
 <div role="none">
   {{#if @allowDelete}}
     <div class="flex justify-end">
-      <button type="button" {{on "click" @onDelete}} class="text-red-500 hover:text-red-600">
+      <button
+        type="button"
+        {{on "click" @onDelete}}
+        class="text-red-500 hover:text-red-600"
+      >
         {{svg-jar "trash3" class="h-5 w-5"}}
       </button>
     </div>
@@ -12,15 +16,11 @@
         for="hours"
         class="block text-sm font-semibold leading-6 text-gray-700"
       >Hours Worked</label>
-      <input
-        type="number"
+      <HourInput
         id="hours"
-        min={{0}}
-        class="h-10 mt-1 block w-full border-gray-200 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-        value={{this.hours}}
-        {{on "input" this.updateHours}}
+        @value={{this.duration}}
+        @onChange={{this.updateDuration}}
         {{focus-select true}}
-        {{select-on "click"}}
       />
     </div>
 

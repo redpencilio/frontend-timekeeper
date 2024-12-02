@@ -16,8 +16,8 @@
                 {{#let (unique-id) as |inputId|}}
                   <HourInput
                     id={{inputId}}
-                    @value={{workLog.hours}}
-                    @onChange={{fn this.updateHours workLog}}
+                    @value={{workLog.duration}}
+                    @onChange={{fn this.updateDuration workLog}}
                     {{focus-select (eq index 0)}}
                   />
                 {{/let}}
@@ -38,8 +38,8 @@
               </div>
               <HourInput
                 id={{workLog.elementId}}
-                @value={{workLog.hours}}
-                @onChange={{fn this.updateHours workLog}}
+                @value={{workLog.duration}}
+                @onChange={{fn this.updateDuration workLog}}
                 {{focus-select (eq index this.focusHoursInput)}}
                 {{clear-value this "focusHoursInput"}}
               />
