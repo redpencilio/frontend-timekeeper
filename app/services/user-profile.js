@@ -23,12 +23,34 @@ export default class UserProfileService extends Service {
   }
 
   async loadFavoriteTasks() {
-    return await this.store.query('task', {
-      'filter[:has:parent]': 't',
-      include: 'parent',
+    const logs = await this.store.query('work-log', {
+      sort: '-date',
       page: {
-        size: 3,
+        size: 100,
       },
+      include: 'task',
     });
+
+    const counts = logs.reduce((acc, log) => {
+      const taskId = log.belongsTo('task')?.value()?.id;
+      if (Object.hasOwn(acc, taskId)) {
+        acc[taskId] += 1;
+      } else {
+        acc[taskId] = 0;
+      }
+
+      return acc;
+    }, {});
+
+    const top3TaskIds = Object.entries(counts)
+      .sort(([, countA], [, countB]) => countB - countA)
+      .slice(0, 3)
+      .map(([taskId]) => taskId);
+
+    const top3Tasks = await Promise.all(top3TaskIds.map(async (taskId) => {
+      return await this.store.findRecord('task', taskId);
+    }));
+
+    return top3Tasks;
   }
 }
