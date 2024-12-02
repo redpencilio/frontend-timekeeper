@@ -3,6 +3,7 @@ import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { task } from 'ember-concurrency';
+import taskName from 'frontend-timekeeper/helpers/task-name';
 
 export default class TaskPowerSelectComponent extends Component {
   @service store;
@@ -22,6 +23,11 @@ export default class TaskPowerSelectComponent extends Component {
 
     this.options = leafTasks;
   });
+
+  matcher(option, searchTerm) {
+    const name = taskName(option);
+    return name.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : -1;
+  }
 
   @action
   onKeydown(api, event) {
