@@ -3,7 +3,7 @@ import { on } from '@ember/modifier';
 import { localCopy } from 'tracked-toolbox';
 import selectOn from 'frontend-timekeeper/modifiers/select-on';
 
-export default class HourInput extends Component {
+export default class ButtonComponent extends Component {
   get class() {
     const base = 'px-4 py-2 inline-flex justify-center font-medium';
     const cancel = 'text-gray-500';
