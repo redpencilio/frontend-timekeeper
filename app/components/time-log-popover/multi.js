@@ -58,7 +58,7 @@ export default class TimeLogPopoverComponent extends Component {
   submitWorkLogs(event) {
     event.preventDefault();
     const hourProjectPairs = [
-      ...this.favouriteTaskWorkLogs.map(({ hours, task }) => ({
+      ...this.favoriteTaskWorkLogs.map(({ hours, task }) => ({
         duration: { hours },
         task,
       })),
