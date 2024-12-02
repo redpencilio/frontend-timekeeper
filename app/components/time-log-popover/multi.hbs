@@ -2,7 +2,7 @@
 <div role="none" {{on "keydown" this.handleKeydown}}>
   <form {{on "submit" this.submitWorkLogs}}>
     <ul class="divide-y divide-dotted">
-      {{#each this.favouriteTaskWorkLogs as |workLog index|}}
+      {{#each this.favoriteTaskWorkLogs as |workLog index|}}
         {{#let workLog.task as |task|}}
           <li>
             <div class="mt-2 mb-2">

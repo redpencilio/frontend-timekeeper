@@ -1,8 +1,11 @@
 import Component from '@glimmer/component';
+import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { trackedReset } from 'tracked-toolbox';
 
 export default class TimeLogPopoverComponent extends Component {
+  @service userProfile;
+
   @trackedReset({
     memo: 'args.selectedHourLog',
     update() {
@@ -17,7 +20,7 @@ export default class TimeLogPopoverComponent extends Component {
       return this.args.selectedHourLog.task;
     },
   })
-  task = null;
+  task = this.userProfile.favoriteTasks[0];
 
   @action
   updateHours(event) {

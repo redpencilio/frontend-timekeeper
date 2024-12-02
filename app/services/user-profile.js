@@ -16,8 +16,19 @@ export default class UserProfileService extends Service {
         include: 'person',
       });
       this.user = await this.account.user;
+      this.favoriteTasks = await this.loadFavoriteTasks();
     } else {
       this.user = null;
     }
+  }
+
+  async loadFavoriteTasks() {
+    return await this.store.query('task', {
+      'filter[:has:parent]': 't',
+      include: 'parent',
+      page: {
+        size: 3,
+      },
+    });
   }
 }

@@ -8,39 +8,24 @@ import { task } from 'ember-concurrency';
 
 export default class TimeLogPopoverComponent extends Component {
   @service store;
+  @service userProfile;
 
   @tracked focusHoursInput = null;
-  @tracked favouriteTasks = [];
 
   constructor() {
     super(...arguments);
-    this.loadData.perform();
   }
 
-  loadData = task(async () => {
-    // TODO update query to make a smarter selection of favourite tasks
-    // and share logic with FavouriteTasksRadioGroup component
-    const leafTasks = await this.store.query('task', {
-      'filter[:has:parent]': 't',
-      include: 'parent',
-      page: {
-        size: 3,
-      },
-    });
-
-    this.favouriteTasks = leafTasks;
-  });
-
   @trackedReset({
-    memo: 'favouriteTasks',
+    memo: 'userProfile.favoriteTasks',
     update() {
-      return this.favouriteTasks.map((task) => ({
+      return this.userProfile.favoriteTasks.map((task) => ({
         task,
         hours: 0,
       }));
     },
   })
-  favouriteTaskWorkLogs = [];
+  favoriteTaskWorkLogs = [];
 
   @tracked addedWorkLogs = [];
 
