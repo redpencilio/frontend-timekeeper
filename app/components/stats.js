@@ -8,14 +8,19 @@ export default class StatsComponent extends Component {
   getProjectNameById = (id) => this.store.peekRecord('task', id).name;
   getSubProjectNameById = (id) => this.store.peekRecord('task', id).name;
 
-  get totalHours() {
+  get totalDuration() {
     if (!this.args.workLogs) {
       return 0;
     }
 
-    return this.args.workLogs.reduce(
-      (acc, workLog) => acc + workLog.duration.hours,
-      0,
+    return normalizeDuration(
+      this.args.workLogs.reduce(
+        (acc, workLog) => ({
+          hours: acc.hours + workLog.duration.hours,
+          minutes: acc.minutes + workLog.duration.minutes,
+        }),
+        { hours: 0, minutes: 0 },
+      ),
     );
   }
 

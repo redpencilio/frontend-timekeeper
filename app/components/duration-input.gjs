@@ -49,14 +49,14 @@ const blurListener = (event) => {
   }
 };
 
-const hourInputModifier = modifier((element) => {
+const durationInputModifier = modifier((element) => {
   element.addEventListener('blur', blurListener);
   return () => {
     element.removeEventListener('blur', blurListener);
   };
 });
 
-export default class HourInput extends Component {
+export default class DurationInput extends Component {
   @localCopy('args.value') value = { hours: 0, minutes: 0 };
 
   get textValue() {
@@ -82,7 +82,7 @@ export default class HourInput extends Component {
       value={{this.textValue}}
       {{on 'change' this.onChange}}
       {{selectOn 'click'}}
-      {{hourInputModifier}}
+      {{durationInputModifier}}
       required={{this.isRequired}}
       ...attributes
     />

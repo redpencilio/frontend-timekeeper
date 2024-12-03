@@ -14,7 +14,7 @@
                   <div class="text-sm">{{task-name task}}</div>
                 </div>
                 {{#let (unique-id) as |inputId|}}
-                  <HourInput
+                  <DurationInput
                     id={{inputId}}
                     @value={{workLog.duration}}
                     @onChange={{fn this.updateDuration workLog}}
@@ -36,7 +36,7 @@
                   @onChange={{fn this.updateTask workLog}}
                 />
               </div>
-              <HourInput
+              <DurationInput
                 id={{workLog.elementId}}
                 @value={{workLog.duration}}
                 @onChange={{fn this.updateDuration workLog}}

@@ -14,7 +14,8 @@
                 {{this.getProjectNameById projectId}}
               </span>
             </div>
-            <div class="text-sm font-normal">{{data.totalDuration.hours}}h {{data.totalDuration.minutes}}m</div>
+            <div class="text-sm font-normal">{{data.totalDuration.hours}}h
+              {{data.totalDuration.minutes}}m</div>
           </div>
 
           {{#if data.subProjects}}
@@ -39,6 +40,7 @@
   {{/if}}
   <div class="mt-4 flex items-center justify-between">
     <span class="text-sm font-normal uppercase tracking-wide">Total</span>
-    <span class="text-sm font-normal">{{this.totalHours}} hours</span>
+    <span class="text-sm font-normal">{{this.totalDuration.hours}}h
+      {{this.totalDuration.minutes}}m</span>
   </div>
 </div>
