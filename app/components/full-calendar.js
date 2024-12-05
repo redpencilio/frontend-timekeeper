@@ -10,7 +10,6 @@ import { task } from 'ember-concurrency';
 export default class FullCalendarComponent extends Component {
   @service dateNavigation;
   @service store;
-  @service router;
 
   @tracked calendar = null;
   calendarEl = null;
@@ -93,32 +92,6 @@ export default class FullCalendarComponent extends Component {
     document.addEventListener('keydown', this.handleKeydown.bind(this));
   }
 
-  onSaveSimple = task(async ({ duration, task }) => {
-    const workLog = this.store.createRecord('work-log', {
-      duration,
-      task,
-      date: this.clickedDateInfo.date,
-    });
-    await workLog.save();
-    this.clearPopovers();
-    this.router.refresh();
-  });
-
-  onSaveMulti = task(async (hourTaskPairs) => {
-    await Promise.all(
-      hourTaskPairs.map(async ({ duration, task }) => {
-        const workLog = this.store.createRecord('work-log', {
-          duration,
-          task,
-          date: this.clickedDateInfo.date,
-        });
-        await workLog.save();
-      }),
-    );
-    this.clearPopovers();
-    this.router.refresh();
-  });
-
   editWorkLog = task(async ({ duration, task }) => {
     const workLog = this.clickedWorkLog;
     workLog.duration = duration;
@@ -176,11 +149,22 @@ export default class FullCalendarComponent extends Component {
     this.calendar.render();
   }
 
-  @action
-  async deleteWorkLog(workLog) {
-    await workLog.destroyRecord();
+  saveSimple = task(async (context) => {
+    await this.args.onSaveSimple?.perform(context, this.clickedDateInfo.date);
     this.clearPopovers();
-    this.router.refresh();
+  });
+
+  saveMulti = task(async (hourTaskPairs) => {
+    await this.args.onSaveMulti?.perform(
+      hourTaskPairs,
+      this.clickedDateInfo.date,
+    );
+    this.clearPopovers();
+  });
+
+  @action
+  deleteWorkLog() {
+    this.args.onDeleteWorkLog?.(...arguments);
   }
 
   get clickedWorkLog() {

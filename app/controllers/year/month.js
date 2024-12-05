@@ -1,7 +1,43 @@
 import Controller from '@ember/controller';
 import taskName from '../../helpers/task-name';
+import { service } from '@ember/service';
+import { task } from 'ember-concurrency';
+import { action } from '@ember/object';
 
 export default class YearMonthContoller extends Controller {
+  @service router;
+  @service store;
+
+  onSaveSimple = task(async ({ duration, task }, date) => {
+    const workLog = this.store.createRecord('work-log', {
+      duration,
+      task,
+      date,
+    });
+    await workLog.save();
+    this.router.refresh();
+  });
+
+  onSaveMulti = task(async (hourTaskPairs, date) => {
+    await Promise.all(
+      hourTaskPairs.map(async ({ duration, task }) => {
+        const workLog = this.store.createRecord('work-log', {
+          duration,
+          task,
+          date,
+        });
+        await workLog.save();
+      }),
+    );
+    this.router.refresh();
+  });
+
+  @action
+  async deleteWorkLog(workLog) {
+    await workLog.destroyRecord();
+    this.router.refresh();
+  }
+
   get events() {
     return this.model.workLogs.map((workLog) => {
       const {

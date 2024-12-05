@@ -3,7 +3,13 @@
     <NavBar @year={{this.model.year}} @month={{this.model.month}} />
   </div>
   <div class="p-4 grow">
-    <FullCalendar @events={{this.events}} @focusDate={{this.activeDate}} />
+    <FullCalendar
+      @onDeleteWorkLog={{this.deleteWorkLog}}
+      @onSaveMulti={{this.onSaveMulti}}
+      @onSaveSimple={{this.onSaveSimple}}
+      @events={{this.events}}
+      @focusDate={{this.activeDate}}
+    />
   </div>
   <div class="h-full box-border py-4">
     <div class="flex flex-col bg-gray-100 h-full rounded-lg mr-2 shadow">
