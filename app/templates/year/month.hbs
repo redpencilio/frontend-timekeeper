@@ -8,10 +8,10 @@
     @focusDate={{this.activeDate}}
   />
 </div>
-<div class="h-full box-border py-4">
+<div class="h-full box-border py-4 min-w-96">
   <div class="flex flex-col bg-gray-100 h-full rounded-lg mr-2 shadow">
     <div class="px-4 my-4 w-full">
-      {{#if @model.timesheet.isDraft}}
+      {{#if (or (not @model.timesheet) @model.timesheet.isDraft)}}
         <Button
           class="drop-shadow w-full"
           @loading={{this.markHolidaysComplete.isRunning}}
@@ -25,6 +25,20 @@
           {{on "click" (perform this.markTimesheetComplete)}}
         >Timesheet Complete
           <span class="pl-2">{{svg-jar "check2-square"}}</span></Button>
+      {{/if}}
+    </div>
+    <div class="px-4 mb-2">
+      {{#if
+        (or
+          @model.timesheet.isAbsenceSubmitted
+          @model.timesheet.isSubmitted
+          @model.timesheet.isExported
+        )
+      }}
+        <Badge>Absence submitted</Badge>
+      {{/if}}
+      {{#if (or @model.timesheet.isSubmitted @model.timesheet.isExported)}}
+        <Badge>Timesheet submitted</Badge>
       {{/if}}
     </div>
     <Stats @workLogs={{@model.workLogs}} />

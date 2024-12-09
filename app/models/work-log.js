@@ -6,4 +6,5 @@ export default class TimeLogModel extends Model {
   @attr('date') date;
 
   @belongsTo('task', { async: true, inverse: 'workLogs' }) task;
+  @belongsTo('timesheet', { async: true, inverse: 'workLogs' }) timesheet;
 }
