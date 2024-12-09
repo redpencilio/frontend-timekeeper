@@ -12,7 +12,7 @@ export default class ProjectPillRadioGroupComponent extends Component {
         number: i,
         humanNumber: i + 1,
         label: format(dateInMonth, 'LLLL'),
-        status: null,
+        status: this.args.timesheets?.find((ts) => ts.monthNumber === i)?.status,
       });
     }
     return items;
