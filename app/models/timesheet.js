@@ -8,6 +8,10 @@ export default class TimesheetModel extends Model {
 
   @hasMany('work-log', { async: true, inverse: 'timesheet' }) workLogs;
 
+  get monthNumber() {
+    return this.start.getMonth();
+  }
+
   get isDraft() {
     return this.status === TIMESHEET_STATUSES.DRAFT;
   }

@@ -1,1 +1,6 @@
-{{outlet}}
+<div class="flex h-full">
+  <div class="overflow-scroll">
+    <NavBar @year={{this.model.year}} @timesheets={{this.model.timesheets}} />
+  </div>
+  {{outlet}}
+</div>

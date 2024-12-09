@@ -1,25 +1,32 @@
-<div class="flex h-full">
-  <div class="overflow-scroll">
-    <NavBar @year={{this.model.year}} @month={{this.model.month}} />
-  </div>
-  <div class="p-4 grow">
-    <FullCalendar
-      @onDeleteWorkLog={{this.deleteWorkLog}}
-      @onSaveMulti={{this.onSaveMulti}}
-      @onSaveSimple={{this.onSaveSimple}}
-      @events={{this.events}}
-      @focusDate={{this.activeDate}}
-    />
-  </div>
-  <div class="h-full box-border py-4">
-    <div class="flex flex-col bg-gray-100 h-full rounded-lg mr-2 shadow">
-      <div class="flex gap-2 px-8 my-4 shrink-0">
-        <Button class="drop-shadow">Holidays Complete</Button>
-        <Button class="flex items-center bg-green-500 drop-shadow">Timesheet
-          Complete
+<div class="p-4 grow">
+  <FullCalendar
+    @isDisabled={{@model.timesheet.isSubmitted}}
+    @onDeleteWorkLog={{this.deleteWorkLog}}
+    @onSaveMulti={{this.onSaveMulti}}
+    @onSaveSimple={{this.onSaveSimple}}
+    @events={{this.events}}
+    @focusDate={{this.activeDate}}
+  />
+</div>
+<div class="h-full box-border py-4">
+  <div class="flex flex-col bg-gray-100 h-full rounded-lg mr-2 shadow">
+    <div class="px-4 my-4 w-full">
+      {{#if @model.timesheet.isDraft}}
+        <Button
+          class="drop-shadow w-full"
+          @loading={{this.markHolidaysComplete.isRunning}}
+          {{on "click" (perform this.markHolidaysComplete)}}
+        >Holidays Complete</Button>
+      {{/if}}
+      {{#if @model.timesheet.isAbsenceSubmitted}}
+        <Button
+          class="drop-shadow w-full flex items-center"
+          @loading={{this.markTimesheetComplete.isRunning}}
+          {{on "click" (perform this.markTimesheetComplete)}}
+        >Timesheet Complete
           <span class="pl-2">{{svg-jar "check2-square"}}</span></Button>
-      </div>
-      <Stats @workLogs={{@model.workLogs}} />
+      {{/if}}
     </div>
+    <Stats @workLogs={{@model.workLogs}} />
   </div>
 </div>
