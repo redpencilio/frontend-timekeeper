@@ -2,24 +2,32 @@ import Component from '@glimmer/component';
 import { on } from '@ember/modifier';
 import { localCopy } from 'tracked-toolbox';
 import selectOn from 'frontend-timekeeper/modifiers/select-on';
+import disabled from 'frontend-timekeeper/modifiers/disabled';
 
 export default class ButtonComponent extends Component {
   get class() {
-    const base = 'px-4 py-2 inline-flex justify-center font-medium';
-    const cancel = 'text-gray-500';
-    const primary =
-      'border border-transparent rounded-md shadow-sm text-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500';
-    if (this.args.skin === 'mute') {
-      return [base, cancel].join(' ');
-    } else {
-      return [base, primary].join(' ');
-    }
+    const baseClass = 'px-4 py-2 inline-flex justify-center font-medium';
+    const primaryClass =
+      this.args.skin === 'primary' || !this.args.skin
+        ? 'border border-transparent rounded-md shadow-sm text-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+        : '';
+    const disabledClass = this.args.isDisabled
+      ? 'cursor-not-allowed bg-blue-400 hover:bg-blue-400'
+      : '';
+    const muteClass = this.args.skin === 'mute' ? 'text-gray-500' : '';
+
+    return `${baseClass} ${primaryClass} ${muteClass} ${disabledClass}`.trim();
   }
 
   <template>
-    <button type='button' class={{this.class}} ...attributes>
+    <button
+      type='button'
+      class={{this.class}}
+      {{disabled @isDisabled}}
+      ...attributes
+    >
       {{#if @isLoading}}
-        Loading
+        Loading...
       {{else}}
         {{yield}}
       {{/if}}
