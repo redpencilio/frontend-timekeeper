@@ -26,11 +26,16 @@ export default class YearMonthRoute extends Route {
       include: 'task',
     });
 
+    const timesheet = await this.store.queryOne('timesheet', {
+      'filter[start]': formatDate(firstOfMonth),
+    });
+
     return {
       workLogs,
       year,
       month: params.month,
       monthNumber,
+      timesheet,
     };
   }
 }

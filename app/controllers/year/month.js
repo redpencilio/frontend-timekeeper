@@ -1,14 +1,42 @@
 import Controller from '@ember/controller';
-import taskName from '../../helpers/task-name';
+import taskName from 'frontend-timekeeper/helpers/task-name';
 import { service } from '@ember/service';
-import { task } from 'ember-concurrency';
 import { action } from '@ember/object';
+import { TIMESHEET_STATUSES } from 'frontend-timekeeper/constants';
+import { startOfMonth, endOfMonth } from 'date-fns';
+import { task } from 'ember-concurrency';
+import { formatDate } from 'frontend-timekeeper/utils/format-date';
 
 export default class YearMonthContoller extends Controller {
   @service router;
   @service store;
 
+  async createTimesheet() {
+    const { year, monthNumber } = this.model;
+    if (!this.model.timesheet) {
+      this.model.timesheet = this.store.createRecord('timesheet', {
+        status: TIMESHEET_STATUSES.DRAFT,
+        start: formatDate(startOfMonth(Date.UTC(year, monthNumber))),
+        end: formatDate(endOfMonth(Date.UTC(year, monthNumber))),
+      });
+      await this.model.timesheet.save();
+    }
+  }
+
+  markTimesheetComplete = task(async () => {
+    await this.createTimesheet();
+    this.model.timesheet.status = TIMESHEET_STATUSES.SUBMITTED;
+    await this.model.timesheet.save();
+  });
+
+  markHolidaysComplete = task(async () => {
+    await this.createTimesheet();
+    this.model.timesheet.status = TIMESHEET_STATUSES.ABSENCE_SUBMITTED;
+    await this.model.timesheet.save();
+  });
+
   onSaveSimple = task(async ({ duration, task }, date) => {
+    await this.createTimesheet();
     const workLog = this.store.createRecord('work-log', {
       duration,
       task,
@@ -19,6 +47,7 @@ export default class YearMonthContoller extends Controller {
   });
 
   onSaveMulti = task(async (hourTaskPairs, date) => {
+    await this.createTimesheet();
     await Promise.all(
       hourTaskPairs.map(async ({ duration, task }) => {
         const workLog = this.store.createRecord('work-log', {
