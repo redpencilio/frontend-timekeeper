@@ -40,8 +40,12 @@ export default class FullCalendarComponent extends Component {
       initialView: 'dayGridMonth',
       events: this.args.events || [],
       droppable: false, // Allows for drag and drop of external elements
-      dateClick: this.onDateClick.bind(this),
-      eventClick: this.onEventClick.bind(this),
+      dateClick: this.args.isDisabled
+        ? () => false
+        : this.onDateClick.bind(this),
+      eventClick: this.args.isDisabled
+        ? () => false
+        : this.onEventClick.bind(this),
       eventDisplay: 'list-item',
       // selectable: true,
       dayMaxEvents: 6,
@@ -60,9 +64,8 @@ export default class FullCalendarComponent extends Component {
         start: firstDayOfMonth,
         end: lastDayOfMonth,
       },
-
       // Drag and Drop
-      editable: true, // Allows for drag and drop of internal events
+      editable: !this.args.isDisabled, // Allows for drag and drop of internal events
       eventConstraint: {
         // Where events can be dragged to
         start: firstDayOfMonth,
@@ -147,6 +150,19 @@ export default class FullCalendarComponent extends Component {
     sources.forEach((source) => source.remove());
     this.calendar.addEventSource(this.args.events);
     this.calendar.render();
+  }
+
+  @action
+  updateDisabled() {
+    this.calendar.setOption(
+      'dateClick',
+      this.args.isDisabled ? () => false : this.onDateClick.bind(this),
+    );
+    this.calendar.setOption(
+      'eventClick',
+      this.args.isDisabled ? () => false : this.onEventClick.bind(this),
+    );
+    this.calendar.setOption('editable', !this.args.isDisabled);
   }
 
   saveSimple = task(async (context) => {
