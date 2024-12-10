@@ -1,9 +1,79 @@
 <Popover @anchorElement={{@anchorElement}}>
   <div class="mx-4 mb-3">
-    <TimeLogPopover::Multi
-      @workLogs={{@workLogs}}
-      @onSave={{@onSaveMulti}}
-      @onCancel={{@onCancel}}
-    />
+    {{! template-lint-disable no-invalid-interactive }}
+    <div role="none" {{on "keydown" this.handleKeydown}}>
+      <form {{on "submit" this.submitWorkLogs}}>
+        <ul class="divide-y divide-dotted">
+          {{#each this.favoriteTaskWorkLogs as |workLog index|}}
+            {{#let workLog.task as |task|}}
+              <li>
+                <div class="mt-2 mb-2">
+                  <div class="mt-1 flex justify-between">
+                    <div class="flex items-center space-x-2">
+                      <div {{fill-color (or task.color task.parent.color)}}>
+                        {{svg-jar "clock" class="fill-inherit"}}
+                      </div>
+                      <div class="text-sm">{{task-name task}}</div>
+                    </div>
+                    {{#let (unique-id) as |inputId|}}
+                      <DurationInput
+                        id={{inputId}}
+                        @value={{workLog.duration}}
+                        @onChange={{fn this.updateDuration workLog}}
+                        {{focus-select (eq index 0)}}
+                      />
+                    {{/let}}
+                  </div>
+                </div>
+              </li>
+            {{/let}}
+          {{/each}}
+          {{#each this.addedWorkLogs as |workLog index|}}
+            <li>
+              <div class="mt-2 mb-2">
+                <div class="mt-1 flex justify-between content-center">
+                  <div class="block h-10 flex-grow mr-2">
+                    <TaskPowerSelect
+                      @excludeTasks={{this.excludeTasks}}
+                      @selectedTask={{workLog.task}}
+                      @onChange={{fn this.updateTask workLog}}
+                    />
+                  </div>
+                  <DurationInput
+                    id={{workLog.elementId}}
+                    @value={{workLog.duration}}
+                    @onChange={{fn this.updateDuration workLog}}
+                    {{focus-select (eq index this.focusHoursInput)}}
+                    {{clear-value this "focusHoursInput"}}
+                  />
+                </div>
+              </div>
+            </li>
+          {{/each}}
+          <li>
+            <div class="mt-2 mb-2">
+              <div class="mt-1 flex justify-between content-center">
+                <div class="block h-10 flex-grow mr-2">
+                  <TaskPowerSelect
+                    @excludeTasks={{this.excludeTasks}}
+                    @registerAPI={{this.registerNewProjectPowerSelect}}
+                    @onChange={{this.addTaskToList}}
+                  />
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <div class="flex justify-between mt-4">
+          <Button @skin="mute" {{on "click" this.closePopover}}>
+            Cancel
+          </Button>
+          <Button type="submit" @isLoading={{@onSave.isRunning}}>
+            Save
+          </Button>
+        </div>
+      </form>
+    </div>
   </div>
 </Popover>

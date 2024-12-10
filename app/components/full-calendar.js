@@ -173,13 +173,8 @@ export default class FullCalendarComponent extends Component {
     this.calendar.setOption('editable', !this.args.isDisabled);
   }
 
-  saveSimple = task(async (context) => {
-    await this.args.onSaveSimple?.perform(context, this.clickedDateInfo.date);
-    this.clearPopovers();
-  });
-
-  saveMulti = task(async (hourTaskPairs) => {
-    await this.args.onSaveMulti?.perform(
+  onSave = task(async (hourTaskPairs) => {
+    await this.args.onSave?.perform(
       hourTaskPairs,
       this.clickedDateInfo.date,
     );

@@ -3,7 +3,7 @@ import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { trackedReset } from 'tracked-toolbox';
 
-export default class TimeLogPopoverComponent extends Component {
+export default class TimeEditPopoverComponent extends Component {
   @service userProfile;
 
   @trackedReset({

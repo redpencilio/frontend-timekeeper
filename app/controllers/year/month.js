@@ -35,24 +35,15 @@ export default class YearMonthContoller extends Controller {
     await this.model.timesheet.save();
   });
 
-  onSaveSimple = task(async ({ duration, task }, date) => {
-    await this.createTimesheet();
-    const workLog = this.store.createRecord('work-log', {
-      duration,
-      task,
-      date,
-    });
-    await workLog.save();
-    this.router.refresh();
-  });
-
-  onSaveMulti = task(async (hourTaskPairs, date) => {
+  onSave = task(async (workLogTaskPairs, date) => {
     await this.createTimesheet();
     await Promise.all(
-      hourTaskPairs.map(async ({ duration, task, workLog }) => {
+      workLogTaskPairs.map(async ({ duration, task, workLog }) => {
         if (workLog) {
           workLog.duration = duration;
-          await workLog.save();
+          if (workLog.hasDirtyAttributes) {
+            await workLog.save();
+          }
         } else {
           const newWorkLog = this.store.createRecord('work-log', {
             duration,

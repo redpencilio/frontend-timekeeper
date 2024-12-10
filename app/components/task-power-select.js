@@ -48,11 +48,6 @@ export default class TaskPowerSelectComponent extends Component {
       event.preventDefault(); // We don't want to trigger a submit
     }
 
-    if (event.key === 'Escape' || event.key === 'Esc') {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
     return true;
   }
 

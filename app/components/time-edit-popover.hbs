@@ -1,11 +1,35 @@
 <Popover @anchorElement={{@anchorElement}}>
   <div class="mx-4 mb-3 mt-4">
-    <TimeLogPopover::Simple
-      @selectedHourLog={{@selectedHourLog}}
-      @onSave={{@onSave}}
-      @onCancel={{@onCancel}}
-      @onDelete={{@onDelete}}
-      @allowDelete={{true}}
-    />
+    <div role="none">
+      <div class="flex justify-end">
+        <button
+          type="button"
+          {{on "click" @onDelete}}
+          class="text-red-500 hover:text-red-600"
+        >
+          {{svg-jar "trash3" class="h-5 w-5"}}
+        </button>
+      </div>
+      <form {{on "submit" this.submitWorkLog}}>
+        {{#let (unique-id) as |id|}}
+          <div>
+            <label
+              for={{id}}
+              class="block text-sm font-semibold leading-6 text-gray-700"
+            >Time Worked</label>
+            <DurationInput
+              id={{id}}
+              @value={{this.duration}}
+              @onChange={{this.updateDuration}}
+              {{focus-select true}}
+            />
+          </div>
+        {{/let}}
+        <div class="flex justify-between mt-4">
+          <Button @skin="mute" {{on "click" this.closePopover}}>Cancel</Button>
+          <Button type="submit" @isLoading={{@onSave.isRunning}}>Save</Button>
+        </div>
+      </form>
+    </div>
   </div>
 </Popover>
