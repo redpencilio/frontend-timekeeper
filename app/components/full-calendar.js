@@ -6,6 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { service } from '@ember/service';
 import { task } from 'ember-concurrency';
+import { formatDate } from 'frontend-timekeeper/utils/format-date';
 
 export default class FullCalendarComponent extends Component {
   @service dateNavigation;
@@ -126,6 +127,13 @@ export default class FullCalendarComponent extends Component {
     return this.calendarEl.querySelector(`[data-date="${dateStr}"]`);
   }
 
+  get workLogsForClickedDate() {
+    const dateStr = this.clickedDateInfo.dateStr;
+    return this.args.events
+      .filter((event) => formatDate(event.start) === dateStr)
+      .map((event) => event.extendedProps.workLog);
+  }
+
   @action
   onDateClick(info) {
     this.clickedEventInfo = null;
@@ -165,13 +173,8 @@ export default class FullCalendarComponent extends Component {
     this.calendar.setOption('editable', !this.args.isDisabled);
   }
 
-  saveSimple = task(async (context) => {
-    await this.args.onSaveSimple?.perform(context, this.clickedDateInfo.date);
-    this.clearPopovers();
-  });
-
-  saveMulti = task(async (hourTaskPairs) => {
-    await this.args.onSaveMulti?.perform(
+  onSave = task(async (hourTaskPairs) => {
+    await this.args.onSave?.perform(
       hourTaskPairs,
       this.clickedDateInfo.date,
     );

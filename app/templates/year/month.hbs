@@ -2,8 +2,7 @@
   <FullCalendar
     @isDisabled={{@model.timesheet.isSubmitted}}
     @onDeleteWorkLog={{this.deleteWorkLog}}
-    @onSaveMulti={{this.onSaveMulti}}
-    @onSaveSimple={{this.onSaveSimple}}
+    @onSave={{this.onSave}}
     @events={{this.events}}
     @focusDate={{this.activeDate}}
   />

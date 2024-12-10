@@ -1,8 +1,8 @@
 {{#if this.clickedDateInfo}}
   <TimeLogPopover
     @anchorElement={{this.clickedDateElement}}
-    @onSaveSimple={{this.saveSimple}}
-    @onSaveMulti={{this.saveMulti}}
+    @workLogs={{this.workLogsForClickedDate}}
+    @onSave={{this.onSave}}
     @onCancel={{this.onCancel}}
   />
 {{/if}}

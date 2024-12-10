@@ -7,7 +7,7 @@ import taskName from 'frontend-timekeeper/helpers/task-name';
 
 export default class TaskPowerSelectComponent extends Component {
   @service store;
-  @tracked options;
+  @tracked _fetchedTasks = [];
 
   constructor() {
     super(...arguments);
@@ -21,8 +21,15 @@ export default class TaskPowerSelectComponent extends Component {
       sort: 'parent.customer.name,parent.name',
     });
 
-    this.options = leafTasks;
+    this._fetchedTasks = leafTasks;
   });
+
+  get options() {
+    return this._fetchedTasks.filter(
+      (task) =>
+        !this.args.excludeTasks?.map((task) => task.id)?.includes(task.id),
+    );
+  }
 
   matcher(option, searchTerm) {
     const name = taskName(option);
@@ -39,11 +46,6 @@ export default class TaskPowerSelectComponent extends Component {
 
     if (event.key === 'Enter') {
       event.preventDefault(); // We don't want to trigger a submit
-    }
-
-    if (event.key === 'Escape' || event.key === 'Esc') {
-      event.preventDefault();
-      event.stopPropagation();
     }
 
     return true;
