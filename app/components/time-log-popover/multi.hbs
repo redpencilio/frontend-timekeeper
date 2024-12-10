@@ -32,6 +32,7 @@
             <div class="mt-1 flex justify-between content-center">
               <div class="block h-10 flex-grow mr-2">
                 <TaskPowerSelect
+                  @excludeTasks={{this.excludeTasks}}
                   @selectedTask={{workLog.task}}
                   @onChange={{fn this.updateTask workLog}}
                 />
@@ -52,6 +53,7 @@
           <div class="mt-1 flex justify-between content-center">
             <div class="block h-10 flex-grow mr-2">
               <TaskPowerSelect
+                @excludeTasks={{this.excludeTasks}}
                 @registerAPI={{this.registerNewProjectPowerSelect}}
                 @onChange={{this.addTaskToList}}
               />

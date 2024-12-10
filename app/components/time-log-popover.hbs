@@ -1,21 +1,9 @@
 <Popover @anchorElement={{@anchorElement}}>
   <div class="mx-4 mb-3">
-    <div class="flex justify-end mt-4 mb-4">
-      <Toggle::Small
-        @checked={{this.localStorage.useAdvancedLogPopover}}
-        @onToggle={{this.onToggle}}
-      >Advanced</Toggle::Small>
-    </div>
-    {{#if this.localStorage.useAdvancedLogPopover}}
-      <TimeLogPopover::Multi
-        @onSave={{@onSaveMulti}}
-        @onCancel={{@onCancel}}
-      />
-    {{else}}
-      <TimeLogPopover::Simple
-        @onSave={{@onSaveSimple}}
-        @onCancel={{@onCancel}}
-      />
-    {{/if}}
+    <TimeLogPopover::Multi
+      @workLogs={{@workLogs}}
+      @onSave={{@onSaveMulti}}
+      @onCancel={{@onCancel}}
+    />
   </div>
 </Popover>

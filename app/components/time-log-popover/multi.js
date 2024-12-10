@@ -12,24 +12,52 @@ export default class TimeLogPopoverComponent extends Component {
 
   @tracked focusHoursInput = null;
 
-  constructor() {
-    super(...arguments);
-  }
-
   @trackedReset({
-    memo: 'userProfile.favoriteTasks',
+    memo: 'args.workLogs',
     update() {
-      return this.userProfile.favoriteTasks.map((task) => ({
-        task,
-        duration: { hours: 0, minutes: 0 },
-      }));
+      return this.userProfile.favoriteTasks.map((task) => {
+        const workLog = this.args.workLogs.find(
+          (workLog) => workLog.task.id === task.id,
+        );
+        return {
+          task,
+          duration: workLog?.duration ?? { hours: 0, minutes: 0 },
+          workLog,
+        };
+      });
     },
   })
   favoriteTaskWorkLogs = [];
 
-  @tracked addedWorkLogs = [];
+  @trackedReset({
+    memo: 'args.workLogs',
+    update() {
+      return [
+        ...this.args.workLogs
+          .filter(
+            (workLog) =>
+              !this.userProfile.favoriteTasks
+                .map((task) => task.id)
+                .includes(workLog.task.id),
+          )
+          .map((workLog) => ({
+            duration: workLog.duration,
+            task: workLog.task,
+            workLog,
+          })),
+      ];
+    },
+  })
+  addedWorkLogs = [];
 
   newProjectPowerSelectApi = null;
+
+  get excludeTasks() {
+    return [
+      ...this.userProfile.favoriteTasks,
+      ...this.addedWorkLogs.map((log) => log.task),
+    ];
+  }
 
   @action
   closePopover() {
@@ -61,17 +89,11 @@ export default class TimeLogPopoverComponent extends Component {
   @action
   submitWorkLogs(event) {
     event.preventDefault();
-    const hourProjectPairs = [
-      ...this.favoriteTaskWorkLogs.map(({ duration, task }) => ({
-        duration,
-        task,
-      })),
-      ...this.addedWorkLogs.map(({ duration, task }) => ({
-        duration,
-        task,
-      })),
+    const workLogTaskPairs = [
+      ...this.favoriteTaskWorkLogs,
+      ...this.addedWorkLogs,
     ].filter(({ duration: { hours, minutes } }) => hours > 0 || minutes > 0);
-    this.args.onSave?.perform(hourProjectPairs);
+    this.args.onSave?.perform(workLogTaskPairs);
   }
 
   @action

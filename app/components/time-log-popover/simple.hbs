@@ -24,24 +24,26 @@
       />
     </div>
 
-    <div class="mt-2">
-      <label
-        for="task"
-        class="block text-sm font-semibold text-gray-700"
-      >Task</label>
-      <div class="mt-1">
-        <FavouriteTasksRadioGroup
+    {{#unless @selectedHourLog}}
+      <div class="mt-2">
+        <label
+          for="task"
+          class="block text-sm font-semibold text-gray-700"
+        >Task</label>
+        <div class="mt-1">
+          <FavouriteTasksRadioGroup
+            @onChange={{set this "task"}}
+            @selectedTask={{this.task}}
+          />
+        </div>
+      </div>
+      <div class="block h-10 mt-2">
+        <TaskPowerSelect
           @onChange={{set this "task"}}
           @selectedTask={{this.task}}
         />
       </div>
-    </div>
-    <div class="block h-10 mt-2">
-      <TaskPowerSelect
-        @onChange={{set this "task"}}
-        @selectedTask={{this.task}}
-      />
-    </div>
+    {{/unless}}
     <div class="flex justify-between mt-4">
       <Button @skin="mute" {{on "click" this.closePopover}}>Cancel</Button>
       <Button type="submit" @isLoading={{@onSave.isRunning}}>Save</Button>

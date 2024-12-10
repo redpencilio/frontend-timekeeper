@@ -6,6 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { service } from '@ember/service';
 import { task } from 'ember-concurrency';
+import { formatDate } from 'frontend-timekeeper/utils/format-date';
 
 export default class FullCalendarComponent extends Component {
   @service dateNavigation;
@@ -124,6 +125,13 @@ export default class FullCalendarComponent extends Component {
       ? this.clickedEventInfo.event.startStr
       : this.clickedDateInfo.dateStr;
     return this.calendarEl.querySelector(`[data-date="${dateStr}"]`);
+  }
+
+  get workLogsForClickedDate() {
+    const dateStr = this.clickedDateInfo.dateStr;
+    return this.args.events
+      .filter((event) => formatDate(event.start) === dateStr)
+      .map((event) => event.extendedProps.workLog);
   }
 
   @action

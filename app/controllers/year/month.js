@@ -49,13 +49,18 @@ export default class YearMonthContoller extends Controller {
   onSaveMulti = task(async (hourTaskPairs, date) => {
     await this.createTimesheet();
     await Promise.all(
-      hourTaskPairs.map(async ({ duration, task }) => {
-        const workLog = this.store.createRecord('work-log', {
-          duration,
-          task,
-          date,
-        });
-        await workLog.save();
+      hourTaskPairs.map(async ({ duration, task, workLog }) => {
+        if (workLog) {
+          workLog.duration = duration;
+          await workLog.save();
+        } else {
+          const newWorkLog = this.store.createRecord('work-log', {
+            duration,
+            task,
+            date,
+          });
+          await newWorkLog.save();
+        }
       }),
     );
     this.router.refresh();
