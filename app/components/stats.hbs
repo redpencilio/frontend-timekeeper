@@ -20,19 +20,21 @@
             </div>
 
             {{#if data.subProjects}}
-              <ul class="ml-4 mt-2 space-y-2">
-                {{#each-in data.subProjects as |subprojectId subdata|}}
-                  <li class="flex items-center justify-between space-x-2">
-                    <span class="text-sm text-gray-700">
-                      {{this.getSubProjectNameById subprojectId}}
-                    </span>
-                    <span class="text-sm text-gray-700">
-                      {{subdata.totalDuration.hours}}h
-                      {{subdata.totalDuration.minutes}}m
-                    </span>
-                  </li>
-                {{/each-in}}
-              </ul>
+              {{#unless (this.shouldHide data.subProjects)}}
+                <ul class="ml-4 mt-2 space-y-2">
+                  {{#each-in data.subProjects as |subprojectId subdata|}}
+                    <li class="flex items-center justify-between space-x-2">
+                      <span class="text-sm text-gray-700">
+                        {{this.getSubProjectNameById subprojectId}}
+                      </span>
+                      <span class="text-sm text-gray-700">
+                        {{subdata.totalDuration.hours}}h
+                        {{subdata.totalDuration.minutes}}m
+                      </span>
+                    </li>
+                  {{/each-in}}
+                </ul>
+              {{/unless}}
             {{/if}}
           </li>
         {{/each-in}}

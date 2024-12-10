@@ -8,6 +8,13 @@ export default class StatsComponent extends Component {
   getProjectNameById = (id) => this.store.peekRecord('task', id).name;
   getSubProjectNameById = (id) => this.store.peekRecord('task', id).name;
 
+  shouldHide = (taskMap) => {
+    const keys = Object.keys(taskMap);
+    return (
+      keys.length === 1 && this.getSubProjectNameById(keys[0]) === 'General'
+    );
+  };
+
   get totalDuration() {
     if (!this.args.workLogs) {
       return 0;
