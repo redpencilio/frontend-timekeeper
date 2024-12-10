@@ -3,5 +3,5 @@ export default class AccountModel extends Model {
   @attr('string') uri;
   @attr('string') accountName;
   @attr('string') accountServiceHomepage;
-  @belongsTo('user', { inverse: 'account', async: true }) user;
+  @belongsTo('person', { inverse: 'account', async: true }) person;
 }
