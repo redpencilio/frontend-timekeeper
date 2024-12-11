@@ -183,6 +183,7 @@ export default class FullCalendarComponent extends Component {
 
   @action
   deleteWorkLog() {
+    this.clearPopovers();
     this.args.onDeleteWorkLog?.(...arguments);
   }
 

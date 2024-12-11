@@ -12,7 +12,7 @@
     @selectedHourLog={{this.clickedWorkLog}}
     @onSave={{this.editWorkLog}}
     @onCancel={{this.onCancel}}
-    @onDelete={{fn @onDeleteWorkLog this.clickedWorkLog}}
+    @onDelete={{fn this.deleteWorkLog this.clickedWorkLog}}
   />
 {{/if}}
 <div
