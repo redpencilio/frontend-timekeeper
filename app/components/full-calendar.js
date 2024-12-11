@@ -9,7 +9,6 @@ import { task } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 
 export default class FullCalendarComponent extends Component {
-  @service dateNavigation;
   @service store;
 
   @tracked calendar = null;
@@ -73,20 +72,6 @@ export default class FullCalendarComponent extends Component {
         end: lastDayOfMonth,
       },
       eventDrop: this.onEventDrop.bind(this),
-      customButtons: {
-        prev: {
-          text: 'Previous',
-          click: this.dateNavigation.previousMonth,
-        },
-        next: {
-          text: 'Next',
-          click: this.dateNavigation.nextMonth,
-        },
-        today: {
-          text: 'Today',
-          click: this.dateNavigation.today,
-        },
-      },
     });
 
     this.calendar.gotoDate(focusDate);
