@@ -15,7 +15,7 @@ export default class UserProfileService extends Service {
       this.account = await this.store.findRecord('account', accountId, {
         include: 'person',
       });
-      this.user = await this.account.user;
+      this.user = await this.account.person;
       this.favoriteTasks = await this.loadFavoriteTasks();
     } else {
       this.user = null;
@@ -23,6 +23,7 @@ export default class UserProfileService extends Service {
   }
 
   async loadFavoriteTasks() {
+    // TODO filter work-logs by user
     const logs = await this.store.query('work-log', {
       sort: '-date',
       page: {
