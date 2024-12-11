@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { monthsInYear } from 'date-fns/constants';
 import { format } from 'date-fns';
 
-export default class ProjectPillRadioGroupComponent extends Component {
+export default class NavBarComponent extends Component {
   // TODO fetch timesheet status for each month
   get months() {
     const items = [];
