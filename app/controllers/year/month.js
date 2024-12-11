@@ -2,10 +2,11 @@ import Controller from '@ember/controller';
 import taskName from 'frontend-timekeeper/helpers/task-name';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
-import { TIMESHEET_STATUSES } from 'frontend-timekeeper/constants';
+import constants from 'frontend-timekeeper/constants';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { task } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
+const { TIMESHEET_STATUSES } = constants;
 
 export default class YearMonthContoller extends Controller {
   @service router;

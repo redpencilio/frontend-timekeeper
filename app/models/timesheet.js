@@ -1,5 +1,6 @@
-import Model, { attr, hasMany, belongsTo } from '@ember-data/model';
-import { TIMESHEET_STATUSES } from '../constants';
+import Model, { attr, hasMany } from '@ember-data/model';
+import constants from '../constants';
+const { TIMESHEET_STATUSES } = constants;
 
 export default class TimesheetModel extends Model {
   @attr status;
@@ -15,12 +16,15 @@ export default class TimesheetModel extends Model {
   get isDraft() {
     return this.status === TIMESHEET_STATUSES.DRAFT;
   }
+
   get isAbsenceSubmitted() {
     return this.status === TIMESHEET_STATUSES.ABSENCE_SUBMITTED;
   }
+
   get isSubmitted() {
     return this.status === TIMESHEET_STATUSES.SUBMITTED;
   }
+
   get isExported() {
     return this.status === TIMESHEET_STATUSES.EXPORTED;
   }
