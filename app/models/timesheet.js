@@ -1,4 +1,4 @@
-import Model, { attr, hasMany } from '@ember-data/model';
+import Model, { attr, belongsTo, hasMany } from '@ember-data/model';
 import constants from '../constants';
 const { TIMESHEET_STATUSES } = constants;
 
@@ -7,6 +7,7 @@ export default class TimesheetModel extends Model {
   @attr('date') start;
   @attr('date') end;
 
+  @belongsTo('person', { async: true, inverse: 'timesheets' }) person;
   @hasMany('work-log', { async: true, inverse: 'timesheet' }) workLogs;
 
   get monthNumber() {

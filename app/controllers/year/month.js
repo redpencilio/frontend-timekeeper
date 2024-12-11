@@ -11,6 +11,7 @@ const { TIMESHEET_STATUSES } = constants;
 export default class YearMonthContoller extends Controller {
   @service router;
   @service store;
+  @service userProfile;
 
   async createTimesheet() {
     const { year, monthNumber } = this.model;
@@ -19,6 +20,7 @@ export default class YearMonthContoller extends Controller {
         status: TIMESHEET_STATUSES.DRAFT,
         start: formatDate(startOfMonth(Date.UTC(year, monthNumber))),
         end: formatDate(endOfMonth(Date.UTC(year, monthNumber))),
+        person: this.userProfile.user,
       });
       await this.model.timesheet.save();
     }
