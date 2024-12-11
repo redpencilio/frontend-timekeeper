@@ -9,14 +9,14 @@ export default class YearRoute extends Route {
   @service store;
 
   beforeModel(transition) {
+    this.session.requireAuthentication(transition, 'login');
+
     let { year } = this.paramsFor(this.routeName);
     year = Number(year);
 
     if (isNaN(year) || year < 0) {
       this.router.transitionTo('404');
     }
-
-    this.session.requireAuthentication(transition, 'login');
   }
 
   async model(params) {
