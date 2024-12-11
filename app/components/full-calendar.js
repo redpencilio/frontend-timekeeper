@@ -143,7 +143,7 @@ export default class FullCalendarComponent extends Component {
   }
 
   @action
-  onCancel() {
+  cancel() {
     this.clearPopovers();
   }
 
@@ -173,7 +173,7 @@ export default class FullCalendarComponent extends Component {
     this.calendar.setOption('editable', !this.args.isDisabled);
   }
 
-  onSave = task(async (hourTaskPairs) => {
+  save = task(async (hourTaskPairs) => {
     await this.args.onSave?.perform(
       hourTaskPairs,
       this.clickedDateInfo.date,
