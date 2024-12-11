@@ -8,8 +8,12 @@ import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration'
 const getDurationFromString = (input) => {
   let result = { hours: 0, minutes: 0 };
 
-  if (!input || typeof input !== 'string') {
-    throw new Error('Input must be a non-empty string');
+  if (typeof input !== 'string') {
+    throw new Error('Input must be a string');
+  }
+
+  if (!input) {
+    return result;
   }
 
   // Check for fractional hours (e.g., "1.5")
