@@ -29,6 +29,7 @@ export default class UserProfileService extends Service {
       page: {
         size: 100,
       },
+      'filter[person][:id:]': this.user?.id,
       include: 'task',
     });
 

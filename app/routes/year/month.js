@@ -6,6 +6,7 @@ import { formatDate } from 'frontend-timekeeper/utils/format-date';
 export default class YearMonthRoute extends Route {
   @service store;
   @service router;
+  @service userProfile;
 
   beforeModel(transition) {
     // Check if month is a valid number
@@ -22,6 +23,7 @@ export default class YearMonthRoute extends Route {
     const workLogs = await this.store.queryAll('work-log', {
       'filter[:gte:date]': formatDate(firstOfMonth),
       'filter[:lt:date]': formatDate(firstOfNextMonth),
+      'filter[person][:id:]': this.userProfile.user.id,
       include: 'task',
     });
 

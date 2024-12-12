@@ -10,6 +10,7 @@ const { TIMESHEET_STATUSES } = constants;
 export default class YearMonthContoller extends Controller {
   @service router;
   @service store;
+  @service userProfile;
 
   @tracked timesheet;
 
@@ -36,6 +37,7 @@ export default class YearMonthContoller extends Controller {
             duration,
             task,
             date,
+            person: this.userProfile.user,
           });
           await newWorkLog.save();
         }
