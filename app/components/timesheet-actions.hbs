@@ -1,0 +1,30 @@
+<div class="mt-4 px-4 w-full">
+  {{#if (or (not @timesheet) @timesheet.isDraft)}}
+    <Button class="mb-4 drop-shadow w-full"
+      @loading={{this.submitHolidays.isRunning}}
+      {{on "click" (perform this.submitHolidays)}}>
+      Submit holidays
+    </Button>
+  {{else if @timesheet.isAbsenceSubmitted}}
+    <Button class="mb-4 drop-shadow w-full flex items-center"
+      @loading={{this.submitTimesheet.isRunning}}
+      {{on "click" (perform this.submitTimesheet)}}>
+      Submit timesheet
+      <span class="pl-2">{{svg-jar "check2-square"}}</span>
+    </Button>
+  {{/if}}
+</div>
+<div class="px-4 mb-2">
+  {{#if
+       (or
+       @timesheet.isAbsenceSubmitted
+       @timesheet.isSubmitted
+       @timesheet.isExported
+       )
+  }}
+    <Badge>Absence submitted</Badge>
+  {{/if}}
+  {{#if (or @timesheet.isSubmitted @timesheet.isExported)}}
+    <Badge>Timesheet submitted</Badge>
+  {{/if}}
+</div>

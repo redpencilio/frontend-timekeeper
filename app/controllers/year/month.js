@@ -14,17 +14,19 @@ export default class YearMonthContoller extends Controller {
 
   @tracked timesheet;
 
-  markHolidaysComplete = task(async () => {
+  @action
+  async submitHolidays() {
     this.timesheet.status = TIMESHEET_STATUSES.ABSENCE_SUBMITTED;
     await this.timesheet.save();
-  });
+  }
 
-  markTimesheetComplete = task(async () => {
+  @action
+  async submitTimesheet() {
     this.timesheet.status = TIMESHEET_STATUSES.SUBMITTED;
     await this.timesheet.save();
-  });
+  }
 
-  onSave = task(async (workLogTaskPairs, date) => {
+  save = task(async (workLogTaskPairs, date) => {
     await Promise.all(
       workLogTaskPairs.map(async ({ duration, task, workLog }) => {
         if (workLog) {

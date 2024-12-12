@@ -2,44 +2,17 @@
   <FullCalendar
     @isDisabled={{this.timesheet.isSubmitted}}
     @onDeleteWorkLog={{this.deleteWorkLog}}
-    @onSave={{this.onSave}}
+    @onSave={{this.save}}
     @events={{this.events}}
     @focusDate={{this.activeDate}}
   />
 </div>
 <div class="h-full box-border py-4 min-w-96">
   <div class="flex flex-col bg-gray-100 h-full rounded-lg mr-2 shadow">
-    <div class="px-4 my-4 w-full">
-      {{#if (or (not this.timesheet) this.timesheet.isDraft)}}
-        <Button
-          class="drop-shadow w-full"
-          @loading={{this.markHolidaysComplete.isRunning}}
-          {{on "click" (perform this.markHolidaysComplete)}}
-        >Holidays Complete</Button>
-      {{/if}}
-      {{#if this.timesheet.isAbsenceSubmitted}}
-        <Button
-          class="drop-shadow w-full flex items-center"
-          @loading={{this.markTimesheetComplete.isRunning}}
-          {{on "click" (perform this.markTimesheetComplete)}}
-        >Timesheet Complete
-          <span class="pl-2">{{svg-jar "check2-square"}}</span></Button>
-      {{/if}}
-    </div>
-    <div class="px-4 mb-2">
-      {{#if
-        (or
-          this.timesheet.isAbsenceSubmitted
-          this.timesheet.isSubmitted
-          this.timesheet.isExported
-        )
-      }}
-        <Badge>Absence submitted</Badge>
-      {{/if}}
-      {{#if (or this.timesheet.isSubmitted this.timesheet.isExported)}}
-        <Badge>Timesheet submitted</Badge>
-      {{/if}}
-    </div>
+    <TimesheetActions
+      @timesheet={{this.timesheet}}
+      @onSubmitHolidays={{this.submitHolidays}}
+      @onSubmitTimesheet={{this.submitTimesheet}} />
     <Stats @workLogs={{@model.workLogs}} />
   </div>
 </div>
