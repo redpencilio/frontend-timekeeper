@@ -2,8 +2,8 @@
   <TimeLogPopover
     @anchorElement={{this.clickedDateElement}}
     @workLogs={{this.workLogsForClickedDate}}
-    @onSave={{this.onSave}}
-    @onCancel={{this.onCancel}}
+    @onSave={{this.save}}
+    @onCancel={{this.cancel}}
   />
 {{/if}}
 {{#if this.clickedEventInfo}}
@@ -11,8 +11,8 @@
     @anchorElement={{this.clickedDateElement}}
     @selectedHourLog={{this.clickedWorkLog}}
     @onSave={{this.editWorkLog}}
-    @onCancel={{this.onCancel}}
-    @onDelete={{fn @onDeleteWorkLog this.clickedWorkLog}}
+    @onCancel={{this.cancel}}
+    @onDelete={{fn this.deleteWorkLog this.clickedWorkLog}}
   />
 {{/if}}
 <div

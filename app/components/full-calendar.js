@@ -9,7 +9,6 @@ import { task } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 
 export default class FullCalendarComponent extends Component {
-  @service dateNavigation;
   @service store;
 
   @tracked calendar = null;
@@ -73,20 +72,6 @@ export default class FullCalendarComponent extends Component {
         end: lastDayOfMonth,
       },
       eventDrop: this.onEventDrop.bind(this),
-      customButtons: {
-        prev: {
-          text: 'Previous',
-          click: this.dateNavigation.previousMonth,
-        },
-        next: {
-          text: 'Next',
-          click: this.dateNavigation.nextMonth,
-        },
-        today: {
-          text: 'Today',
-          click: this.dateNavigation.today,
-        },
-      },
     });
 
     this.calendar.gotoDate(focusDate);
@@ -143,7 +128,7 @@ export default class FullCalendarComponent extends Component {
   }
 
   @action
-  onCancel() {
+  cancel() {
     this.clearPopovers();
   }
 
@@ -173,7 +158,7 @@ export default class FullCalendarComponent extends Component {
     this.calendar.setOption('editable', !this.args.isDisabled);
   }
 
-  onSave = task(async (hourTaskPairs) => {
+  save = task(async (hourTaskPairs) => {
     await this.args.onSave?.perform(
       hourTaskPairs,
       this.clickedDateInfo.date,
@@ -183,6 +168,7 @@ export default class FullCalendarComponent extends Component {
 
   @action
   deleteWorkLog() {
+    this.clearPopovers();
     this.args.onDeleteWorkLog?.(...arguments);
   }
 
