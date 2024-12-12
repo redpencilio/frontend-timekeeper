@@ -82,15 +82,10 @@ export default class FullCalendarComponent extends Component {
     this.clickedEventInfo = info;
   }
 
-  onEventDrop(info) {
-    const newLog = {
-      ...info.oldEvent.extendedProps.hourLog,
-      date: info.event.startStr,
-    };
-    this.mockData.updateHourLogById(
-      info.oldEvent.extendedProps.hourLog.id,
-      newLog,
-    );
+  async onEventDrop(info) {
+    const { workLog } = info.oldEvent.extendedProps;
+    workLog.date = info.event.start;
+    await workLog.save();
   }
 
   get clickedDateElement() {
