@@ -3,7 +3,6 @@ import { monthsInYear } from 'date-fns/constants';
 import { format } from 'date-fns';
 
 export default class NavBarComponent extends Component {
-  // TODO fetch timesheet status for each month
   get months() {
     const items = [];
     for (let i = 0; i < monthsInYear; i++) {
@@ -12,7 +11,7 @@ export default class NavBarComponent extends Component {
         number: i,
         humanNumber: i + 1,
         label: format(dateInMonth, 'LLLL'),
-        status: this.args.timesheets?.find((ts) => ts.monthNumber === i)?.status,
+        timesheet: this.args.timesheets.find((timesheet) => timesheet.start.getMonth() === i),
       });
     }
     return items;

@@ -2,44 +2,28 @@ import Controller from '@ember/controller';
 import taskName from 'frontend-timekeeper/helpers/task-name';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
-import constants from 'frontend-timekeeper/constants';
-import { startOfMonth, endOfMonth } from 'date-fns';
 import { task } from 'ember-concurrency';
-import { formatDate } from 'frontend-timekeeper/utils/format-date';
+import { tracked } from '@glimmer/tracking';
+import constants from 'frontend-timekeeper/constants';
 const { TIMESHEET_STATUSES } = constants;
 
 export default class YearMonthContoller extends Controller {
   @service router;
   @service store;
-  @service userProfile;
 
-  async createTimesheet() {
-    const { year, monthNumber } = this.model;
-    if (!this.model.timesheet) {
-      this.model.timesheet = this.store.createRecord('timesheet', {
-        status: TIMESHEET_STATUSES.DRAFT,
-        start: formatDate(startOfMonth(Date.UTC(year, monthNumber))),
-        end: formatDate(endOfMonth(Date.UTC(year, monthNumber))),
-        person: this.userProfile.user,
-      });
-      await this.model.timesheet.save();
-    }
-  }
-
-  markTimesheetComplete = task(async () => {
-    await this.createTimesheet();
-    this.model.timesheet.status = TIMESHEET_STATUSES.SUBMITTED;
-    await this.model.timesheet.save();
-  });
+  @tracked timesheet;
 
   markHolidaysComplete = task(async () => {
-    await this.createTimesheet();
-    this.model.timesheet.status = TIMESHEET_STATUSES.ABSENCE_SUBMITTED;
-    await this.model.timesheet.save();
+    this.timesheet.status = TIMESHEET_STATUSES.ABSENCE_SUBMITTED;
+    await this.timesheet.save();
+  });
+
+  markTimesheetComplete = task(async () => {
+    this.timesheet.status = TIMESHEET_STATUSES.SUBMITTED;
+    await this.timesheet.save();
   });
 
   onSave = task(async (workLogTaskPairs, date) => {
-    await this.createTimesheet();
     await Promise.all(
       workLogTaskPairs.map(async ({ duration, task, workLog }) => {
         if (workLog) {
@@ -92,6 +76,6 @@ export default class YearMonthContoller extends Controller {
   }
 
   get activeDate() {
-    return new Date(this.model.year, this.model.monthNumber);
+    return new Date(this.model.year, this.model.month);
   }
 }
