@@ -4,6 +4,7 @@ import { tracked } from '@glimmer/tracking';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import { startOfMonth, endOfMonth } from 'date-fns';
 import { service } from '@ember/service';
 import { task } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
@@ -22,18 +23,8 @@ export default class FullCalendarComponent extends Component {
     this.calendarEl = element;
 
     const focusDate = this.args.focusDate;
-    // TODO use date-fns lib to avoid edge cases / timezone issue
-    // E.g. https://date-fns.org/v4.1.0/docs/startOfMonth
-    const firstDayOfMonth = new Date(
-      focusDate.getFullYear(),
-      focusDate.getMonth(),
-      1,
-    ); // First day of the current month
-    const lastDayOfMonth = new Date(
-      focusDate.getFullYear(),
-      focusDate.getMonth() + 1,
-      1,
-    ); // Last day of the current month
+    const firstDayOfMonth = startOfMonth(this.args.focusDate);
+    const lastDayOfMonth = endOfMonth(this.args.focusDate);
 
     this.calendar = new Calendar(element, {
       plugins: [interactionPlugin, dayGridPlugin],
@@ -68,8 +59,8 @@ export default class FullCalendarComponent extends Component {
       editable: !this.args.isDisabled, // Allows for drag and drop of internal events
       eventConstraint: {
         // Where events can be dragged to
-        start: firstDayOfMonth,
-        end: lastDayOfMonth,
+        start: formatDate(firstDayOfMonth),
+        end: formatDate(lastDayOfMonth),
       },
       eventDrop: this.onEventDrop.bind(this),
     });
