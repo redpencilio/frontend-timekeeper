@@ -12,7 +12,7 @@ export default class YearRoute extends Route {
   @service store;
   @service userProfile;
 
-  beforeModel(transition) {
+  async beforeModel(transition) {
     this.session.requireAuthentication(transition, 'login');
 
     const { year } = this.paramsFor(this.routeName);
@@ -21,6 +21,8 @@ export default class YearRoute extends Route {
     if (isNaN(this.year) || this.year < 0) {
       this.router.transitionTo('404');
     }
+
+    await this.userProfile.waitForUser.perform();
   }
 
   async model() {

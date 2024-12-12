@@ -1,5 +1,6 @@
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
+import { task, waitForProperty } from 'ember-concurrency';
 
 export default class UserProfileService extends Service {
   @service session;
@@ -21,6 +22,10 @@ export default class UserProfileService extends Service {
       this.user = null;
     }
   }
+
+  waitForUser = task(async () => {
+    await waitForProperty(this, 'user');
+  });
 
   async loadFavoriteTasks() {
     // TODO filter work-logs by user
