@@ -5,13 +5,10 @@ import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { startOfMonth, endOfMonth } from 'date-fns';
-import { service } from '@ember/service';
 import { task } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 
 export default class FullCalendarComponent extends Component {
-  @service store;
-
   @tracked calendar = null;
   calendarEl = null;
 
