@@ -38,7 +38,9 @@ export default class YearRoute extends Route {
     // Create draft records for missing timesheets
     const draftTimesheets = [];
     for (let i = 0; i < monthsInYear; i++) {
-      const timesheetForMonth = timesheets.find((timesheet) => timesheet.start.getMonth() === i);
+      const timesheetForMonth = timesheets.find(
+        (timesheet) => timesheet.start.getMonth() === i,
+      );
       if (!timesheetForMonth) {
         const timesheet = this.store.createRecord('timesheet', {
           status: TIMESHEET_STATUSES.DRAFT,

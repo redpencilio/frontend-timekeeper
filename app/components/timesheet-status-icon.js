@@ -1,5 +1,3 @@
 import Component from '@glimmer/component';
 
-export default class TimesheetStatusIconComponent extends Component {
-
-}
+export default class TimesheetStatusIconComponent extends Component {}

@@ -6,6 +6,10 @@ export default class IndexRoute extends Route {
 
   beforeModel() {
     const now = new Date();
-    this.router.transitionTo('year.month', now.getFullYear(), now.getMonth() + 1);
+    this.router.transitionTo(
+      'year.month',
+      now.getFullYear(),
+      now.getMonth() + 1,
+    );
   }
 }

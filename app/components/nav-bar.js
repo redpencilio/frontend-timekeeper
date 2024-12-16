@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { service } from '@ember/service';
 
 export default class NavBarComponent extends Component {
-  @service userProfile; 
+  @service userProfile;
 
   get months() {
     const items = [];
@@ -14,7 +14,9 @@ export default class NavBarComponent extends Component {
         number: i,
         humanNumber: i + 1,
         label: format(dateInMonth, 'LLLL'),
-        timesheet: this.args.timesheets.find((timesheet) => timesheet.start.getMonth() === i),
+        timesheet: this.args.timesheets.find(
+          (timesheet) => timesheet.start.getMonth() === i,
+        ),
       });
     }
     return items;

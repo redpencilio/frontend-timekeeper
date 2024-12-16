@@ -54,9 +54,11 @@ export default class UserProfileService extends Service {
       .slice(0, 3)
       .map(([taskId]) => taskId);
 
-    const top3Tasks = await Promise.all(top3TaskIds.map(async (taskId) => {
-      return await this.store.findRecord('task', taskId);
-    }));
+    const top3Tasks = await Promise.all(
+      top3TaskIds.map(async (taskId) => {
+        return await this.store.findRecord('task', taskId);
+      }),
+    );
 
     return top3Tasks;
   }

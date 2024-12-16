@@ -37,7 +37,9 @@ export default class YearMonthRoute extends Route {
   setupController(controller, model) {
     super.setupController(...arguments);
     const { timesheets } = this.modelFor('year');
-    const timesheet = timesheets.find((timesheet) => timesheet.start.getMonth() === model.month);
+    const timesheet = timesheets.find(
+      (timesheet) => timesheet.start.getMonth() === model.month,
+    );
     controller.timesheet = timesheet;
   }
 }
