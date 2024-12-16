@@ -1,9 +1,10 @@
-import Model, { attr, belongsTo, hasMany } from '@ember-data/model';
+import Model, { attr, hasMany } from '@ember-data/model';
 
 export default class PersonModel extends Model {
   @attr('string') uri;
   @attr('string') name;
-  @belongsTo('account', { inverse: 'person', async: true }) account;
+  @hasMany('account', { inverse: 'person', async: true }) accounts;
   @hasMany('timesheet', { inverse: 'person', async: true }) timesheets;
   @hasMany('work-log', { inverse: 'person', async: true }) workLogs;
+  @hasMany('user-group', { inverse: 'persons', async: true }) userGroups;
 }

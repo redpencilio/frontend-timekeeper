@@ -1,0 +1,25 @@
+{{page-title "User management"}}
+<div class="p-6">
+  <h1 class="text-xl font-medium">Users management</h1>
+  <div class="mt-4">
+    <table class="divide-y divide-gray-200">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Kimai account</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each @model as |person|}}
+          <tr>
+            <td class="pr-4">{{person.name}}</td>
+            <td class="p-1">
+              <UserEdit
+                @person={{person}} />
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -10,6 +10,9 @@ Router.map(function () {
   this.route('year', { path: '/:year' }, function () {
     this.route('month', { path: '/:month' });
   });
+  this.route('admin', function () {
+    this.route('users');
+  });
   this.route('404');
   this.route('login');
   this.route('profile');
