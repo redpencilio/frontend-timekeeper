@@ -3,7 +3,7 @@
     <Button class="mb-4 drop-shadow w-full"
       @loading={{this.submitHolidays.isRunning}}
       {{on "click" (perform this.submitHolidays)}}>
-      Submit holidays
+      Submit absence
     </Button>
   {{else if @timesheet.isAbsenceSubmitted}}
     <Button class="mb-4 drop-shadow w-full flex items-center"
