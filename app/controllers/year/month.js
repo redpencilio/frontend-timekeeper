@@ -30,9 +30,13 @@ export default class YearMonthContoller extends Controller {
     await Promise.all(
       workLogTaskPairs.map(async ({ duration, task, workLog }) => {
         if (workLog) {
-          workLog.duration = duration;
-          if (workLog.hasDirtyAttributes) {
-            await workLog.save();
+          if (duration.hours === 0 && duration.minutes === 0) {
+            await workLog.destroyRecord();
+          } else {
+            workLog.duration = duration;
+            if (workLog.hasDirtyAttributes) {
+              await workLog.save();
+            }
           }
         } else {
           const newWorkLog = this.store.createRecord('work-log', {

@@ -89,7 +89,7 @@ export default class FullCalendarComponent extends Component {
 
   get workLogsForClickedDate() {
     const dateStr =
-      this.clickedDateInfo.dateStr ?? this.clickedEventInfo.event.startStr;
+      this.clickedDateInfo?.dateStr ?? this.clickedEventInfo.event.startStr;
     return this.args.events
       .filter((event) => formatDate(event.start) === dateStr)
       .map((event) => event.extendedProps.workLog);
@@ -135,7 +135,9 @@ export default class FullCalendarComponent extends Component {
   }
 
   save = task(async (hourTaskPairs) => {
-    await this.args.onSave?.perform(hourTaskPairs, this.clickedDateInfo.date);
+    const date =
+      this.clickedDateInfo?.date ?? this.clickedEventInfo.event.start;
+    await this.args.onSave?.perform(hourTaskPairs, date);
     this.clearPopovers();
   });
 

@@ -92,7 +92,10 @@ export default class WorkLogPopoverComponent extends Component {
     const workLogTaskPairs = [
       ...this.favoriteTaskWorkLogs,
       ...this.addedWorkLogs,
-    ].filter(({ duration: { hours, minutes } }) => hours > 0 || minutes > 0);
+    ].filter(
+      ({ duration: { hours, minutes }, workLog }) =>
+        workLog || hours > 0 || minutes > 0,
+    );
     this.args.onSave?.perform(workLogTaskPairs);
   }
 
