@@ -69,6 +69,23 @@ export default class FullCalendarComponent extends Component {
     document.addEventListener('keydown', this.handleKeydown.bind(this));
   }
 
+  // Hacky way to make the clicked day highlighted while editing work logs
+  @action
+  updateDateHighlight() {
+    const cells = this.calendarEl.querySelectorAll('[data-date]');
+    cells.forEach((cell) => {
+      if (cell.getAttribute('data-date') === formatDate(new Date())) {
+        cell.style.backgroundColor = 'var(--fc-today-bg-color)';
+      } else {
+        cell.style.backgroundColor = 'white';
+      }
+    });
+    const clickedDate = this.clickedDateElement;
+    if (clickedDate) {
+      clickedDate.style.backgroundColor = '#EFF6FF';
+    }
+  }
+
   onEventClick(info) {
     this.clickedDateInfo = false;
     this.clickedEventInfo = info;
@@ -82,8 +99,8 @@ export default class FullCalendarComponent extends Component {
 
   get clickedDateElement() {
     const dateStr = this.clickedEventInfo
-      ? this.clickedEventInfo.event.startStr
-      : this.clickedDateInfo.dateStr;
+      ? this.clickedEventInfo?.event?.startStr
+      : this.clickedDateInfo?.dateStr;
     return this.calendarEl.querySelector(`[data-date="${dateStr}"]`);
   }
 
