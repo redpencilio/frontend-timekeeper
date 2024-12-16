@@ -12,4 +12,5 @@ Router.map(function () {
   });
   this.route('404');
   this.route('login');
+  this.route('profile');
 });

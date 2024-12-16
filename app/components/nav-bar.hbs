@@ -34,7 +34,9 @@
     class="px-4 py-4 flex items-center justify-between border-gray-700 border-t"
   >
     <span class="text-sm text-gray-300 font-normal">
-      {{this.userProfile.user.name}}
+      <LinkTo @route="profile">
+        {{this.userProfile.user.name}}
+      </LinkTo>
     </span>
     <MuLogout />
   </div>
