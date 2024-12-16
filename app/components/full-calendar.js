@@ -69,14 +69,6 @@ export default class FullCalendarComponent extends Component {
     document.addEventListener('keydown', this.handleKeydown.bind(this));
   }
 
-  editWorkLog = task(async ({ duration, task }) => {
-    const workLog = this.clickedWorkLog;
-    workLog.duration = duration;
-    workLog.task = task;
-    await workLog.save();
-    this.clearPopovers();
-  });
-
   onEventClick(info) {
     this.clickedDateInfo = false;
     this.clickedEventInfo = info;
@@ -96,7 +88,8 @@ export default class FullCalendarComponent extends Component {
   }
 
   get workLogsForClickedDate() {
-    const dateStr = this.clickedDateInfo.dateStr;
+    const dateStr =
+      this.clickedDateInfo.dateStr ?? this.clickedEventInfo.event.startStr;
     return this.args.events
       .filter((event) => formatDate(event.start) === dateStr)
       .map((event) => event.extendedProps.workLog);
@@ -142,10 +135,7 @@ export default class FullCalendarComponent extends Component {
   }
 
   save = task(async (hourTaskPairs) => {
-    await this.args.onSave?.perform(
-      hourTaskPairs,
-      this.clickedDateInfo.date,
-    );
+    await this.args.onSave?.perform(hourTaskPairs, this.clickedDateInfo.date);
     this.clearPopovers();
   });
 

@@ -20,7 +20,11 @@
                         id={{inputId}}
                         @value={{workLog.duration}}
                         @onChange={{fn this.updateDuration workLog}}
-                        {{focus-select (eq index 0)}}
+                        {{focus-select
+                          (or
+                            (eq @selectedWorkLog.task.id task.id) (eq index 0)
+                          )
+                        }}
                       />
                     {{/let}}
                   </div>
@@ -43,7 +47,12 @@
                     id={{workLog.elementId}}
                     @value={{workLog.duration}}
                     @onChange={{fn this.updateDuration workLog}}
-                    {{focus-select (eq index this.focusHoursInput)}}
+                    {{focus-select
+                      (or
+                        (eq @selectedWorkLog.task.id workLog.task.id)
+                        (eq index this.focusHoursInput)
+                      )
+                    }}
                     {{clear-value this "focusHoursInput"}}
                   />
                 </div>

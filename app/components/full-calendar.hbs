@@ -7,12 +7,12 @@
   />
 {{/if}}
 {{#if this.clickedEventInfo}}
-  <TimeEditPopover
+  <TimeLogPopover
     @anchorElement={{this.clickedDateElement}}
-    @selectedHourLog={{this.clickedWorkLog}}
-    @onSave={{this.editWorkLog}}
+    @selectedWorkLog={{this.clickedWorkLog}}
+    @workLogs={{this.workLogsForClickedDate}}
+    @onSave={{this.save}}
     @onCancel={{this.cancel}}
-    @onDelete={{fn this.deleteWorkLog this.clickedWorkLog}}
   />
 {{/if}}
 <div
