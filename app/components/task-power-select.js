@@ -17,7 +17,7 @@ export default class TaskPowerSelectComponent extends Component {
   loadData = task(async () => {
     const leafTasks = await this.store.queryAll('task', {
       'filter[:has:parent]': 't',
-      include: 'parent',
+      include: 'parent,parent.customer',
       sort: 'parent.customer.name,parent.name',
     });
 
@@ -32,8 +32,15 @@ export default class TaskPowerSelectComponent extends Component {
   }
 
   matcher(option, searchTerm) {
-    const name = taskName(option);
-    return name.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : -1;
+    const searchStrings = [
+      taskName(option),
+      option.parent?.get('customer')?.get('name'),
+    ];
+    return searchStrings.some((string) =>
+      string.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+      ? 1
+      : -1;
   }
 
   @action
