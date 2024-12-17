@@ -5,6 +5,7 @@ import { action } from '@ember/object';
 import { task } from 'ember-concurrency';
 import { tracked } from '@glimmer/tracking';
 import constants from 'frontend-timekeeper/constants';
+import { isSameDay } from 'date-fns';
 const { TIMESHEET_STATUSES } = constants;
 
 export default class YearMonthContoller extends Controller {
@@ -26,29 +27,60 @@ export default class YearMonthContoller extends Controller {
     await this.timesheet.save();
   }
 
-  save = task(async (workLogTaskPairs, date) => {
-    await Promise.all(
-      workLogTaskPairs.map(async ({ duration, task, workLog }) => {
-        if (workLog) {
-          if (duration.hours === 0 && duration.minutes === 0) {
-            await workLog.destroyRecord();
-          } else {
-            workLog.duration = duration;
-            if (workLog.hasDirtyAttributes) {
-              await workLog.save();
+  save = task(async (workLogTaskPairs, dates) => {
+    // Selection only contains one date, we don't want to overwrite
+    if (dates.length === 1) {
+      await Promise.all(
+        workLogTaskPairs.map(async ({ duration, task, workLog }) => {
+          if (workLog) {
+            if (duration.hours === 0 && duration.minutes === 0) {
+              // An existing worklog was set to 0, remove it
+              await workLog.destroyRecord();
+            } else {
+              // The duration of an existing workLog has changed
+              workLog.duration = duration;
+              if (workLog.hasDirtyAttributes) {
+                await workLog.save();
+              }
             }
+          } else {
+            // A new workLog has to be created
+            const [date] = dates;
+            const newWorkLog = this.store.createRecord('work-log', {
+              duration,
+              task,
+              date,
+              person: this.userProfile.user,
+            });
+            await newWorkLog.save();
           }
-        } else {
-          const newWorkLog = this.store.createRecord('work-log', {
-            duration,
-            task,
-            date,
-            person: this.userProfile.user,
-          });
-          await newWorkLog.save();
-        }
-      }),
-    );
+        }),
+      );
+    } else {
+      await Promise.all([
+        // Clear existing workLogs
+        ...this.model.workLogs.map(async (workLog) => {
+          if (dates.some((date) => isSameDay(date, workLog.date))) {
+            await workLog.destroyRecord();
+          }
+        }),
+        // Insert new workLogs
+        ...dates.map(async (date) => {
+          await Promise.all(
+            workLogTaskPairs.map(async ({ duration, task }) => {
+              // A new workLog has to be created
+              const newWorkLog = this.store.createRecord('work-log', {
+                duration,
+                task,
+                date,
+                person: this.userProfile.user,
+              });
+              await newWorkLog.save();
+            }),
+          );
+        }),
+      ]);
+    }
     this.router.refresh();
   });
 
