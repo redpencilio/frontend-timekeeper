@@ -6,6 +6,10 @@
  * Full calendar
  */
 
+:root {
+  --fc-highlight-color: rgba(147, 197, 253, 0.2);
+}
+
 .fc .fc-event-title {
   @apply !font-light;
 }
