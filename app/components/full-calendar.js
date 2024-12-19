@@ -31,10 +31,10 @@ export default class FullCalendarComponent extends Component {
       initialView: 'dayGridMonth',
       events: this.args.events || [],
       droppable: false, // Allows for drag and drop of external elements
-      selectable: true,
+      selectable: !this.args.isDisabled,
       unselectCancel: '.work-log-popover',
-      select: this.onSelect.bind(this),
-      unselect: this.onUnselect.bind(this),
+      select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
+      unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
       dayCellContent: this.renderDayCellContent.bind(this),
       eventClick: this.args.isDisabled
         ? () => false
