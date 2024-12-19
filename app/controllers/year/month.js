@@ -36,6 +36,7 @@ export default class YearMonthContoller extends Controller {
             if (duration.hours === 0 && duration.minutes === 0) {
               // An existing worklog was set to 0, remove it
               await workLog.destroyRecord();
+              this.model.workLogs.removeObject(workLog);
             } else {
               // The duration of an existing workLog has changed
               workLog.duration = duration;
@@ -62,6 +63,7 @@ export default class YearMonthContoller extends Controller {
         ...this.model.workLogs.map(async (workLog) => {
           if (dates.some((date) => isSameDay(date, workLog.date))) {
             await workLog.destroyRecord();
+            this.model.workLogs.removeObject(workLog);
           }
         }),
         // Insert new workLogs
