@@ -187,6 +187,7 @@ export default class FullCalendarComponent extends Component {
       this.args.isDisabled ? () => false : this.onUnselect.bind(this),
     );
     this.calendar.setOption('editable', !this.args.isDisabled);
+    this.calendar.setOption('selectable', !this.args.isDisabled);
   }
 
   save = task(async (hourTaskPairs) => {
@@ -212,6 +213,10 @@ export default class FullCalendarComponent extends Component {
   gotoFocusDate() {
     const firstDayOfMonth = startOfMonth(this.args.focusDate);
     const firstDayOfNextMonth = addDays(endOfMonth(this.args.focusDate), 1);
+    this.calendar.setOption('selectConstraint', {
+      start: firstDayOfMonth,
+      end: firstDayOfNextMonth,
+    });
     this.calendar.setOption('selectConstraint', {
       start: firstDayOfMonth,
       end: firstDayOfNextMonth,
