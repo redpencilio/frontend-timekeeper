@@ -176,6 +176,12 @@ export default class FullCalendarComponent extends Component {
 
   @action
   gotoFocusDate() {
+    const firstDayOfMonth = startOfMonth(this.args.focusDate);
+    const firstDayOfNextMonth = addDays(endOfMonth(this.args.focusDate), 1);
+    this.calendar.setOption('selectConstraint', {
+      start: firstDayOfMonth,
+      end: firstDayOfNextMonth,
+    });
     this.calendar.gotoDate(this.args.focusDate);
   }
 
