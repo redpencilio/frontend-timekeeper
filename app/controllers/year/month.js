@@ -58,12 +58,15 @@ export default class YearMonthContoller extends Controller {
         }),
       );
     } else {
+      // This list is needed because otherwise UI will update
+      // After every delete
+      const workLogsToRemove = [];
       await Promise.all([
         // Clear existing workLogs
         ...this.model.workLogs.map(async (workLog) => {
           if (dates.some((date) => isSameDay(date, workLog.date))) {
             await workLog.destroyRecord();
-            this.model.workLogs.removeObject(workLog);
+            workLogsToRemove.push(workLog);
           }
         }),
         // Insert new workLogs
@@ -82,6 +85,9 @@ export default class YearMonthContoller extends Controller {
           );
         }),
       ]);
+      workLogsToRemove.forEach((workLog) =>
+        this.model.workLogs.removeObject(workLog),
+      );
     }
     this.router.refresh();
   });
