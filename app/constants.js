@@ -9,4 +9,9 @@ export default {
     EXPORTED:
       'http://timekeeper.redpencil.io/concepts/9d50b644-3d61-4a9d-b3a9-0b27f4f1d566',
   },
+  USER_GROUPS: {
+    ADMIN: 'http://mu.semte.ch/user-groups/admin',
+    EMPLOYEE: 'http://mu.semte.ch/user-groups/employee',
+  },
+  KIMAI_SERVICE_HOMEPAGE: 'http://kimai.redpencil.io',
 };

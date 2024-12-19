@@ -1,12 +1,14 @@
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { task, waitForProperty } from 'ember-concurrency';
-
+import constants from '../constants';
+const { USER_GROUPS } = constants;
 export default class UserProfileService extends Service {
   @service session;
   @service store;
 
   @tracked user;
+  @tracked userGroups;
 
   async load() {
     if (this.session.isAuthenticated) {
@@ -17,10 +19,19 @@ export default class UserProfileService extends Service {
         include: 'person',
       });
       this.user = await this.account.person;
+      this.userGroups = await this.user.userGroups;
       this.favoriteTasks = await this.loadFavoriteTasks();
     } else {
       this.user = null;
     }
+  }
+
+  get isAdmin() {
+    return this.userGroups.some((group) => group.uri == USER_GROUPS.ADMIN);
+  }
+
+  get isEmployee() {
+    return this.userGroups.some((group) => group.uri == USER_GROUPS.EMPLOYEE);
   }
 
   waitForUser = task(async () => {
