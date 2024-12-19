@@ -4,10 +4,11 @@ import { tracked } from '@glimmer/tracking';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { startOfMonth, endOfMonth, addDays } from 'date-fns';
+import { startOfMonth, endOfMonth, addDays, isSameDay } from 'date-fns';
 import { task } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
+import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
 
 export default class FullCalendarComponent extends Component {
   @tracked calendar = null;
@@ -34,6 +35,7 @@ export default class FullCalendarComponent extends Component {
       unselectCancel: '.work-log-popover',
       select: this.onSelect.bind(this),
       unselect: this.onUnselect.bind(this),
+      dayCellContent: this.renderDayCellContent.bind(this),
       eventClick: this.args.isDisabled
         ? () => false
         : this.onEventClick.bind(this),
@@ -69,6 +71,38 @@ export default class FullCalendarComponent extends Component {
     // TODO improve by putting addEventListener and removeEventListener
     // together
     document.addEventListener('keydown', this.handleKeydown.bind(this));
+  }
+
+  renderDayCellContent(info) {
+    const events = this.calendar
+      .getEvents()
+      .filter((event) => isSameDay(event.start, info.date));
+    if (events.length === 0) {
+      return info.dayNumberText;
+    }
+
+    const totalDuration = events
+      .map((event) => event.extendedProps.workLog.duration)
+      .reduce(
+        (acc, duration) => ({
+          hours: acc.hours + duration.hours,
+          minutes: acc.minutes + duration.minutes,
+        }),
+        { hours: 0, minutes: 0 },
+      );
+
+    const { hours, minutes } = normalizeDuration(totalDuration);
+
+    return {
+      html: `
+        <div class="flex justify-between w-full">
+          <div class="grow">${info.dayNumberText}</div>
+          <div class="flex items-center text-gray-400 text-sm">
+            ${hours}h ${minutes > 0 ? `${minutes}m` : ''}
+          </div>
+        </div>
+      `,
+    };
   }
 
   onEventClick(info) {

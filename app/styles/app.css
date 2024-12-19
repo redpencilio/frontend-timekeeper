@@ -18,6 +18,14 @@
   @apply text-gray-600 font-normal text-sm uppercase tracking-wide;
 }
 
+.fc .fc-daygrid-day-top {
+  flex-direction: row;
+}
+
+.fc .fc-daygrid-day-number {
+  @apply w-full
+}
+
 /**
  * Ember Power Select
  */
