@@ -192,10 +192,9 @@ export default class FullCalendarComponent extends Component {
 
   save = task(async (hourTaskPairs) => {
     const { start, end } = this.selectionInfo;
-    await this.args.onSave?.perform(
+    await this.args.onSave(
       hourTaskPairs,
-      eachDayOfInterval({ start, end: subDays(end, 1) }),
-    );
+      eachDayOfInterval({ start, end: subDays(end, 1) }));
     this.clearPopovers();
   });
 
