@@ -25,15 +25,21 @@ export default class TaskPowerSelectComponent extends Component {
   });
 
   get options() {
-    return this._fetchedTasks.filter(
+    const tasks = this._fetchedTasks.filter(
       (task) =>
         !this.args.excludeTasks?.map((task) => task.id)?.includes(task.id),
     );
+    const grouped = Object.groupBy(tasks, (task) => task.parent.id);
+    return Object.entries(grouped).map(([key, value]) => ({
+      groupName: this.store.peekRecord('task', key)?.name,
+      options: value,
+    }));
   }
 
   matcher(option, searchTerm) {
     const searchStrings = [
-      taskName(option),
+      option.name,
+      option.parent?.get('name'),
       option.parent?.get('customer')?.get('name'),
     ];
     return searchStrings.some((string) =>
