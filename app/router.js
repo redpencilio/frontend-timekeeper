@@ -13,6 +13,7 @@ Router.map(function () {
   this.route('admin', function () {
     this.route('users');
   });
+  this.route('forbidden');
   this.route('404');
   this.route('login');
   this.route('profile');
