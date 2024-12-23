@@ -4,9 +4,11 @@ import { tracked } from '@glimmer/tracking';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { startOfMonth, endOfMonth } from 'date-fns';
+import { startOfMonth, endOfMonth, addDays, isSameDay } from 'date-fns';
 import { task } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
+import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
+import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
 
 export default class FullCalendarComponent extends Component {
   @tracked calendar = null;
@@ -14,6 +16,7 @@ export default class FullCalendarComponent extends Component {
 
   @tracked clickedEventInfo = null;
   @tracked clickedDateInfo = null;
+  @tracked selectionInfo = null;
 
   @action
   setupCalendar(element) {
@@ -21,21 +24,22 @@ export default class FullCalendarComponent extends Component {
 
     const focusDate = this.args.focusDate;
     const firstDayOfMonth = startOfMonth(this.args.focusDate);
-    const lastDayOfMonth = endOfMonth(this.args.focusDate);
+    const firstDayOfNextMonth = addDays(endOfMonth(this.args.focusDate), 1);
 
     this.calendar = new Calendar(element, {
       plugins: [interactionPlugin, dayGridPlugin],
       initialView: 'dayGridMonth',
       events: this.args.events || [],
       droppable: false, // Allows for drag and drop of external elements
-      dateClick: this.args.isDisabled
-        ? () => false
-        : this.onDateClick.bind(this),
+      selectable: !this.args.isDisabled,
+      unselectCancel: '.work-log-popover',
+      select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
+      unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
+      dayCellContent: this.renderDayCellContent.bind(this),
       eventClick: this.args.isDisabled
         ? () => false
         : this.onEventClick.bind(this),
       eventDisplay: 'list-item',
-      // selectable: true,
       dayMaxEvents: 6,
       height: 'parent',
       firstDay: 1,
@@ -50,14 +54,14 @@ export default class FullCalendarComponent extends Component {
       },
       selectConstraint: {
         start: firstDayOfMonth,
-        end: lastDayOfMonth,
+        end: firstDayOfNextMonth,
       },
       // Drag and Drop
       editable: !this.args.isDisabled, // Allows for drag and drop of internal events
       eventConstraint: {
         // Where events can be dragged to
         start: formatDate(firstDayOfMonth),
-        end: formatDate(lastDayOfMonth),
+        end: formatDate(firstDayOfNextMonth),
       },
       eventDrop: this.onEventDrop.bind(this),
     });
@@ -69,26 +73,49 @@ export default class FullCalendarComponent extends Component {
     document.addEventListener('keydown', this.handleKeydown.bind(this));
   }
 
-  // Hacky way to make the clicked day highlighted while editing work logs
-  @action
-  updateDateHighlight() {
-    const cells = this.calendarEl.querySelectorAll('[data-date]');
-    cells.forEach((cell) => {
-      if (cell.getAttribute('data-date') === formatDate(new Date())) {
-        cell.style.backgroundColor = 'var(--fc-today-bg-color)';
-      } else {
-        cell.style.backgroundColor = 'white';
-      }
-    });
-    const clickedDate = this.clickedDateElement;
-    if (clickedDate) {
-      clickedDate.style.backgroundColor = '#EFF6FF';
+  renderDayCellContent(info) {
+    const events = this.calendar
+      .getEvents()
+      .filter((event) => isSameDay(event.start, info.date));
+    if (events.length === 0) {
+      return info.dayNumberText;
     }
+
+    const totalDuration = events
+      .map((event) => event.extendedProps.workLog.duration)
+      .reduce(
+        (acc, duration) => ({
+          hours: acc.hours + duration.hours,
+          minutes: acc.minutes + duration.minutes,
+        }),
+        { hours: 0, minutes: 0 },
+      );
+
+    const { hours, minutes } = normalizeDuration(totalDuration);
+
+    return {
+      html: `
+        <div class="flex justify-between w-full">
+          <div class="grow">${info.dayNumberText}</div>
+          <div class="flex items-center text-gray-400 text-sm">
+            ${hours}h ${minutes > 0 ? `${minutes}m` : ''}
+          </div>
+        </div>
+      `,
+    };
   }
 
   onEventClick(info) {
-    this.clickedDateInfo = false;
+    this.calendar.select(info.event.startStr);
     this.clickedEventInfo = info;
+  }
+
+  onSelect(info) {
+    this.selectionInfo = info;
+  }
+
+  onUnselect() {
+    this.clearPopovers();
   }
 
   async onEventDrop(info) {
@@ -97,26 +124,31 @@ export default class FullCalendarComponent extends Component {
     await workLog.save();
   }
 
+  // Returns the last date cell element of the selection
   get clickedDateElement() {
-    const dateStr = this.clickedEventInfo
-      ? this.clickedEventInfo?.event?.startStr
-      : this.clickedDateInfo?.dateStr;
+    if (!this.selectionInfo) {
+      return null;
+    }
+
+    const dateStr = formatDate(subDays(this.selectionInfo.end, 1));
     return this.calendarEl.querySelector(`[data-date="${dateStr}"]`);
   }
 
-  get workLogsForClickedDate() {
-    const dateStr =
-      this.clickedDateInfo?.dateStr ?? this.clickedEventInfo.event.startStr;
-    return this.args.events
-      .filter((event) => formatDate(event.start) === dateStr)
-      .map((event) => event.extendedProps.workLog);
+  get hasSelectedMultipleDates() {
+    return (
+      this.selectionInfo &&
+      differenceInDays(this.selectionInfo.end, this.selectionInfo.start) > 1
+    );
   }
 
-  @action
-  onDateClick(info) {
-    this.clickedEventInfo = null;
-    if (info.date.getMonth() === this.args.focusDate.getMonth()) {
-      this.clickedDateInfo = info;
+  get workLogsForClickedDate() {
+    if (!this.selectionInfo || this.hasSelectedMultipleDates) {
+      return [];
+    } else {
+      const dateStr = this.selectionInfo.startStr;
+      return this.args.events
+        .filter((event) => formatDate(event.start) === dateStr)
+        .map((event) => event.extendedProps.workLog);
     }
   }
 
@@ -128,6 +160,8 @@ export default class FullCalendarComponent extends Component {
   clearPopovers() {
     this.clickedDateInfo = null;
     this.clickedEventInfo = null;
+    this.selectionInfo = null;
+    this.calendar.unselect();
   }
 
   @action
@@ -141,20 +175,27 @@ export default class FullCalendarComponent extends Component {
   @action
   updateDisabled() {
     this.calendar.setOption(
-      'dateClick',
-      this.args.isDisabled ? () => false : this.onDateClick.bind(this),
-    );
-    this.calendar.setOption(
       'eventClick',
       this.args.isDisabled ? () => false : this.onEventClick.bind(this),
     );
+    this.calendar.setOption(
+      'select',
+      this.args.isDisabled ? () => false : this.onSelect.bind(this),
+    );
+    this.calendar.setOption(
+      'unselect',
+      this.args.isDisabled ? () => false : this.onUnselect.bind(this),
+    );
     this.calendar.setOption('editable', !this.args.isDisabled);
+    this.calendar.setOption('selectable', !this.args.isDisabled);
   }
 
   save = task(async (hourTaskPairs) => {
-    const date =
-      this.clickedDateInfo?.date ?? this.clickedEventInfo.event.start;
-    await this.args.onSave?.perform(hourTaskPairs, date);
+    const { start, end } = this.selectionInfo;
+    await this.args.onSave?.perform(
+      hourTaskPairs,
+      eachDayOfInterval({ start, end: subDays(end, 1) }),
+    );
     this.clearPopovers();
   });
 
@@ -170,6 +211,16 @@ export default class FullCalendarComponent extends Component {
 
   @action
   gotoFocusDate() {
+    const firstDayOfMonth = startOfMonth(this.args.focusDate);
+    const firstDayOfNextMonth = addDays(endOfMonth(this.args.focusDate), 1);
+    this.calendar.setOption('selectConstraint', {
+      start: firstDayOfMonth,
+      end: firstDayOfNextMonth,
+    });
+    this.calendar.setOption('selectConstraint', {
+      start: firstDayOfMonth,
+      end: firstDayOfNextMonth,
+    });
     this.calendar.gotoDate(this.args.focusDate);
   }
 

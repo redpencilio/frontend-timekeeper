@@ -6,12 +6,24 @@
  * Full calendar
  */
 
+:root {
+  --fc-highlight-color: rgba(147, 197, 253, 0.2);
+}
+
 .fc .fc-event-title {
   @apply !font-light;
 }
 
 .fc .fc-col-header-cell-cushion {
   @apply text-gray-600 font-normal text-sm uppercase tracking-wide;
+}
+
+.fc .fc-daygrid-day-top {
+  flex-direction: row;
+}
+
+.fc .fc-daygrid-day-number {
+  @apply w-full
 }
 
 /**

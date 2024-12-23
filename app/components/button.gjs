@@ -14,9 +14,14 @@ export default class ButtonComponent extends Component {
     const disabledClass = this.args.isDisabled
       ? 'cursor-not-allowed bg-blue-400 hover:bg-blue-400'
       : '';
+
+    const errorClass =
+      this.args.skin === 'error'
+        ? 'border border-transparent rounded-md shadow-sm text-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+        : '';
     const muteClass = this.args.skin === 'mute' ? 'text-gray-500' : '';
 
-    return `${baseClass} ${primaryClass} ${muteClass} ${disabledClass}`.trim();
+    return `${baseClass} ${primaryClass} ${errorClass} ${muteClass} ${disabledClass}`.trim();
   }
 
   <template>

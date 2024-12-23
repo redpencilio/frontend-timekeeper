@@ -1,7 +1,10 @@
-<Popover @anchorElement={{@anchorElement}}>
+<Popover
+  {{on "keydown" this.handleKeydown}}
+  class="work-log-popover"
+  @anchorElement={{@anchorElement}}
+>
   <div class="mx-4 mb-3">
-    {{! template-lint-disable no-invalid-interactive }}
-    <div role="none" {{on "keydown" this.handleKeydown}}>
+    <div role="none">
       <form {{on "submit" this.submitWorkLogs}}>
         <ul class="divide-y divide-dotted">
           {{#each this.favoriteTaskWorkLogs as |workLog index|}}
@@ -38,6 +41,8 @@
                 <div class="mt-1 flex justify-between content-center">
                   <div class="block h-10 flex-grow mr-2">
                     <TaskPowerSelect
+                      {{! class needed for fullcalendar unselectCancel }}
+                      @dropdownClass="work-log-popover"
                       @excludeTasks={{this.excludeTasks}}
                       @selectedTask={{workLog.task}}
                       @onChange={{fn this.updateTask workLog}}
@@ -64,6 +69,8 @@
               <div class="mt-1 flex justify-between content-center">
                 <div class="block h-10 flex-grow mr-2">
                   <TaskPowerSelect
+                    {{! class needed for fullcalendar unselectCancel }}
+                    @dropdownClass="work-log-popover"
                     @excludeTasks={{this.excludeTasks}}
                     @registerAPI={{this.registerNewProjectPowerSelect}}
                     @onChange={{this.addTaskToList}}
@@ -79,7 +86,7 @@
             Cancel
           </Button>
           <Button type="submit" @isLoading={{@onSave.isRunning}}>
-            Save
+            {{if @isOverwrite "Overwrite" "Save"}}
           </Button>
         </div>
       </form>

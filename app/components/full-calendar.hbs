@@ -1,25 +1,26 @@
-{{#if this.clickedDateInfo}}
-  <TimeLogPopover
-    @anchorElement={{this.clickedDateElement}}
-    @workLogs={{this.workLogsForClickedDate}}
-    @onSave={{this.save}}
-    @onCancel={{this.cancel}}
-  />
-{{/if}}
-{{#if this.clickedEventInfo}}
-  <TimeLogPopover
-    @anchorElement={{this.clickedDateElement}}
-    @selectedWorkLog={{this.clickedWorkLog}}
-    @workLogs={{this.workLogsForClickedDate}}
-    @onSave={{this.save}}
-    @onCancel={{this.cancel}}
-  />
+{{#if this.selectionInfo}}
+  {{#if this.clickedEventInfo}}
+    <TimeLogPopover
+      @anchorElement={{this.clickedDateElement}}
+      @selectedWorkLog={{this.clickedWorkLog}}
+      @workLogs={{this.workLogsForClickedDate}}
+      @onSave={{this.save}}
+      @onCancel={{this.cancel}}
+    />
+  {{else}}
+    <TimeLogPopover
+      @anchorElement={{this.clickedDateElement}}
+      @workLogs={{this.workLogsForClickedDate}}
+      @onSave={{this.save}}
+      @onCancel={{this.cancel}}
+      @isOverwrite={{this.hasSelectedMultipleDates}}
+    />
+  {{/if}}
 {{/if}}
 <div
   class="full-calendar h-full"
   {{did-update this.updateAndRerenderCalendar @events}}
   {{did-update this.gotoFocusDate @focusDate}}
-  {{did-update this.updateDisabled @isDisabled}}
-  {{did-update this.updateDateHighlight this.clickedDateInfo this.clickedEventInfo}}
+  {{did-update this.updateDisabled @isDisabled @focusDate}}
   {{did-insert this.setupCalendar}}
 ></div>
