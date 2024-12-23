@@ -50,16 +50,13 @@ export default class UserProfileService extends Service {
       include: 'task',
     });
 
-    const counts = logs.reduce((acc, log) => {
-      const taskId = log.belongsTo('task')?.value()?.id;
-      if (Object.hasOwn(acc, taskId)) {
-        acc[taskId] += 1;
-      } else {
-        acc[taskId] = 0;
+    const counts = {};
+    for( let log of logs ) {
+      const taskId = (await log.task)?.id;
+      if( taskId ) {
+        counts[taskId] = (counts[taskId] || 0) + 1;
       }
-
-      return acc;
-    }, {});
+    }
 
     const top3TaskIds = Object.entries(counts)
       .sort(([, countA], [, countB]) => countB - countA)

@@ -2,7 +2,7 @@ import Controller from '@ember/controller';
 import taskName from 'frontend-timekeeper/helpers/task-name';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
-import { task } from 'ember-concurrency';
+import { task as ecTask } from 'ember-concurrency';
 import { tracked } from '@glimmer/tracking';
 import constants from 'frontend-timekeeper/constants';
 import { isSameDay } from 'date-fns';
@@ -27,7 +27,7 @@ export default class YearMonthContoller extends Controller {
     await this.timesheet.save();
   }
 
-  save = task(async (workLogTaskPairs, dates) => {
+  save = ecTask(async (workLogTaskPairs, dates) => {
     // Selection only contains one date, we don't want to overwrite
     if (dates.length === 1) {
       await Promise.all(
@@ -109,19 +109,23 @@ export default class YearMonthContoller extends Controller {
       // TODO: use trackedFunction of https://github.com/NullVoxPopuli/ember-resources
       // instead of fetching async data in a getter
       const task = workLog.belongsTo('task')?.value();
-      const name = taskName(task);
-      return {
-        id,
-        title: `${hours > 0 ? `${hours}h` : ''}${minutes > 0 ? `${minutes}m` : ''}: ${name}`,
-        start: date,
-        allDay: true,
-        backgroundColor: task?.color,
-        borderColor: task?.color,
-        extendedProps: {
-          workLog,
-        },
-      };
-    });
+      if ( task ) {
+        const name = taskName(task);
+        return {
+          id,
+          title: `${hours > 0 ? `${hours}h` : ''}${minutes > 0 ? `${minutes}m` : ''}: ${name}`,
+          start: date,
+          allDay: true,
+          backgroundColor: task?.color,
+          borderColor: task?.color,
+          extendedProps: {
+            workLog,
+          },
+        };
+      } else {
+        return null;
+      }
+    }).filter( (x) => x) ;
   }
 
   get activeDate() {
