@@ -19,7 +19,7 @@ export default class YearRoute extends Route {
     this.year = Number(year);
 
     if (isNaN(this.year) || this.year < 0) {
-      this.router.transitionTo('404');
+      this.router.transitionTo('not-found');
     }
 
     await this.userProfile.waitForUser.perform();
