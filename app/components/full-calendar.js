@@ -5,7 +5,7 @@ import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { startOfMonth, endOfMonth, addDays, isSameDay } from 'date-fns';
-import { task } from 'ember-concurrency';
+import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
 import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
@@ -190,7 +190,7 @@ export default class FullCalendarComponent extends Component {
     this.calendar.setOption('selectable', !this.args.isDisabled);
   }
 
-  save = task(async (hourTaskPairs) => {
+  save = ecTask(async (hourTaskPairs) => {
     const { start, end } = this.selectionInfo;
     await this.args.onSave(
       hourTaskPairs,
