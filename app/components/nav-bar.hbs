@@ -11,7 +11,7 @@
     </LinkTo>
   </div>
 
-  <div class="flex-grow px-6 py-4">
+  <div class="flex-grow px-6 py-4 flex flex-col justify-between">
     <ul class="space-y-4">
       {{#each this.months as |month|}}
         <li class="flex items-center justify-between space-x-12">
@@ -28,16 +28,21 @@
         </li>
       {{/each}}
     </ul>
+
+    <div>
+      {{#if (user-may "manage-users")}}
+        <LinkTo @route="admin.users" class="text-sm tracking-wide flex items-center space-x-2">
+          {{svg-jar "people" class="size-4"}}
+          <span>Users</span>
+        </LinkTo>
+      {{/if}}
+    </div>
   </div>
 
-  <div
-    class="px-4 py-4 flex items-center justify-between border-gray-700 border-t"
-  >
-    <span class="text-sm text-gray-300 font-normal">
-      <LinkTo @route="profile">
-        {{this.userProfile.user.name}}
-      </LinkTo>
-    </span>
+  <div class="px-6 py-4 flex items-center justify-between border-gray-700 border-t">
+    <LinkTo class="text-sm text-gray-300 font-normal" @route="profile">
+      {{this.userProfile.user.name}}
+    </LinkTo>
     <MuLogout />
   </div>
 </div>

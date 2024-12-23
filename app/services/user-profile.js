@@ -1,12 +1,14 @@
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { task, waitForProperty } from 'ember-concurrency';
+import { getPermissionsForGroups } from '../permissions';
 
 export default class UserProfileService extends Service {
   @service session;
   @service store;
 
   @tracked user;
+  @tracked userGroups;
 
   async load() {
     if (this.session.isAuthenticated) {
@@ -17,9 +19,12 @@ export default class UserProfileService extends Service {
         include: 'person',
       });
       this.user = await this.account.person;
+      this.userGroups = await this.user.userGroups;
       this.favoriteTasks = await this.loadFavoriteTasks();
     } else {
       this.user = null;
+      this.userGroups = [];
+      this.favoriteTasks = [];
     }
   }
 
@@ -27,8 +32,15 @@ export default class UserProfileService extends Service {
     await waitForProperty(this, 'user');
   });
 
+  get permissions() {
+    return getPermissionsForGroups(this.userGroups);
+  }
+
+  may(permission) {
+    return this.permissions.includes(permission);
+  }
+
   async loadFavoriteTasks() {
-    // TODO filter work-logs by user
     const logs = await this.store.query('work-log', {
       sort: '-date',
       page: {
