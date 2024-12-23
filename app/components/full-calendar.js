@@ -132,13 +132,13 @@ export default class FullCalendarComponent extends Component {
       clickEvent.stopPropagation();
       this.deleteWorkLog(event.extendedProps.workLog);
     };
-    deleteButton.style.visibility = 'hidden';
+    deleteButton.style.visibility = 'collapse';
     el.appendChild(deleteButton);
     el.onmouseenter = () => {
       deleteButton.style.visibility = 'visible';
     };
     el.onmouseleave = () => {
-      deleteButton.style.visibility = 'hidden';
+      deleteButton.style.visibility = 'collapse';
     };
   }
 
