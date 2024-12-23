@@ -85,7 +85,11 @@
           <Button @skin="mute" {{on "click" this.closePopover}}>
             Cancel
           </Button>
-          <Button type="submit" @isLoading={{@onSave.isRunning}}>
+          <Button
+            type="submit"
+            @isLoading={{@onSave.isRunning}}
+            @skin={{if @isOverwrite "error" "primary"}}
+          >
             {{if @isOverwrite "Overwrite" "Save"}}
           </Button>
         </div>
