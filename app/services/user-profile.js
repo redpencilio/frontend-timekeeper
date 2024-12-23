@@ -1,8 +1,8 @@
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { task, waitForProperty } from 'ember-concurrency';
-import constants from '../constants';
-const { USER_GROUPS } = constants;
+import { getPermissionsForGroups } from '../permissions';
+
 export default class UserProfileService extends Service {
   @service session;
   @service store;
@@ -23,23 +23,24 @@ export default class UserProfileService extends Service {
       this.favoriteTasks = await this.loadFavoriteTasks();
     } else {
       this.user = null;
+      this.userGroups = [];
+      this.favoriteTasks = [];
     }
-  }
-
-  get isAdmin() {
-    return this.userGroups.some((group) => group.uri == USER_GROUPS.ADMIN);
-  }
-
-  get isEmployee() {
-    return this.userGroups.some((group) => group.uri == USER_GROUPS.EMPLOYEE);
   }
 
   waitForUser = task(async () => {
     await waitForProperty(this, 'user');
   });
 
+  get permissions() {
+    return getPermissionsForGroups(this.userGroups);
+  }
+
+  may(permission) {
+    return this.permissions.includes(permission);
+  }
+
   async loadFavoriteTasks() {
-    // TODO filter work-logs by user
     const logs = await this.store.query('work-log', {
       sort: '-date',
       page: {
