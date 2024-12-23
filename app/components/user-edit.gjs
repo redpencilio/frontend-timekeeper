@@ -34,6 +34,7 @@ export default class UserEditComponent extends Component {
       'filter[:exact:account-service-homepage]':
         constants.KIMAI_SERVICE_HOMEPAGE,
       'filter[:has-no:person]': true,
+      sort: 'account-name',
     });
   });
 
