@@ -12,7 +12,7 @@ import {
   isAfter,
   isBefore,
 } from 'date-fns';
-import { task } from 'ember-concurrency';
+import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
 import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
@@ -127,8 +127,7 @@ export default class FullCalendarComponent extends Component {
         />
       </svg>
     `;
-    deleteButton.classList =
-      'fill-gray-500 rounded hover:fill-red-500';
+    deleteButton.classList = 'fill-gray-500 rounded hover:fill-red-500';
     deleteButton.onclick = (clickEvent) => {
       clickEvent.stopPropagation();
       this.deleteWorkLog(event.extendedProps.workLog);
@@ -230,9 +229,9 @@ export default class FullCalendarComponent extends Component {
     this.calendar.setOption('selectable', !this.args.isDisabled);
   }
 
-  save = task(async (hourTaskPairs) => {
+  save = ecTask(async (hourTaskPairs) => {
     const { start, end } = this.selectionInfo;
-    await this.args.onSave?.perform(
+    await this.args.onSave(
       hourTaskPairs,
       eachDayOfInterval({ start, end: subDays(end, 1) }),
     );

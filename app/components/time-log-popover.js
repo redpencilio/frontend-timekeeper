@@ -4,7 +4,6 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { trackedReset } from 'tracked-toolbox';
 import { v4 as uuidv4 } from 'uuid';
-import { task } from 'ember-concurrency';
 import { TrackedObject } from 'tracked-built-ins';
 import { uniqueBy } from '../utils/unique-by-key';
 
@@ -77,7 +76,7 @@ export default class WorkLogPopoverComponent extends Component {
   }
 
   @action
-  updateTask(workLogEntry) {
+  updateTask(workLogEntry, task) {
     workLogEntry.task = task;
     this.focusHoursInput = this.addedWorkLogs.indexOf(workLogEntry);
   }
