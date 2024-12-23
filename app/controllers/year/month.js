@@ -38,11 +38,10 @@ export default class YearMonthContoller extends Controller {
               await workLog.destroyRecord();
               this.model.workLogs.removeObject(workLog);
             } else {
-              // The duration of an existing workLog has changed
+              // Properties of an existing workLog have changed
               workLog.duration = duration;
-              if (workLog.hasDirtyAttributes) {
-                await workLog.save();
-              }
+              workLog.task = task;
+              await workLog.save();
             }
           } else {
             // A new workLog has to be created
@@ -100,32 +99,34 @@ export default class YearMonthContoller extends Controller {
   }
 
   get events() {
-    return this.model.workLogs.map((workLog) => {
-      const {
-        duration: { hours, minutes },
-        date,
-        id,
-      } = workLog;
-      // TODO: use trackedFunction of https://github.com/NullVoxPopuli/ember-resources
-      // instead of fetching async data in a getter
-      const task = workLog.belongsTo('task')?.value();
-      if ( task ) {
-        const name = taskName(task);
-        return {
+    return this.model.workLogs
+      .map((workLog) => {
+        const {
+          duration: { hours, minutes },
+          date,
           id,
-          title: `${hours > 0 ? `${hours}h` : ''}${minutes > 0 ? `${minutes}m` : ''}: ${name}`,
-          start: date,
-          allDay: true,
-          backgroundColor: task?.color,
-          borderColor: task?.color,
-          extendedProps: {
-            workLog,
-          },
-        };
-      } else {
-        return null;
-      }
-    }).filter( (x) => x) ;
+        } = workLog;
+        // TODO: use trackedFunction of https://github.com/NullVoxPopuli/ember-resources
+        // instead of fetching async data in a getter
+        const task = workLog.belongsTo('task')?.value();
+        if (task) {
+          const name = taskName(task);
+          return {
+            id,
+            title: `${hours > 0 ? `${hours}h` : ''}${minutes > 0 ? `${minutes}m` : ''}: ${name}`,
+            start: date,
+            allDay: true,
+            backgroundColor: task?.color,
+            borderColor: task?.color,
+            extendedProps: {
+              workLog,
+            },
+          };
+        } else {
+          return null;
+        }
+      })
+      .filter((x) => x);
   }
 
   get activeDate() {

@@ -76,9 +76,12 @@ export default class WorkLogPopoverComponent extends Component {
   }
 
   @action
-  updateTask(workLogEntry, task) {
-    workLogEntry.task = task;
-    this.focusHoursInput = this.addedWorkLogs.indexOf(workLogEntry);
+  updateTask(workLog, task) {
+    this.focusHoursInput = this.addedWorkLogs.indexOf(workLog);
+    // We need to do it like this so the component rerenders
+    this.addedWorkLogs = this.addedWorkLogs.map((workLogIt) =>
+      workLogIt === workLog ? { ...workLog, task } : workLogIt,
+    );
   }
 
   @action
