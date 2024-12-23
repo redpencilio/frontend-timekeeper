@@ -24,7 +24,7 @@ export default class YearMonthRoute extends Route {
       'filter[:gte:date]': formatDate(firstOfMonth),
       'filter[:lt:date]': formatDate(firstOfNextMonth),
       'filter[person][:id:]': this.userProfile.user.id,
-      include: 'task',
+      include: 'task,task.parent',
     });
 
     return {

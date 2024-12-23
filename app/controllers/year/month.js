@@ -108,19 +108,23 @@ export default class YearMonthContoller extends Controller {
       // TODO: use trackedFunction of https://github.com/NullVoxPopuli/ember-resources
       // instead of fetching async data in a getter
       const task = workLog.belongsTo('task')?.value();
-      const name = taskName(task);
-      return {
-        id,
-        title: `${hours > 0 ? `${hours}h` : ''}${minutes > 0 ? `${minutes}m` : ''}: ${name}`,
-        start: date,
-        allDay: true,
-        backgroundColor: task?.color,
-        borderColor: task?.color,
-        extendedProps: {
-          workLog,
-        },
-      };
-    });
+      if ( task ) {
+        const name = taskName(task);
+        return {
+          id,
+          title: `${hours > 0 ? `${hours}h` : ''}${minutes > 0 ? `${minutes}m` : ''}: ${name}`,
+          start: date,
+          allDay: true,
+          backgroundColor: task?.color,
+          borderColor: task?.color,
+          extendedProps: {
+            workLog,
+          },
+        };
+      } else {
+        return null;
+      }
+    }).filter( (x) => x) ;
   }
 
   get activeDate() {
