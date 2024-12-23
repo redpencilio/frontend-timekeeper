@@ -88,7 +88,6 @@ export default class WorkLogPopoverComponent extends Component {
     const newEntry = {
       task,
       duration: { hours: 0, minutes: 0 },
-      elementId: uuidv4(),
     };
     this.addedWorkLogs = [...this.addedWorkLogs, newEntry];
     this.focusHoursInput = this.addedWorkLogs.length - 1;
