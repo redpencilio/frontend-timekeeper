@@ -14,8 +14,12 @@
   @apply !font-light;
 }
 
+.fc .fc-toolbar-title {
+  @apply text-red-700 font-normal;
+}
+
 .fc .fc-col-header-cell-cushion {
-  @apply text-gray-600 font-normal text-sm uppercase tracking-wide;
+  @apply text-red-700 font-normal text-sm uppercase tracking-wide;
 }
 
 .fc .fc-daygrid-day-top {
@@ -31,7 +35,7 @@
  */
 
 .ember-power-select-trigger {
-  @apply appearance-none py-2 px-3 w-full min-h-9 text-sm border border-gray-300 rounded-md bg-white opacity-100;
+  @apply appearance-none py-2 px-3 w-full min-h-9 text-sm border border-red-300 rounded-md bg-white opacity-100;
 }
 
 .ember-power-select-trigger.ember-power-select-multiple-trigger {
@@ -60,15 +64,15 @@
 }
 
 .ember-power-select-option {
-  @apply py-1 text-sm text-gray-900;
+  @apply py-1 text-sm text-red-900;
 }
 
 .ember-power-select-option[aria-current="true"] {
-  @apply bg-gray-200 text-gray-900;
+  @apply bg-gray-200 text-red-900;
 }
 
 .ember-power-select-option[aria-selected="true"] {
-  @apply bg-indigo-100 text-gray-900;
+  @apply bg-indigo-100 text-red-900;
 }
 
 .ember-power-select-clear-btn {
@@ -88,7 +92,7 @@
 }
 
 .ember-power-select-multiple-option {
-  @apply inline-flex rounded-lg border-0 items-center px-1.5 py-1 text-sm font-medium bg-gray-100 text-gray-700;
+  @apply inline-flex rounded-lg border-0 items-center px-1.5 py-1 text-sm font-medium bg-gray-100 text-red-700;
 }
 
 .ember-power-select-multiple-remove-btn {
@@ -97,4 +101,12 @@
 
 .ember-power-select-multiple-remove-btn:hover {
   @apply text-red-700;
+}
+
+/**
+ * links
+ */
+
+.active {
+  @apply font-medium;
 }

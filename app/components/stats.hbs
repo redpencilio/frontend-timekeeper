@@ -1,5 +1,4 @@
 <div class="py-2 px-8 overflow-auto grow">
-  <h1 class="text-xl font-semibold mb-6">Summary</h1>
   <div>
     {{#if @workLogs}}
       <ul class="space-y-6">
@@ -11,11 +10,11 @@
                   class="inline-block w-2 h-2 rounded-full"
                   {{bg-color data.color}}
                 ></span>
-                <span class="text-sm font-normal">
+                <span class="text-sm font-normal text-red-800">
                   {{this.getProjectNameById projectId}}
                 </span>
               </div>
-              <div class="text-sm font-normal">{{data.totalDuration.hours}}h
+              <div class="text-sm font-normal text-red-800">{{data.totalDuration.hours}}h
                 {{data.totalDuration.minutes}}m</div>
             </div>
 
@@ -24,10 +23,10 @@
                 <ul class="ml-4 mt-2 space-y-2">
                   {{#each-in data.subProjects as |subprojectId subdata|}}
                     <li class="flex items-center justify-between space-x-2">
-                      <span class="text-sm text-gray-700">
+                      <span class="text-sm">
                         {{this.getSubProjectNameById subprojectId}}
                       </span>
-                      <span class="text-sm text-gray-700">
+                      <span class="text-sm">
                         {{subdata.totalDuration.hours}}h
                         {{subdata.totalDuration.minutes}}m
                       </span>
@@ -45,8 +44,8 @@
   </div>
 </div>
 <div class="pt-2 pb-8 px-8">
-  <div class="h-0 mt-2 border-gray-300 border-t-2 border-dashed"></div>
-  <div class="mt-4 flex items-center justify-between">
+  <div class="h-0 mt-2 border-red-800 border-t-2 border-dashed"></div>
+  <div class="text-red-800 mt-4 flex items-center justify-between">
     <span class="text-sm font-normal uppercase tracking-wide">Total</span>
     <span class="text-sm font-normal">{{this.totalDuration.hours}}h
       {{this.totalDuration.minutes}}m</span>
