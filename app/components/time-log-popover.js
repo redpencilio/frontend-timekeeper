@@ -4,7 +4,6 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { trackedReset } from 'tracked-toolbox';
 import { v4 as uuidv4 } from 'uuid';
-import { TrackedObject } from 'tracked-built-ins';
 import { uniqueBy } from '../utils/unique-by-key';
 
 export default class WorkLogPopoverComponent extends Component {
@@ -20,11 +19,11 @@ export default class WorkLogPopoverComponent extends Component {
         const workLog = this.args.workLogs.find(
           (workLog) => workLog.task.id === task.id,
         );
-        return new TrackedObject({
+        return {
           task,
           duration: workLog?.duration ?? { hours: 0, minutes: 0 },
           workLog,
-        });
+        };
       });
     },
   })
@@ -45,7 +44,7 @@ export default class WorkLogPopoverComponent extends Component {
           )
           .map(
             (workLog) =>
-              new TrackedObject({
+              ({
                 duration: workLog.duration,
                 task: workLog.task,
                 workLog,
