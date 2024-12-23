@@ -225,7 +225,6 @@ export default class FullCalendarComponent extends Component {
       'unselect',
       this.args.isDisabled ? () => false : this.onUnselect.bind(this),
     );
-    this.calendar.setOption('editable', !this.args.isDisabled);
     this.calendar.setOption('selectable', !this.args.isDisabled);
   }
 
