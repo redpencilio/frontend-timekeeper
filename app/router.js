@@ -10,7 +10,11 @@ Router.map(function () {
   this.route('year', { path: '/:year' }, function () {
     this.route('month', { path: '/:month' });
   });
-  this.route('404');
+  this.route('admin', function () {
+    this.route('users');
+  });
+  this.route('forbidden');
+  this.route('not-found');
   this.route('login');
   this.route('profile');
 });

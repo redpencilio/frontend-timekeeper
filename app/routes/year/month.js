@@ -12,7 +12,7 @@ export default class YearMonthRoute extends Route {
     // Check if month is a valid number
     this.humanMonth = Number(transition.to.params.month);
     if (isNaN(this.humanMonth) || this.humanMonth < 1 || this.humanMonth > 12) {
-      this.router.transitionTo('404');
+      this.router.transitionTo('not-found');
     }
   }
 
