@@ -29,11 +29,22 @@ export default class TaskPowerSelectComponent extends Component {
       (task) =>
         !this.args.excludeTasks?.map((task) => task.id)?.includes(task.id),
     );
-    const grouped = Object.groupBy(tasks, (task) => task.parent.id);
-    return Object.entries(grouped).map(([key, value]) => ({
-      groupName: this.store.peekRecord('task', key)?.name,
-      options: value,
-    }));
+    const grouped = Object.entries(
+      Object.groupBy(tasks, (task) => task.parent.id),
+    );
+
+    const singletons = grouped.filter(
+      ([_, taskContent]) => taskContent.length === 1,
+    );
+    const groups = grouped.filter(([_, taskContent]) => taskContent.length > 1);
+
+    return [
+      ...singletons.map(([_, taskContent]) => taskContent[0]),
+      ...groups.map(([taskId, children]) => ({
+        groupName: this.store.peekRecord('task', taskId)?.name,
+        options: children,
+      })),
+    ];
   }
 
   matcher(option, searchTerm) {
