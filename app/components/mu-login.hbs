@@ -45,7 +45,12 @@
       </div>
 
       <div>
-        <Button @skin="primary" type="submit" class="w-full">Sign in</Button>
+        <Button
+          @isLoading={{this.isAuthenticating}}
+          @skin="primary"
+          type="submit"
+          class="w-full"
+        >Sign in</Button>
       </div>
     </form>
     {{#if this.errorMessage}}
