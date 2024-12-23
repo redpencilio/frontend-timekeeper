@@ -5,6 +5,8 @@ import { tracked } from '@glimmer/tracking';
 import { trackedReset } from 'tracked-toolbox';
 import { v4 as uuidv4 } from 'uuid';
 import { task } from 'ember-concurrency';
+import { TrackedObject } from 'tracked-built-ins';
+import { uniqueBy } from '../utils/unique-by-key';
 
 export default class WorkLogPopoverComponent extends Component {
   @service store;
@@ -19,11 +21,11 @@ export default class WorkLogPopoverComponent extends Component {
         const workLog = this.args.workLogs.find(
           (workLog) => workLog.task.id === task.id,
         );
-        return {
+        return new TrackedObject({
           task,
           duration: workLog?.duration ?? { hours: 0, minutes: 0 },
           workLog,
-        };
+        });
       });
     },
   })
@@ -33,18 +35,23 @@ export default class WorkLogPopoverComponent extends Component {
     memo: 'args.workLogs',
     update() {
       return [
-        ...this.args.workLogs
+        // Allow a single workLog per task
+        ...uniqueBy(this.args.workLogs, (workLog) => workLog.task.id)
+          // Exclude tasks that are in favorites
           .filter(
             (workLog) =>
               !this.userProfile.favoriteTasks
                 .map((task) => task.id)
                 .includes(workLog.task.id),
           )
-          .map((workLog) => ({
-            duration: workLog.duration,
-            task: workLog.task,
-            workLog,
-          })),
+          .map(
+            (workLog) =>
+              new TrackedObject({
+                duration: workLog.duration,
+                task: workLog.task,
+                workLog,
+              }),
+          ),
       ];
     },
   })
@@ -70,9 +77,9 @@ export default class WorkLogPopoverComponent extends Component {
   }
 
   @action
-  updateTask(workLog) {
-    workLog.task = task;
-    this.focusHoursInput = this.addedWorkLogs.indexOf(workLog);
+  updateTask(workLogEntry) {
+    workLogEntry.task = task;
+    this.focusHoursInput = this.addedWorkLogs.indexOf(workLogEntry);
   }
 
   @action
