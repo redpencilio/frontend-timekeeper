@@ -95,6 +95,7 @@ export default class YearMonthContoller extends Controller {
   @action
   async deleteWorkLog(workLog) {
     await workLog.destroyRecord();
+    this.model.workLogs.removeObject(workLog);
     this.router.refresh();
   }
 

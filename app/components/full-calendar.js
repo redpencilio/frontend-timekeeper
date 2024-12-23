@@ -36,6 +36,7 @@ export default class FullCalendarComponent extends Component {
       select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
       unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
       dayCellContent: this.renderDayCellContent.bind(this),
+      eventDidMount: this.attachEventRemoveButton.bind(this),
       eventClick: this.args.isDisabled
         ? () => false
         : this.onEventClick.bind(this),
@@ -57,7 +58,7 @@ export default class FullCalendarComponent extends Component {
         end: firstDayOfNextMonth,
       },
       // Drag and Drop
-      editable: !this.args.isDisabled, // Allows for drag and drop of internal events
+      // editable: !this.args.isDisabled, // Allows for drag and drop of internal events
       eventConstraint: {
         // Where events can be dragged to
         start: formatDate(firstDayOfMonth),
@@ -102,6 +103,36 @@ export default class FullCalendarComponent extends Component {
           </div>
         </div>
       `,
+    };
+  }
+
+  attachEventRemoveButton({ el, event }) {
+    const deleteButton = document.createElement('button');
+    deleteButton.innerHTML = `
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+        />
+      </svg>
+    `;
+    deleteButton.classList =
+      'fill-gray-700 rounded hover:fill-red-500';
+    deleteButton.onclick = (clickEvent) => {
+      clickEvent.stopPropagation();
+      this.deleteWorkLog(event.extendedProps.workLog);
+    };
+    deleteButton.style.visibility = 'hidden';
+    el.appendChild(deleteButton);
+    el.onmouseenter = () => {
+      deleteButton.style.visibility = 'visible';
+    };
+    el.onmouseleave = () => {
+      deleteButton.style.visibility = 'hidden';
     };
   }
 
