@@ -7,6 +7,7 @@ import { service } from '@ember/service';
 
 export default class UserEditComponent extends Component {
   @service store;
+
   @tracked newAccountSelection = null;
 
   isKimaiAccount = (account) =>
@@ -15,9 +16,11 @@ export default class UserEditComponent extends Component {
   get person() {
     return this.args.person;
   }
+
   get selectedAccount() {
     return this.newAccountSelection || this.currentAccount.value;
   }
+
   currentAccount = trackedFunction(this, async () => {
     const accounts = await this.person.accounts;
     const kimaiAccount = accounts.find((account) =>
@@ -39,8 +42,10 @@ export default class UserEditComponent extends Component {
     const oldKimaiAccount = accounts.find((account) =>
       this.isKimaiAccount(account),
     );
-    oldKimaiAccount.person = null;
-    await oldKimaiAccount.save();
+    if (oldKimaiAccount) {
+      oldKimaiAccount.person = null;
+      await oldKimaiAccount.save();
+    }
     selectedAccount.person = this.person;
     selectedAccount.save();
   };
