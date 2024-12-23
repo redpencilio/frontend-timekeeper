@@ -6,23 +6,15 @@ export default class AdminUsersRoute extends Route {
   @service router;
   @service userProfile;
 
-  queryParams = {
-    page: { refreshModel: true },
-    size: { refreshModel: true },
-  };
-
   beforeModel() {
     if (!this.userProfile.may('manage-users')) {
       this.router.transitionTo('forbidden');
     }
   }
 
-  model(params) {
-    return this.store.query('person', {
-      page: {
-        size: params.size,
-        number: params.page,
-      },
+  model() {
+    return this.store.queryAll('person', {
+      sort: 'name',
     });
   }
 }
