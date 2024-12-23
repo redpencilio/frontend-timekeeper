@@ -40,7 +40,7 @@
 
 .ember-power-select-trigger:focus,
 .ember-power-select-trigger--active {
-  @apply ring-indigo-200 border-2 border-indigo-200 outline-none;
+  @apply ring-blue-200 border-2 border-blue-200 outline-none;
 }
 
 .ember-power-select-selected-item {
@@ -56,7 +56,7 @@
 }
 
 .ember-power-select-search-input:focus {
-  @apply ring-0 border-0 border-b border-indigo-200 outline-none;
+  @apply ring-0 border-0 border-b border-blue-200 outline-none;
 }
 
 .ember-power-select-option {
@@ -68,7 +68,7 @@
 }
 
 .ember-power-select-option[aria-selected="true"] {
-  @apply bg-indigo-100 text-gray-900;
+  @apply bg-blue-100 text-gray-900;
 }
 
 .ember-power-select-clear-btn {
