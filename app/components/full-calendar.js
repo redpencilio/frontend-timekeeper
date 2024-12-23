@@ -4,7 +4,14 @@ import { tracked } from '@glimmer/tracking';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { startOfMonth, endOfMonth, addDays, isSameDay } from 'date-fns';
+import {
+  startOfMonth,
+  endOfMonth,
+  addDays,
+  isSameDay,
+  isAfter,
+  isBefore,
+} from 'date-fns';
 import { task } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
@@ -121,7 +128,7 @@ export default class FullCalendarComponent extends Component {
       </svg>
     `;
     deleteButton.classList =
-      'fill-gray-700 rounded hover:fill-red-500';
+      'fill-gray-500 rounded hover:fill-red-500';
     deleteButton.onclick = (clickEvent) => {
       clickEvent.stopPropagation();
       this.deleteWorkLog(event.extendedProps.workLog);
@@ -172,13 +179,15 @@ export default class FullCalendarComponent extends Component {
     );
   }
 
-  get workLogsForClickedDate() {
-    if (!this.selectionInfo || this.hasSelectedMultipleDates) {
+  get workLogsForSelection() {
+    if (!this.selectionInfo) {
       return [];
     } else {
-      const dateStr = this.selectionInfo.startStr;
+      const { start, end } = this.selectionInfo;
       return this.args.events
-        .filter((event) => formatDate(event.start) === dateStr)
+        .filter(
+          (event) => isAfter(event.start, start) && isBefore(event.start, end),
+        )
         .map((event) => event.extendedProps.workLog);
     }
   }
