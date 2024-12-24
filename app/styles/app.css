@@ -23,7 +23,7 @@
 }
 
 .fc .fc-col-header-cell-cushion {
-  @apply text-red-700 font-normal text-sm uppercase tracking-wide;
+  @apply text-gray-700 font-normal text-sm uppercase tracking-wide;
 }
 
 .fc .fc-daygrid-day-top {
