@@ -14,7 +14,7 @@ export default class ButtonComponent extends Component {
 
     const errorClass =
       this.args.skin === 'error'
-        ? 'border border-transparent rounded-md shadow-sm text-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+        ? 'border border-transparent rounded-md shadow-sm text-sm text-white bg-red-700 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
         : '';
     const muteClass = this.args.skin === 'mute' ? 'text-red-700' : '';
 
