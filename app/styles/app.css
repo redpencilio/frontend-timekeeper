@@ -7,7 +7,7 @@
  */
 
 :root {
-  --fc-highlight-color: rgba(147, 197, 253, 0.2);
+  --fc-highlight-color: rgba(252, 165, 165, 0.2);
 }
 
 .fc .fc-event-title {
@@ -31,7 +31,7 @@
 }
 
 .fc .fc-daygrid-day-number {
-  @apply w-full
+  @apply w-full;
 }
 
 /**
