@@ -1,6 +1,6 @@
-<div class="h-full bg-red-800 text-white flex flex-col">
+<div class="h-full bg-zinc-800 text-white flex flex-col">
   <div
-    class="px-6 py-4 border-b-2 border-red-600 flex items-center justify-between"
+    class="px-6 py-4 flex items-center justify-between"
   >
     <LinkTo @route="year.month" @models={{array (sub @year 1) 12}}>
       {{svg-jar "chevron-left" class="h-5 w-5"}}
@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <div class="px-6 py-3 flex items-center justify-between border-red-600 border-t-2">
+  <div class="px-6 py-3 flex items-center justify-between border-red-500 border-t-2">
     <LinkTo class="text-sm text-white font-medium" @route="profile">
       {{this.userProfile.user.name}}
     </LinkTo>
