@@ -1,10 +1,5 @@
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
   <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    {{! <img
-      class="mx-auto h-10 w-auto"
-      src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-      alt="Your Company"
-    /> }}
     <h2
       class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-red-600"
     >Sign in to your account</h2>
@@ -18,14 +13,13 @@
           class="block text-sm/6 font-medium text-gray-900"
         >Email address</label>
         <div class="mt-2">
-          <input
+          <TkInput
             id="mu-login-username"
             value={{this.nickname}}
             name="email"
             type="email"
             autocomplete="email"
             required
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm/6"
             {{on "input" (with-value (fn (mut this.nickname)))}}
           />
         </div>
@@ -39,20 +33,24 @@
           >Password</label>
         </div>
         <div class="mt-2">
-          <input
+          <TkInput
             id="mu-login-password"
             name="password"
             type="password"
             autocomplete="current-password"
             required
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm/6"
             {{on "input" (with-value (fn (mut this.password)))}}
           />
         </div>
       </div>
 
       <div>
-        <Button @skin="primary" type="submit" class="w-full">Sign in</Button>
+        <Button
+          @isLoading={{this.isAuthenticating}}
+          @skin="primary"
+          type="submit"
+          class="w-full"
+        >Sign in</Button>
       </div>
     </form>
     {{#if this.errorMessage}}

@@ -4,7 +4,14 @@ import { tracked } from '@glimmer/tracking';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { startOfMonth, endOfMonth, addDays, isSameDay } from 'date-fns';
+import {
+  startOfMonth,
+  endOfMonth,
+  addDays,
+  isSameDay,
+  isAfter,
+  isBefore,
+} from 'date-fns';
 import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
@@ -36,6 +43,7 @@ export default class FullCalendarComponent extends Component {
       select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
       unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
       dayCellContent: this.renderDayCellContent.bind(this),
+      eventDidMount: this.attachEventRemoveButton.bind(this),
       eventClick: this.args.isDisabled
         ? () => false
         : this.onEventClick.bind(this),
@@ -57,7 +65,7 @@ export default class FullCalendarComponent extends Component {
         end: firstDayOfNextMonth,
       },
       // Drag and Drop
-      editable: !this.args.isDisabled, // Allows for drag and drop of internal events
+      // editable: !this.args.isDisabled, // Allows for drag and drop of internal events
       eventConstraint: {
         // Where events can be dragged to
         start: formatDate(firstDayOfMonth),
@@ -105,6 +113,35 @@ export default class FullCalendarComponent extends Component {
     };
   }
 
+  attachEventRemoveButton({ el, event }) {
+    const deleteButton = document.createElement('button');
+    deleteButton.innerHTML = `
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+        />
+      </svg>
+    `;
+    deleteButton.classList = 'fill-gray-500 rounded hover:fill-red-500';
+    deleteButton.onclick = (clickEvent) => {
+      clickEvent.stopPropagation();
+      this.deleteWorkLog(event.extendedProps.workLog);
+    };
+    deleteButton.style.visibility = 'collapse';
+    el.appendChild(deleteButton);
+    el.onmouseenter = () => {
+      deleteButton.style.visibility = 'visible';
+    };
+    el.onmouseleave = () => {
+      deleteButton.style.visibility = 'collapse';
+    };
+  }
+
   onEventClick(info) {
     this.calendar.select(info.event.startStr);
     this.clickedEventInfo = info;
@@ -141,13 +178,15 @@ export default class FullCalendarComponent extends Component {
     );
   }
 
-  get workLogsForClickedDate() {
-    if (!this.selectionInfo || this.hasSelectedMultipleDates) {
+  get workLogsForSelection() {
+    if (!this.selectionInfo) {
       return [];
     } else {
-      const dateStr = this.selectionInfo.startStr;
+      const { start, end } = this.selectionInfo;
       return this.args.events
-        .filter((event) => formatDate(event.start) === dateStr)
+        .filter(
+          (event) => isAfter(event.start, start) && isBefore(event.start, end),
+        )
         .map((event) => event.extendedProps.workLog);
     }
   }
@@ -186,7 +225,6 @@ export default class FullCalendarComponent extends Component {
       'unselect',
       this.args.isDisabled ? () => false : this.onUnselect.bind(this),
     );
-    this.calendar.setOption('editable', !this.args.isDisabled);
     this.calendar.setOption('selectable', !this.args.isDisabled);
   }
 
@@ -194,7 +232,8 @@ export default class FullCalendarComponent extends Component {
     const { start, end } = this.selectionInfo;
     await this.args.onSave(
       hourTaskPairs,
-      eachDayOfInterval({ start, end: subDays(end, 1) }));
+      eachDayOfInterval({ start, end: subDays(end, 1) }),
+    );
     this.clearPopovers();
   });
 

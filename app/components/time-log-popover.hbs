@@ -7,8 +7,8 @@
     <div role="none">
       <form {{on "submit" this.submitWorkLogs}}>
         <ul class="divide-y divide-dotted">
-          {{#each this.favoriteTaskWorkLogs as |workLog index|}}
-            {{#let workLog.task as |task|}}
+          {{#each this.favoriteTaskWorkLogs as |workLogEntry index|}}
+            {{#let workLogEntry.task as |task|}}
               <li>
                 <div class="mt-2 mb-2">
                   <div class="mt-1 flex justify-between">
@@ -21,8 +21,8 @@
                     {{#let (unique-id) as |inputId|}}
                       <DurationInput
                         id={{inputId}}
-                        @value={{workLog.duration}}
-                        @onChange={{fn this.updateDuration workLog}}
+                        @value={{workLogEntry.duration}}
+                        @onChange={{fn this.updateDuration workLogEntry}}
                         {{focus-select
                           (or
                             (eq @selectedWorkLog.task.id task.id) (eq index 0)
@@ -35,7 +35,7 @@
               </li>
             {{/let}}
           {{/each}}
-          {{#each this.addedWorkLogs as |workLog index|}}
+          {{#each this.addedWorkLogs as |workLogEntry index|}}
             <li>
               <div class="mt-2 mb-2">
                 <div class="mt-1 flex justify-between content-center">
@@ -44,22 +44,24 @@
                       {{! class needed for fullcalendar unselectCancel }}
                       @dropdownClass="work-log-popover"
                       @excludeTasks={{this.excludeTasks}}
-                      @selectedTask={{workLog.task}}
-                      @onChange={{fn this.updateTask workLog}}
+                      @selectedTask={{workLogEntry.task}}
+                      @onChange={{fn this.updateTask workLogEntry}}
                     />
                   </div>
-                  <DurationInput
-                    id={{workLog.elementId}}
-                    @value={{workLog.duration}}
-                    @onChange={{fn this.updateDuration workLog}}
-                    {{focus-select
-                      (or
-                        (eq @selectedWorkLog.task.id workLog.task.id)
-                        (eq index this.focusHoursInput)
-                      )
-                    }}
-                    {{clear-value this "focusHoursInput"}}
-                  />
+                  {{#let (unique-id) as |elementId|}}
+                    <DurationInput
+                      id={{elementId}}
+                      @value={{workLogEntry.duration}}
+                      @onChange={{fn this.updateDuration workLogEntry}}
+                      {{focus-select
+                        (or
+                          (eq @selectedWorkLog.task.id workLogEntry.task.id)
+                          (eq index this.focusHoursInput)
+                        )
+                      }}
+                      {{clear-value this "focusHoursInput"}}
+                    />
+                  {{/let}}
                 </div>
               </div>
             </li>
@@ -74,6 +76,7 @@
                     @excludeTasks={{this.excludeTasks}}
                     @registerAPI={{this.registerNewProjectPowerSelect}}
                     @onChange={{this.addTaskToList}}
+                    {{focus (eq this.favoriteTaskWorkLogs.length 0)}}
                   />
                 </div>
               </div>
@@ -85,7 +88,11 @@
           <Button @skin="mute" {{on "click" this.closePopover}}>
             Cancel
           </Button>
-          <Button type="submit" @isLoading={{@onSave.isRunning}}>
+          <Button
+            type="submit"
+            @isLoading={{@onSave.isRunning}}
+            @skin={{if @isOverwrite "error" "primary"}}
+          >
             {{if @isOverwrite "Overwrite" "Save"}}
           </Button>
         </div>
