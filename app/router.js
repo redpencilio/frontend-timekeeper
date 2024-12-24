@@ -12,6 +12,11 @@ Router.map(function () {
   });
   this.route('admin', function () {
     this.route('users');
+    this.route('timesheets', function () {
+      this.route('year', { path: '/:year' }, function () {
+        this.route('month', { path: '/:month' });
+      });
+    });
   });
   this.route('forbidden');
   this.route('not-found');
