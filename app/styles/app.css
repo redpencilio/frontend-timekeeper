@@ -18,6 +18,10 @@
   @apply text-red-700 font-normal;
 }
 
+.fc .fc-view-harness {
+  @apply shadow-lg;
+}
+
 .fc .fc-col-header-cell-cushion {
   @apply text-red-700 font-normal text-sm uppercase tracking-wide;
 }

@@ -1,7 +1,7 @@
 {{#if (eq @timesheet.status (app-constant "TIMESHEET_STATUSES.ABSENCE_SUBMITTED"))}}
-  {{svg-jar "check-lg" class="h-5 w-5 text-red-200"}}
+  {{svg-jar "check-lg" class="h-5 w-5 text-red-100"}}
 {{else if (eq @timesheet.status (app-constant "TIMESHEET_STATUSES.SUBMITTED"))}}
-  {{svg-jar "check-lg" class="h-5 w-5 text-red-200"}}
+  {{svg-jar "check-all" class="h-5 w-5 text-red-100"}}
 {{else if (eq @timesheet.status (app-constant "TIMESHEET_STATUSES.EXPORTED"))}}
-  {{svg-jar "lock-fill" class="h-4 w-4 text-red-200"}}
+  {{svg-jar "lock-fill" class="h-4 w-4 text-red-100"}}
 {{/if}}
