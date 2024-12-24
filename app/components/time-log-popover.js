@@ -4,6 +4,7 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { trackedReset } from 'tracked-toolbox';
 import { v4 as uuidv4 } from 'uuid';
+import { uniqueBy } from '../utils/unique-by-key';
 
 export default class WorkLogPopoverComponent extends Component {
   @service store;
@@ -32,18 +33,23 @@ export default class WorkLogPopoverComponent extends Component {
     memo: 'args.workLogs',
     update() {
       return [
-        ...this.args.workLogs
+        // Allow a single workLog per task
+        ...uniqueBy(this.args.workLogs, (workLog) => workLog.task.id)
+          // Exclude tasks that are in favorites
           .filter(
             (workLog) =>
               !this.userProfile.favoriteTasks
                 .map((task) => task.id)
                 .includes(workLog.task.id),
           )
-          .map((workLog) => ({
-            duration: workLog.duration,
-            task: workLog.task,
-            workLog,
-          })),
+          .map(
+            (workLog) =>
+              ({
+                duration: workLog.duration,
+                task: workLog.task,
+                workLog,
+              }),
+          ),
       ];
     },
   })
@@ -82,7 +88,6 @@ export default class WorkLogPopoverComponent extends Component {
     const newEntry = {
       task,
       duration: { hours: 0, minutes: 0 },
-      elementId: uuidv4(),
     };
     this.addedWorkLogs = [...this.addedWorkLogs, newEntry];
     this.focusHoursInput = this.addedWorkLogs.length - 1;

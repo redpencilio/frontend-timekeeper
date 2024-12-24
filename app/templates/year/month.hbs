@@ -7,12 +7,16 @@
     @focusDate={{this.activeDate}}
   />
 </div>
-<div class="h-full box-border py-4 min-w-96">
-  <div class="flex flex-col bg-gray-100 h-full rounded-lg mr-2 shadow">
+<div class="h-full min-w-96">
+  <div class="flex flex-col border-solid border-red-600 bg-white-100 h-full mr-2">
     <TimesheetActions
       @timesheet={{this.timesheet}}
       @onSubmitHolidays={{this.submitHolidays}}
-      @onSubmitTimesheet={{this.submitTimesheet}} />
+      @onSubmitTimesheet={{this.submitTimesheet}}
+      class="mt-6 -mb-6"
+      />
+    <h1 class="px-4 mt-6 text-xl text-red-700 font-semibold mb-3">Summary</h1>
+    <TimesheetBadges @timesheet={{this.timesheet}} />
     <Stats @workLogs={{@model.workLogs}} />
   </div>
 </div>

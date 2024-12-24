@@ -4,7 +4,14 @@ import { tracked } from '@glimmer/tracking';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { startOfMonth, endOfMonth, addDays, isSameDay } from 'date-fns';
+import {
+  startOfMonth,
+  endOfMonth,
+  addDays,
+  isSameDay,
+  isAfter,
+  isBefore,
+} from 'date-fns';
 import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
@@ -120,19 +127,18 @@ export default class FullCalendarComponent extends Component {
         />
       </svg>
     `;
-    deleteButton.classList =
-      'fill-gray-700 rounded hover:fill-red-500';
+    deleteButton.classList = 'fill-gray-500 rounded hover:fill-red-500';
     deleteButton.onclick = (clickEvent) => {
       clickEvent.stopPropagation();
       this.deleteWorkLog(event.extendedProps.workLog);
     };
-    deleteButton.style.visibility = 'hidden';
+    deleteButton.style.visibility = 'collapse';
     el.appendChild(deleteButton);
     el.onmouseenter = () => {
       deleteButton.style.visibility = 'visible';
     };
     el.onmouseleave = () => {
-      deleteButton.style.visibility = 'hidden';
+      deleteButton.style.visibility = 'collapse';
     };
   }
 
@@ -172,13 +178,15 @@ export default class FullCalendarComponent extends Component {
     );
   }
 
-  get workLogsForClickedDate() {
-    if (!this.selectionInfo || this.hasSelectedMultipleDates) {
+  get workLogsForSelection() {
+    if (!this.selectionInfo) {
       return [];
     } else {
-      const dateStr = this.selectionInfo.startStr;
+      const { start, end } = this.selectionInfo;
       return this.args.events
-        .filter((event) => formatDate(event.start) === dateStr)
+        .filter(
+          (event) => isAfter(event.start, start) && isBefore(event.start, end),
+        )
         .map((event) => event.extendedProps.workLog);
     }
   }
@@ -217,7 +225,6 @@ export default class FullCalendarComponent extends Component {
       'unselect',
       this.args.isDisabled ? () => false : this.onUnselect.bind(this),
     );
-    this.calendar.setOption('editable', !this.args.isDisabled);
     this.calendar.setOption('selectable', !this.args.isDisabled);
   }
 
@@ -225,7 +232,8 @@ export default class FullCalendarComponent extends Component {
     const { start, end } = this.selectionInfo;
     await this.args.onSave(
       hourTaskPairs,
-      eachDayOfInterval({ start, end: subDays(end, 1) }));
+      eachDayOfInterval({ start, end: subDays(end, 1) }),
+    );
     this.clearPopovers();
   });
 
