@@ -71,16 +71,20 @@ export default class YearMonthContoller extends Controller {
         // Insert new workLogs
         ...dates.map(async (date) => {
           await Promise.all(
-            workLogTaskPairs.map(async ({ duration, task }) => {
-              // A new workLog has to be created
-              const newWorkLog = this.store.createRecord('work-log', {
-                duration,
-                task,
-                date,
-                person: this.userProfile.user,
-              });
-              await newWorkLog.save();
-            }),
+            workLogTaskPairs
+              .filter(
+                ({ duration: { hours, minutes } }) => hours > 0 || minutes > 0,
+              )
+              .map(async ({ duration, task }) => {
+                // A new workLog has to be created
+                const newWorkLog = this.store.createRecord('work-log', {
+                  duration,
+                  task,
+                  date,
+                  person: this.userProfile.user,
+                });
+                await newWorkLog.save();
+              }),
           );
         }),
       ]);

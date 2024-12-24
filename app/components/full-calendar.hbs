@@ -3,17 +3,20 @@
     <TimeLogPopover
       @anchorElement={{this.clickedDateElement}}
       @selectedWorkLog={{this.clickedWorkLog}}
-      @workLogs={{this.workLogsForClickedDate}}
+      @workLogs={{this.workLogsForSelection}}
       @onSave={{this.save}}
       @onCancel={{this.cancel}}
     />
   {{else}}
     <TimeLogPopover
       @anchorElement={{this.clickedDateElement}}
-      @workLogs={{this.workLogsForClickedDate}}
+      @workLogs={{this.workLogsForSelection}}
       @onSave={{this.save}}
       @onCancel={{this.cancel}}
-      @isOverwrite={{this.hasSelectedMultipleDates}}
+      @isOverwrite={{and
+        this.hasSelectedMultipleDates
+        this.workLogsForSelection
+      }}
     />
   {{/if}}
 {{/if}}

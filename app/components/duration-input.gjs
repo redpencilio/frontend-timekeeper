@@ -26,11 +26,11 @@ const getDurationFromString = (input) => {
     result.hours = hours;
     result.minutes = Math.round(fraction * 60);
   } else {
-    // Match formats like "1h", "1h30m", "30m", "1h70"
-    const timeMatch = input.match(/^(?:(\d+)h)?(?:(\d+)m?)?$/);
+    // Match formats like "1h", "1h30m", "30m", "1h70", "1:30", "1u30"
+    const timeMatch = input.match(/^(?:(\d+)(h|:|u))?(?:(\d+)m?)?$/);
     if (timeMatch) {
       const hours = parseInt(timeMatch[1] || 0, 10);
-      const minutes = parseInt(timeMatch[2] || 0, 10);
+      const minutes = parseInt(timeMatch[3] || 0, 10);
       result.hours = hours;
       result.minutes = minutes;
     } else {

@@ -1,0 +1,14 @@
+<div class="px-4 mb-2">
+  {{#if
+       (or
+       @timesheet.isAbsenceSubmitted
+       @timesheet.isSubmitted
+       @timesheet.isExported
+       )
+  }}
+    <Badge>Absence submitted</Badge>
+  {{/if}}
+  {{#if (or @timesheet.isSubmitted @timesheet.isExported)}}
+    <Badge>Timesheet submitted</Badge>
+  {{/if}}
+</div>
