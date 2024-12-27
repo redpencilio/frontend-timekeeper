@@ -11,12 +11,10 @@
   <div class="flex flex-col border-solid border-red-600 bg-white-100 h-full mr-2">
     <TimesheetActions
       @timesheet={{this.timesheet}}
-      @onSubmitHolidays={{this.submitHolidays}}
-      @onSubmitTimesheet={{this.submitTimesheet}}
+      @onStatusChanged={{this.changeTimesheetStatus}}
       class="mt-6 -mb-6"
       />
     <h1 class="px-4 mt-6 text-xl text-red-700 font-semibold mb-3">Summary</h1>
-    <TimesheetBadges @timesheet={{this.timesheet}} />
     <Stats @workLogs={{@model.workLogs}} />
   </div>
 </div>

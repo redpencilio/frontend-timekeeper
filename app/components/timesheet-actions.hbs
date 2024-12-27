@@ -1,19 +1,39 @@
-{{#if (or this.canSubmitHolidays this.canSubmitTimesheet)}}
-  <div class="px-4 w-full" ...attributes>
-    {{#if this.canSubmitHolidays}}
-      <Button class="mb-4 drop-shadow w-full"
-        @loading={{this.submitHolidays.isRunning}}
-        {{on "click" (perform this.submitHolidays)}}>
-        Submit absence
-      </Button>
-    {{/if}}
-    {{#if this.canSubmitTimesheet}}
-      <Button class="mb-4 drop-shadow w-full flex items-center"
-        @loading={{this.submitTimesheet.isRunning}}
-        {{on "click" (perform this.submitTimesheet)}}>
-        Submit timesheet
-        <span class="pl-2">{{svg-jar "check2-square"}}</span>
-      </Button>
-    {{/if}}
-  </div>
-{{/if}}
+<div class="mt-6 px-4 w-full">
+  <h3 class="mb-4 text-lg font-semibold text-red-700 flex items-center gap-2">{{svg-jar "calendar-check"}} Mark as complete</h3>
+  <ul
+    class="items-center w-full text-sm font-medium text-gray-900 shadow-sm white border border-gray-200 rounded-lg sm:flex"
+  >
+    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
+      <div class="flex items-center ps-3">
+        {{#let (unique-id) as |checkboxId|}}
+          <Checkbox
+            id={{checkboxId}}
+            value="holidays"
+            @isChecked={{this.absenceComplete}}
+            @onChange={{this.onAbsenceClick}}
+          />
+          <label
+            for={{checkboxId}}
+            class="w-full py-3 ms-2 text-sm font-medium text-gray-900"
+          >Absence</label>
+        {{/let}}
+      </div>
+    </li>
+    <li class="w-full border-b border-gray-200 sm:border-b-0">
+      <div class="flex items-center ps-3">
+        {{#let (unique-id) as |checkboxId|}}
+          <Checkbox
+            id={{checkboxId}}
+            value="work-hours"
+            @isChecked={{this.timesheetComplete}}
+            @onChange={{this.onTimesheetClick}}
+          />
+          <label
+            for={{checkboxId}}
+            class="w-full py-3 ms-2 text-sm font-medium text-gray-900"
+          >Timesheet</label>
+        {{/let}}
+      </div>
+    </li>
+  </ul>
+</div>
