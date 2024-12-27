@@ -107,6 +107,14 @@
   @apply text-red-700;
 }
 
+.ember-power-select-dropdown.ember-basic-dropdown-content--above {
+  border-bottom: 1px solid #aaaaaa;
+}
+
+.ember-power-select-dropdown.ember-basic-dropdown-content--below {
+  border-top: 1px solid #aaaaaa;
+}
+
 /**
  * links
  */
