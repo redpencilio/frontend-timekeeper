@@ -5,14 +5,15 @@
   @selected={{@selectedTask}}
   @matcher={{this.matcher}}
   @onChange={{@onChange}}
-  @dropdownClass={{concat "shadow-lg" " " @dropdownClass}}
-  {{!-- @matchTriggerWidth={{false}} --}}
+  @dropdownClass={{concat "shadow min-w-96" " " @dropdownClass}}
+  @matchTriggerWidth={{false}}
   @horizontalPosition="center"
   {{!-- @onFocus={{this.onFocus}} --}}
   {{!-- @onClose={{@onClose}} --}}
   {{!-- @onBlur={{this.onBlur}} --}}
   @onKeydown={{this.onKeydown}}
   @placeholder="Type '/' to search"
+  @searchPlaceholder="Type a project name"
   @registerAPI={{@registerAPI}}
   ...attributes
   as |task|
