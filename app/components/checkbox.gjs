@@ -3,7 +3,7 @@ import { tracked } from '@glimmer/tracking';
 import checked from 'frontend-timekeeper/modifiers/checked';
 import { on } from '@ember/modifier';
 
-export default class UserEditComponent extends Component {
+export default class CheckboxComponent extends Component {
   
   handleClick = (event) => {
     this.args.onChange?.(event.target.checked, event);
