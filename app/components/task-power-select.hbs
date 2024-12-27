@@ -5,8 +5,8 @@
   @selected={{@selectedTask}}
   @matcher={{this.matcher}}
   @onChange={{@onChange}}
-  @dropdownClass={{concat "shadow min-w-96" " " @dropdownClass}}
-  @matchTriggerWidth={{false}}
+  @dropdownClass={{concat "shadow" " " @dropdownClass}}
+  {{!-- @matchTriggerWidth={{false}} --}}
   @horizontalPosition="center"
   {{!-- @onFocus={{this.onFocus}} --}}
   {{!-- @onClose={{@onClose}} --}}
@@ -18,11 +18,11 @@
   ...attributes
   as |task|
 >
-  <div class="flex items-center text-sm">
+  <div class="flex items-center text-sm h-6">
     <span
-      class="inline-block w-3 h-3 rounded-full mr-3"
+      class="inline-block w-2 h-2 rounded-full mr-3"
       {{bg-color (or task.color task.parent.color)}}
     ></span>
-    <span class="text-gray-700">{{task-name task}}</span>
+    <span class="text-gray-700 font-light">{{task-name task}}</span>
   </div>
 </PowerSelect>

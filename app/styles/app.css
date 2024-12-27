@@ -108,12 +108,17 @@
 }
 
 .ember-power-select-dropdown.ember-basic-dropdown-content {
-  border: 1px solid rgba(0,0,0,.1);
-  @apply rounded-lg
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  @apply rounded-lg;
+}
+
+.ember-power-select-dropdown.ember-basic-dropdown-content
+  > .ember-power-select-options {
+    @apply pt-1;
 }
 
 .ember-power-select-group-name {
-  @apply text-sm font-medium;
+  @apply text-sm font-normal pr-2 truncate w-full block;
 }
 
 /**
