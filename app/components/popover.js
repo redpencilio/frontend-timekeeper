@@ -27,7 +27,7 @@ export default class TimeLogPopoverComponent extends Component {
           mainAxis: 8,
           crossAxis: -8,
         }),
-        shift({ padding: 5 }),
+        shift(),
         size({
           apply({ availableWidth, availableHeight, elements }) {
             // Change styles, e.g.
