@@ -68,7 +68,7 @@
 }
 
 .ember-power-select-option {
-  @apply py-1 text-sm text-red-900;
+  @apply py-1 text-sm text-gray-900;
 }
 
 .ember-power-select-option[aria-current="true"] {
