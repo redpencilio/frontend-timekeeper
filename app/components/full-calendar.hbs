@@ -22,8 +22,8 @@
 {{/if}}
 <div
   class="full-calendar h-full"
-  {{did-update this.updateAndRerenderCalendar @events}}
   {{did-update this.gotoFocusDate @focusDate}}
   {{did-update this.updateDisabled @isDisabled @focusDate}}
+  {{did-update this.updateAndRerenderCalendar @events}}
   {{did-insert this.setupCalendar}}
 ></div>
