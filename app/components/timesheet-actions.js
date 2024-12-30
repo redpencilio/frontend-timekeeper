@@ -19,7 +19,7 @@ export default class TimesheetActionsComponent extends Component {
   }
 
   @action
-  onAbsenceClick(checked) {
+  clickAbsence(checked) {
     if (!checked) {
       this.args.onStatusChanged(TIMESHEET_STATUSES.DRAFT);
     } else {
@@ -28,7 +28,7 @@ export default class TimesheetActionsComponent extends Component {
   }
 
   @action
-  onTimesheetClick(checked) {
+  clickTimesheet(checked) {
     if (checked) {
       this.args.onStatusChanged(TIMESHEET_STATUSES.SUBMITTED);
     } else {

@@ -9,8 +9,8 @@
           <Checkbox
             id={{checkboxId}}
             value="holidays"
-            @isChecked={{this.absenceComplete}}
-            @onChange={{this.onAbsenceClick}}
+            @checked={{this.absenceComplete}}
+            @onChange={{this.clickAbsence}}
           />
           <label
             for={{checkboxId}}
@@ -25,8 +25,8 @@
           <Checkbox
             id={{checkboxId}}
             value="work-hours"
-            @isChecked={{this.timesheetComplete}}
-            @onChange={{this.onTimesheetClick}}
+            @checked={{this.timesheetComplete}}
+            @onChange={{this.clickTimesheet}}
           />
           <label
             for={{checkboxId}}
