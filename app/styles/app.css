@@ -56,19 +56,19 @@
 }
 
 .ember-power-select-search {
-  @apply p-0;
+  @apply border-b p-2 border-gray-100;
 }
 
 .ember-power-select-search-input {
-  @apply border-gray-300 border-0 border-b text-sm;
+  @apply border border-gray-300 ring-0 text-sm rounded;
 }
 
 .ember-power-select-search-input:focus {
-  @apply ring-0 border-0 border-b border-blue-200 outline-none;
+  @apply border ring-0 border-gray-300;
 }
 
 .ember-power-select-option {
-  @apply py-1 text-sm text-red-900;
+  @apply py-1 text-sm text-gray-900;
 }
 
 .ember-power-select-option[aria-current="true"] {
@@ -105,6 +105,20 @@
 
 .ember-power-select-multiple-remove-btn:hover {
   @apply text-red-700;
+}
+
+.ember-power-select-dropdown.ember-basic-dropdown-content {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  @apply rounded-lg;
+}
+
+.ember-power-select-dropdown.ember-basic-dropdown-content
+  > .ember-power-select-options {
+    @apply pt-1;
+}
+
+.ember-power-select-group-name {
+  @apply text-sm font-normal pr-2 truncate w-full block;
 }
 
 /**

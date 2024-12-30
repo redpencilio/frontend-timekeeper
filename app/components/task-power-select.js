@@ -29,20 +29,33 @@ export default class TaskPowerSelectComponent extends Component {
       (task) =>
         !this.args.excludeTasks?.map((task) => task.id)?.includes(task.id),
     );
-    const grouped = Object.entries(
-      Object.groupBy(tasks, (task) => task.parent.id),
+
+    const groupedCustomer = Object.entries(
+      Object.groupBy(tasks, (task) => task.get('parent')?.get('customer')?.id),
     );
 
-    const singletons = grouped.filter(
-      ([_, taskContent]) => taskContent.length === 1,
-    );
-    const groups = grouped.filter(([_, taskContent]) => taskContent.length > 1);
+    const groups = groupedCustomer
+      .map(([customerId, tasks]) => {
+        const groupedParent = Object.entries(
+          Object.groupBy(tasks, (task) => task.get('parent')?.id),
+        );
+        const groups = groupedParent.filter(([_, tasks]) => tasks.length > 1);
+        const singletons = groupedParent
+          .filter(([_, tasks]) => tasks.length === 1)
+          .map(([_, tasks]) => tasks[0]);
+        return [customerId, singletons, groups];
+      });
 
     return [
-      ...singletons.map(([_, taskContent]) => taskContent[0]),
-      ...groups.map(([taskId, children]) => ({
-        groupName: this.store.peekRecord('task', taskId)?.name,
-        options: children,
+      ...groups.map(([customerId, singletons, groups]) => ({
+        groupName: this.store.peekRecord('customer', customerId)?.name,
+        options: [
+          ...singletons,
+          ...groups.map(([parentId, tasks]) => ({
+            groupName: this.store.peekRecord('task', parentId)?.name,
+            options: tasks,
+          })),
+        ],
       })),
     ];
   }
