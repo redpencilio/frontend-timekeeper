@@ -7,15 +7,23 @@
  */
 
 :root {
-  --fc-highlight-color: rgba(147, 197, 253, 0.2);
+  --fc-highlight-color: rgba(252, 165, 165, 0.2);
 }
 
 .fc .fc-event-title {
   @apply !font-light;
 }
 
+.fc .fc-toolbar-title {
+  @apply text-red-700 font-normal;
+}
+
+.fc .fc-view-harness {
+  @apply shadow-lg;
+}
+
 .fc .fc-col-header-cell-cushion {
-  @apply text-gray-600 font-normal text-sm uppercase tracking-wide;
+  @apply text-gray-700 font-normal text-sm uppercase tracking-wide;
 }
 
 .fc .fc-daygrid-day-top {
@@ -23,7 +31,7 @@
 }
 
 .fc .fc-daygrid-day-number {
-  @apply w-full
+  @apply w-full;
 }
 
 /**
@@ -31,7 +39,7 @@
  */
 
 .ember-power-select-trigger {
-  @apply appearance-none py-2 px-3 w-full min-h-9 text-sm border border-gray-300 rounded-md bg-white opacity-100;
+  @apply appearance-none py-2 px-3 w-full min-h-9 text-sm border border-red-300 rounded-md bg-white opacity-100;
 }
 
 .ember-power-select-trigger.ember-power-select-multiple-trigger {
@@ -48,15 +56,15 @@
 }
 
 .ember-power-select-search {
-  @apply p-0;
+  @apply border-b p-2 border-gray-100;
 }
 
 .ember-power-select-search-input {
-  @apply border-gray-300 border-0 border-b text-sm;
+  @apply border border-gray-300 ring-0 text-sm rounded;
 }
 
 .ember-power-select-search-input:focus {
-  @apply ring-0 border-0 border-b border-blue-200 outline-none;
+  @apply border ring-0 border-gray-300;
 }
 
 .ember-power-select-option {
@@ -64,11 +72,11 @@
 }
 
 .ember-power-select-option[aria-current="true"] {
-  @apply bg-gray-200 text-gray-900;
+  @apply bg-gray-200 text-red-900;
 }
 
 .ember-power-select-option[aria-selected="true"] {
-  @apply bg-blue-100 text-gray-900;
+  @apply bg-indigo-100 text-red-900;
 }
 
 .ember-power-select-clear-btn {
@@ -88,7 +96,7 @@
 }
 
 .ember-power-select-multiple-option {
-  @apply inline-flex rounded-lg border-0 items-center px-1.5 py-1 text-sm font-medium bg-gray-100 text-gray-700;
+  @apply inline-flex rounded-lg border-0 items-center px-1.5 py-1 text-sm font-medium bg-gray-100 text-red-700;
 }
 
 .ember-power-select-multiple-remove-btn {
@@ -97,4 +105,26 @@
 
 .ember-power-select-multiple-remove-btn:hover {
   @apply text-red-700;
+}
+
+.ember-power-select-dropdown.ember-basic-dropdown-content {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  @apply rounded-lg;
+}
+
+.ember-power-select-dropdown.ember-basic-dropdown-content
+  > .ember-power-select-options {
+    @apply pt-1;
+}
+
+.ember-power-select-group-name {
+  @apply text-sm font-normal pr-2 truncate w-full block;
+}
+
+/**
+ * links
+ */
+
+.active {
+  @apply font-medium;
 }

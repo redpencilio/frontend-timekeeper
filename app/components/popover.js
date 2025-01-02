@@ -1,7 +1,6 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { computePosition, shift, offset } from '@floating-ui/dom';
-import { tracked } from '@glimmer/tracking';
+import { computePosition, shift, offset, size } from '@floating-ui/dom';
 import { service } from '@ember/service';
 
 export default class TimeLogPopoverComponent extends Component {
@@ -28,7 +27,16 @@ export default class TimeLogPopoverComponent extends Component {
           mainAxis: 8,
           crossAxis: -8,
         }),
-        shift({ padding: 5 }),
+        shift(),
+        size({
+          apply({ availableWidth, availableHeight, elements }) {
+            // Change styles, e.g.
+            Object.assign(elements.floating.style, {
+              maxWidth: `${Math.max(0, availableWidth)}px`,
+              maxHeight: `${Math.max(0, availableHeight)}px`,
+            });
+          },
+        }),
       ],
     }).then(({ x, y }) => {
       Object.assign(this.elementRef.style, {
