@@ -36,6 +36,12 @@
           <span>Users</span>
         </LinkTo>
       {{/if}}
+      {{#if (user-may "view-employee-timesheets")}}
+        <LinkTo @route="admin.timesheets" class="mt-2 text-sm tracking-wide flex items-center space-x-2">
+          {{svg-jar "calendar" class="size-4"}}
+          <span>Timesheets</span>
+        </LinkTo>
+      {{/if}}
     </div>
   </div>
 
