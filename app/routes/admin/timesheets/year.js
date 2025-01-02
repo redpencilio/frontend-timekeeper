@@ -32,8 +32,11 @@ export default class AdminTimesheetsYearRoute extends Route {
       }),
       this.store.queryAll('person', {
         'filter[user-groups][:uri:]': CONSTANTS.USER_GROUPS.EMPLOYEE,
+        sort: 'name',
       }),
-      this.store.queryAll('task'),
+      this.store.queryAll('task', {
+        include: 'parent',
+      }),
     ]);
 
     return {

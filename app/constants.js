@@ -1,4 +1,9 @@
 export default {
+  TASK_IDS: {
+    ABSENCE: {
+      GENERAL: 'd42b7960-bb88-11ef-be76-8f4539436299',
+    },
+  },
   TIMESHEET_STATUSES: {
     DRAFT:
       'http://timekeeper.redpencil.io/concepts/f1fa3569-7f98-47a9-b03b-90b42e9f3c52',
