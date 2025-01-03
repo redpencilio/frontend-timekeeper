@@ -10,6 +10,8 @@ export default class UserProfileService extends Service {
   @tracked user;
   @tracked userGroups;
 
+  favoriteTasks = [];
+
   async load() {
     if (this.session.isAuthenticated) {
       const authenticatedData = this.session.data.authenticated;
