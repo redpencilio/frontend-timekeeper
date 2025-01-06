@@ -308,7 +308,7 @@ export default class FullCalendarComponent extends Component {
       undoAction: async () =>
         await this.args.onUndoDeleteWorkLog?.(workLogCopy),
       undoTime: 4000,
-      contextKey: 'delete-work-log',
+      contextKey: 'event-edit-actions',
     });
   }
 
@@ -334,8 +334,21 @@ export default class FullCalendarComponent extends Component {
   @action
   saveNote(workLog, noteContent) {
     if (noteContent.length > 0) {
+      const previousContent = workLog.note;
       workLog.note = noteContent;
       workLog.save();
+      this.toaster.actionWithUndo({
+        actionText: 'Updating notes…',
+        actionDoneText: 'Notes updated.',
+        actionUndoneText: 'Notes reverted.',
+        action: async () => await workLog.save(),
+        undoAction: async () => {
+          workLog.note = previousContent;
+          await workLog.save();
+        },
+        undoTime: 4000,
+        contextKey: 'event-edit-actions',
+      });
     }
     this.showNotesFor = null;
   }
