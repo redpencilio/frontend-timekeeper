@@ -102,6 +102,13 @@ export default class YearMonthContoller extends Controller {
     this.router.refresh();
   }
 
+  @action
+  async undoDeleteWorkLog(workLogCopy) {
+    const newWorkLog = this.store.createRecord('work-log', workLogCopy);
+    await newWorkLog.save();
+    this.router.refresh();
+  }
+
   get events() {
     return this.model.workLogs
       .map((workLog) => {
@@ -124,7 +131,7 @@ export default class YearMonthContoller extends Controller {
             borderColor: task?.color,
             extendedProps: {
               workLog,
-              task
+              task,
             },
           };
         } else {
