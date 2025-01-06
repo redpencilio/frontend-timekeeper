@@ -1,0 +1,31 @@
+<Popover @anchorElement={{@anchorElement}}>
+  <div class="mx-4 mt-4 mb-3">
+    <form {{on "submit" this.saveNote}}>
+      {{#let (unique-id) as |id|}}
+        <label
+          for={{id}}
+          class="block mt-3 mb-4 text-sm font-medium text-gray-900"
+        >Notes for
+          {{task-name @task}}</label>
+        <textarea
+          id={{id}}
+          rows="4"
+          class="resize-vertical block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-0 focus:border-gray-400"
+          placeholder="Write your notes here..."
+          value={{this.noteContent}}
+          {{on "change" (with-value (fn (set this "noteContent")))}}
+          {{focus}}
+        ></textarea>
+
+        <div class="flex justify-between mt-4">
+          <Button @skin="mute" {{on "click" @onCancel}}>
+            Cancel
+          </Button>
+          <Button type="submit" @skin="primary">
+            Save
+          </Button>
+        </div>
+      {{/let}}
+    </form>
+  </div>
+</Popover>

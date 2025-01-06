@@ -38,6 +38,7 @@ export default class FullCalendarComponent extends Component {
   @tracked clickedEventInfo = null;
   @tracked clickedDateInfo = null;
   @tracked selectionInfo = null;
+  @tracked showNotesFor = null;
 
   @action
   setupCalendar(element) {
@@ -168,7 +169,10 @@ export default class FullCalendarComponent extends Component {
     stickyButton.classList = 'fill-gray-400 hover:fill-gray-500';
     stickyButton.onclick = (clickEvent) => {
       clickEvent.stopPropagation();
-      
+      this.showNotesFor = {
+        event,
+        el,
+      };
     };
 
     buttonsDiv.appendChild(stickyButton);
@@ -184,11 +188,13 @@ export default class FullCalendarComponent extends Component {
   }
 
   onEventClick(info) {
+    this.clearPopovers();
     this.calendar.select(info.event.startStr);
     this.clickedEventInfo = info;
   }
 
   onSelect(info) {
+    this.showNotesFor = null;
     this.selectionInfo = info;
   }
 
@@ -241,6 +247,7 @@ export default class FullCalendarComponent extends Component {
     this.clickedDateInfo = null;
     this.clickedEventInfo = null;
     this.selectionInfo = null;
+    this.showNotesFor = null;
     this.calendar.unselect();
   }
 
@@ -301,6 +308,15 @@ export default class FullCalendarComponent extends Component {
       end: firstDayOfNextMonth,
     });
     this.calendar.gotoDate(this.args.focusDate);
+  }
+
+  @action
+  saveNote(workLog, noteContent) {
+    if (noteContent.length > 0) {
+      workLog.note = noteContent;
+      workLog.save();
+    }
+    this.showNotesFor = null;
   }
 
   handleKeydown(event) {

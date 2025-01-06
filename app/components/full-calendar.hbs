@@ -20,6 +20,15 @@
     />
   {{/if}}
 {{/if}}
+{{#if this.showNotesFor}}
+  <WorkLogNotesPopover
+    @anchorElement={{this.showNotesFor.el}}
+    @onCancel={{set this "showNotesFor" null}}
+    @onSaveNote={{this.saveNote}}
+    @task={{this.showNotesFor.event.extendedProps.task}}
+    @workLog={{this.showNotesFor.event.extendedProps.workLog}}
+  />
+{{/if}}
 <div
   class="full-calendar h-full"
   {{did-update this.updateAndRerenderCalendar @events}}
