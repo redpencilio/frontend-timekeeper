@@ -1,21 +1,13 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { computePosition, shift, offset, size } from '@floating-ui/dom';
-import { service } from '@ember/service';
 
 export default class TimeLogPopoverComponent extends Component {
-  @service localStorage;
-
   elementRef = null;
 
   @action
   onInsert(el) {
     this.elementRef = el;
-  }
-
-  @action
-  onToggle(value) {
-    this.localStorage.useAdvancedLogPopover = value;
   }
 
   @action
