@@ -1,0 +1,15 @@
+<div class="bg-zinc-800 text-white text-sm font-normal p-4 rounded-t">
+  {{@message}}
+  <button
+    {{on "click" (perform this.clickUndo)}}
+    class="ml-2 text-red-500"
+    type="button"
+    disabled={{this.clickUndo.isRunning}}
+  >
+    {{#if this.clickUndo.isRunning}}
+      UNDOING
+    {{else}}
+      UNDO
+    {{/if}}
+  </button>
+</div>
