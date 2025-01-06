@@ -46,7 +46,7 @@ export default class UserProfileService extends Service {
     const logs = await this.store.query('work-log', {
       sort: '-date',
       page: {
-        size: 100,
+        size: 12,
       },
       'filter[person][:id:]': this.user?.id,
       include: 'task',
