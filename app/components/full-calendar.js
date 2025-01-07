@@ -151,7 +151,7 @@ export default class FullCalendarComponent extends Component {
 
     const container = document.createElement('div');
     container.className =
-      'w-full truncate flex items-center pl-1.5 pt-0.5 pb-0.5 pr-0.5';
+      'w-full truncate flex items-center pl-1 pt-0.5 pb-0.5 pr-0.5';
 
     const eventTitleContainer = document.createElement('div');
     eventTitleContainer.classList = 'flex items-center grow truncate';
