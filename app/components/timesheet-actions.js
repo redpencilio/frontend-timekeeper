@@ -20,10 +20,10 @@ export default class TimesheetActionsComponent extends Component {
 
   @action
   clickAbsence(checked) {
-    if (!checked) {
-      this.args.onStatusChanged(TIMESHEET_STATUSES.DRAFT);
-    } else {
+    if (checked) {
       this.args.onStatusChanged(TIMESHEET_STATUSES.ABSENCE_SUBMITTED);
+    } else {
+      this.args.onStatusChanged(TIMESHEET_STATUSES.DRAFT);
     }
   }
 
