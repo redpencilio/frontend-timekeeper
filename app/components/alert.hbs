@@ -21,7 +21,7 @@
       {{/if}}
       {{#if @message}}
         <div
-          class={{concat "text-sm " (if @title "mt-2 " "") this.messageColor}}
+          class="text-sm {{if @title "mt-2" ""}} {{this.messageColor}}"
         >
           <p>{{@message}}</p>
         </div>
