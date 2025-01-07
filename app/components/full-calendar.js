@@ -376,9 +376,9 @@ export default class FullCalendarComponent extends Component {
     const previousContent = workLog.note;
     workLog.note = noteContent.trim();
     this.toaster.actionWithUndo({
-      actionText: 'Updating notes…',
-      actionDoneText: 'Notes updated.',
-      actionUndoneText: 'Notes reverted.',
+      actionText: 'Updating note…',
+      actionDoneText: 'Note saved.',
+      actionUndoneText: 'Note reverted.',
       action: async () => await workLog.save(),
       undoAction: async () => {
         workLog.note = previousContent;
