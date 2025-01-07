@@ -61,13 +61,12 @@ export default class FullCalendarComponent extends Component {
       select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
       unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
       dayCellContent: this.renderDayCellContent.bind(this),
-      eventDidMount: this.attachEventRemoveButton.bind(this),
+      eventContent: this.renderEvent.bind(this),
       eventClick: this.args.isDisabled
         ? () => false
         : this.onEventClick.bind(this),
       eventDisplay: 'list-item',
       eventOrder: sortEvents,
-      dayMaxEvents: 6,
       height: 'parent',
       firstDay: 1,
       businessHours: {
@@ -121,7 +120,7 @@ export default class FullCalendarComponent extends Component {
     const { hours, minutes } = normalizeDuration(totalDuration);
 
     return {
-      html: `
+      html: /*html*/ `
         <div class="flex justify-between w-full">
           <div class="grow">${info.dayNumberText}</div>
           <div class="flex items-center text-gray-400 text-sm">
@@ -132,12 +131,56 @@ export default class FullCalendarComponent extends Component {
     };
   }
 
-  attachEventRemoveButton({ el, event }) {
+  renderEvent(info) {
+    const { event } = info;
+    const note = info.event.extendedProps.workLog.note;
+
+    const stickyIcon = /*html*/ `
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        class="size-full"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M2.5 1A1.5 1.5 0 0 0 1 2.5v11A1.5 1.5 0 0 0 2.5 15h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 15 8.586V2.5A1.5 1.5 0 0 0 13.5 1zm6 8.5a1 1 0 0 1 1-1h4.396a.25.25 0 0 1 .177.427l-5.146 5.146a.25.25 0 0 1-.427-.177z"
+        />
+      </svg>
+    `;
+
+    const container = document.createElement('div');
+    container.className =
+      'w-full truncate flex items-center pl-1.5 pt-0.5 pb-0.5 pr-0.5';
+
+    const eventTitleContainer = document.createElement('div');
+    eventTitleContainer.classList = 'flex items-center grow truncate';
+
+    if (note) {
+      const colorNote = document.createElement('div');
+      colorNote.className = 'size-3 shrink-0 mr-1';
+      colorNote.style.fill = info.backgroundColor;
+      colorNote.innerHTML = stickyIcon;
+      eventTitleContainer.appendChild(colorNote);
+    } else {
+      const colorDot = document.createElement('div');
+      colorDot.className = 'size-2 rounded-full shrink-0 mr-1';
+      colorDot.style.backgroundColor = info.backgroundColor;
+      eventTitleContainer.appendChild(colorDot);
+    }
+
+    const eventTitle = document.createElement('div');
+    eventTitle.className = 'truncate shrink';
+    eventTitle.textContent = `${info.event.title}`;
+
+    eventTitleContainer.appendChild(eventTitle);
+    container.appendChild(eventTitleContainer);
+
     const buttonsDiv = document.createElement('div');
-    buttonsDiv.classList = 'ml-1 h-5 flex align-center';
+    buttonsDiv.classList = 'ml-1 h-5 flex items-center';
 
     const deleteButton = document.createElement('button');
-    deleteButton.innerHTML = `
+    deleteButton.innerHTML = /*html*/ `
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -156,37 +199,28 @@ export default class FullCalendarComponent extends Component {
     };
 
     const stickyButton = document.createElement('button');
-    stickyButton.innerHTML = `
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        class="bi bi-sticky-fill"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M2.5 1A1.5 1.5 0 0 0 1 2.5v11A1.5 1.5 0 0 0 2.5 15h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 15 8.586V2.5A1.5 1.5 0 0 0 13.5 1zm6 8.5a1 1 0 0 1 1-1h4.396a.25.25 0 0 1 .177.427l-5.146 5.146a.25.25 0 0 1-.427-.177z"
-        />
-      </svg>
-    `;
-    stickyButton.classList = 'fill-gray-400 hover:fill-gray-500';
+    stickyButton.innerHTML = stickyIcon;
+    stickyButton.classList = 'size-4 fill-gray-400 hover:fill-gray-500';
     stickyButton.onclick = (clickEvent) => {
       clickEvent.stopPropagation();
       this.showNotesFor = {
         event,
-        el,
+        el: container,
       };
     };
 
     buttonsDiv.appendChild(stickyButton);
     buttonsDiv.appendChild(deleteButton);
     buttonsDiv.style.visibility = 'collapse';
-    el.appendChild(buttonsDiv);
-    el.onmouseenter = () => {
+    container.appendChild(buttonsDiv);
+    container.onmouseenter = () => {
       buttonsDiv.style.visibility = 'visible';
     };
-    el.onmouseleave = () => {
+    container.onmouseleave = () => {
       buttonsDiv.style.visibility = 'collapse';
+    };
+    return {
+      domNodes: [container],
     };
   }
 
@@ -333,24 +367,23 @@ export default class FullCalendarComponent extends Component {
 
   @action
   saveNote(workLog, noteContent) {
-    if (noteContent.length > 0) {
-      const previousContent = workLog.note;
-      workLog.note = noteContent;
-      workLog.save();
-      this.toaster.actionWithUndo({
-        actionText: 'Updating notes…',
-        actionDoneText: 'Notes updated.',
-        actionUndoneText: 'Notes reverted.',
-        action: async () => await workLog.save(),
-        undoAction: async () => {
-          workLog.note = previousContent;
-          await workLog.save();
-        },
-        undoTime: 4000,
-        contextKey: 'event-edit-actions',
-      });
-    }
+    const previousContent = workLog.note;
+    workLog.note = noteContent.trim();
+    this.toaster.actionWithUndo({
+      actionText: 'Updating notes…',
+      actionDoneText: 'Notes updated.',
+      actionUndoneText: 'Notes reverted.',
+      action: async () => await workLog.save(),
+      undoAction: async () => {
+        workLog.note = previousContent;
+        await workLog.save();
+        this.calendar.render();
+      },
+      undoTime: 4000,
+      contextKey: 'event-edit-actions',
+    });
     this.showNotesFor = null;
+    this.calendar.render();
   }
 
   handleKeydown(event) {

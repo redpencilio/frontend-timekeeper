@@ -10,6 +10,10 @@
   --fc-highlight-color: rgba(252, 165, 165, 0.2);
 }
 
+.fc .fc-event {
+  @apply m-0 p-0;
+}
+
 .fc .fc-event-title {
   @apply !font-light;
 }

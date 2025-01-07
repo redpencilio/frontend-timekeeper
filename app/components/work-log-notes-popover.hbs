@@ -10,7 +10,7 @@
         <textarea
           id={{id}}
           rows="4"
-          class="resize-vertical block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-0 focus:border-gray-400"
+          class="resize-vertical block p-2.5 w-full h-44 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-0 focus:border-gray-400"
           placeholder="Write your notes here..."
           value={{this.noteContent}}
           {{on "change" (with-value (fn (set this "noteContent")))}}
