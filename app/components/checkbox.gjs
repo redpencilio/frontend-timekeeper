@@ -4,7 +4,7 @@ import { on } from '@ember/modifier';
 
 export default class CheckboxComponent extends Component {
   
-  onChange = (event) => {
+  change = (event) => {
     const { checked } = event.target;
     this.args.onChange?.(checked, event);
   }
@@ -15,7 +15,7 @@ export default class CheckboxComponent extends Component {
       type='checkbox'
       class='w-4 h-4 text-red-700 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2'
       checked={{@checked}}
-      {{on "change" this.onChange}}
+      {{on "change" this.change}}
       ...attributes
     />
   </template>
