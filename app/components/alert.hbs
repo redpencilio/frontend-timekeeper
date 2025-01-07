@@ -1,0 +1,30 @@
+<div class="p-4 rounded-md {{this.backgroundColor}}">
+  <div class="flex">
+    <div class="w-5 shrink-0">
+      {{#let (concat "size-4 mt-0.5 ml-0.5" " " this.iconColor) as |iconClass|}}
+      {{#if (eq @skin "error")}}
+        {{svg-jar "x-circle-fill" class=iconClass}}
+      {{else if (eq @skin "warning")}}
+        {{svg-jar "exclamation-circle-fill" class=iconClass}}
+      {{else if (eq @skin "success")}}
+        {{svg-jar "check-circle-fill" class=iconClass}}
+      {{else if (eq @skin "info")}}
+        {{svg-jar "info-circle-fill" class=iconClass}}
+      {{/if}}
+    </div>
+    <div class="ml-3">
+      {{#if @title}}
+        <h3 class={{concat "font-medium text-sm " this.titleColor}}>
+          {{@title}}
+        </h3>
+      {{/if}}
+      {{#if @message}}
+        <div
+          class={{concat "text-sm " (if @title "mt-2 " "") this.messageColor}}
+        >
+          <p>{{@message}}</p>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
