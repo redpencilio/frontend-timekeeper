@@ -156,18 +156,23 @@ export default class FullCalendarComponent extends Component {
     const eventTitleContainer = document.createElement('div');
     eventTitleContainer.classList = 'flex items-center grow truncate';
 
+    const statusIndicatorContainer = document.createElement('div');
+    statusIndicatorContainer.classList = 'size-2.5 shrink-0 mr-1 flex items-center justify-center';
+
     if (note) {
       const colorNote = document.createElement('div');
-      colorNote.className = 'size-3 shrink-0 mr-1';
+      colorNote.className = 'size-full';
       colorNote.style.fill = info.backgroundColor;
       colorNote.innerHTML = stickyIcon;
-      eventTitleContainer.appendChild(colorNote);
+      statusIndicatorContainer.appendChild(colorNote);
     } else {
       const colorDot = document.createElement('div');
-      colorDot.className = 'size-2 rounded-full shrink-0 mr-1';
+      colorDot.className = 'size-2 rounded-full';
       colorDot.style.backgroundColor = info.backgroundColor;
-      eventTitleContainer.appendChild(colorDot);
+      statusIndicatorContainer.appendChild(colorDot);
     }
+    
+    eventTitleContainer.appendChild(statusIndicatorContainer);
 
     const eventTitle = document.createElement('div');
     eventTitle.className = 'truncate shrink';
@@ -290,6 +295,7 @@ export default class FullCalendarComponent extends Component {
 
   @action
   updateAndRerenderCalendar() {
+    this.clearPopovers();
     const sources = this.calendar.getEventSources();
     sources.forEach((source) => source.remove());
     this.calendar.addEventSource(this.args.events);
