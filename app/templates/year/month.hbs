@@ -1,6 +1,6 @@
 <div class="p-4 grow">
   <FullCalendar
-    @isDisabled={{this.timesheet.isSubmitted}}
+    @isDisabled={{this.timesheet.isExported}}
     @onDeleteWorkLog={{this.deleteWorkLog}}
     @onSave={{perform this.save}}
     @events={{this.events}}
