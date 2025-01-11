@@ -16,6 +16,20 @@ import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
 import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
+import taskName from 'frontend-timekeeper/helpers/task-name';
+
+const sortEvents = (event1, event2) => {
+  const task1 = event1.extendedProps.task;
+  const task2 = event2.extendedProps.task;
+
+  if (task1 && task2) {
+    const name1 = taskName(task1);
+    const name2 = taskName(task2);
+    return name1.localeCompare(name2);
+  } else {
+    return event1.title.localeCompare(event2.title);
+  }
+};
 
 export default class FullCalendarComponent extends Component {
   @tracked calendar = null;
@@ -48,6 +62,7 @@ export default class FullCalendarComponent extends Component {
         ? () => false
         : this.onEventClick.bind(this),
       eventDisplay: 'list-item',
+      eventOrder: sortEvents,
       dayMaxEvents: 6,
       height: 'parent',
       firstDay: 1,

@@ -121,6 +121,7 @@ export default class YearMonthContoller extends Controller {
             borderColor: task?.color,
             extendedProps: {
               workLog,
+              task
             },
           };
         } else {
