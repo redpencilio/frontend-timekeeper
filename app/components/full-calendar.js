@@ -57,7 +57,9 @@ export default class FullCalendarComponent extends Component {
       select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
       unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
       dayCellContent: this.renderDayCellContent.bind(this),
-      eventDidMount: this.attachEventRemoveButton.bind(this),
+      eventDidMount: this.args.isDisabled
+        ? undefined
+        : this.attachEventRemoveButton.bind(this),
       eventClick: this.args.isDisabled
         ? () => false
         : this.onEventClick.bind(this),
@@ -241,6 +243,10 @@ export default class FullCalendarComponent extends Component {
       this.args.isDisabled ? () => false : this.onUnselect.bind(this),
     );
     this.calendar.setOption('selectable', !this.args.isDisabled);
+    this.calendar.setOption(
+      'eventDidMount',
+      this.args.isDisabled ? undefined : this.attachEventRemoveButton.bind(this),
+    );
   }
 
   save = ecTask(async (hourTaskPairs) => {
