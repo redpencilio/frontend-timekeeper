@@ -7,62 +7,65 @@
     <div role="none">
       <form {{on "submit" this.submitWorkLogs}}>
         <ul class="divide-y divide-dotted">
-          {{#each this.pinnedTaskEntries as |pinnedTaskEntry|}}
-            {{#let pinnedTaskEntry.task as |task|}}
-              <li>
-                <div class="mt-2 mb-2">
-                  <div class="mt-1 flex justify-between">
-                    <div class="flex items-center grow">
-                      <div class="w-4 h-4">
-                        <button
-                          {{on "click" (fn this.unpinTask pinnedTaskEntry)}}
-                          tabindex="-1"
-                          type="button"
-                        >
-                          <div {{fill-color (or task.color task.parent.color)}}>
-                            {{svg-jar "pin-fill" class="fill-inherit"}}
-                          </div>
-                        </button>
-                      </div>
-                      <div class="text-sm ml-2">{{task-name task}}</div>
-                    </div>
-                    {{#let (unique-id) as |inputId|}}
-                      <DurationInput
-                        id={{inputId}}
-                        @value={{pinnedTaskEntry.duration}}
-                        @onChange={{fn this.updateDuration pinnedTaskEntry}}
-                        {{focus-select (or (eq this.focusTaskEntry task.id))}}
-                      />
-                    {{/let}}
-                  </div>
-                </div>
-              </li>
-            {{/let}}
-          {{/each}}
-          {{#each this.favoriteTaskWorkLogs as |workLogEntry|}}
+          {{#each this.workLogEntries as |workLogEntry|}}
             {{#let workLogEntry.task as |task|}}
               <li>
-                <div class="mt-2 mb-2">
-                  <div class="mt-1 flex justify-between">
-                    <div class="flex items-center grow group">
-                      <div class="w-4 h-4">
+                <div class="mb-2 mt-2">
+                  <div class="mt-1 flex items-center justify-between">
+                    <div
+                      class="group flex grow items-center
+                        {{if (eq workLogEntry.type 'added') 'mr-2'}}"
+                    >
+                      {{#if (eq workLogEntry.type "pinned")}}
+                        <div class="h-4 w-4">
+                          <button
+                            {{on "click" (fn this.unpinTask workLogEntry)}}
+                            tabindex="-1"
+                            type="button"
+                          >
+                            <div {{fill-color (task-color task)}}>
+                              {{svg-jar "pin-fill" class="fill-inherit"}}
+                            </div>
+                          </button>
+                        </div>
+                        <div class="ml-2 text-sm">{{task-name task}}</div>
+                      {{else if (eq workLogEntry.type "recent")}}
+                        <div class="h-4 w-4">
+                          <button
+                            {{on "click" (fn this.pinTask workLogEntry)}}
+                            class="hidden group-hover:block"
+                            type="button"
+                          >
+                            <div class="fill-red-500">
+                              {{svg-jar "pin" class="fill-inherit"}}
+                            </div>
+                          </button>
+                          <div
+                            class="group-hover:hidden"
+                            {{fill-color (task-color task)}}
+                          >
+                            {{svg-jar "clock" class="fill-inherit"}}
+                          </div>
+                        </div>
+                        <div class="ml-2 text-sm">{{task-name task}}</div>
+                      {{else if (eq workLogEntry.type "added")}}
                         <button
                           {{on "click" (fn this.pinTask workLogEntry)}}
-                          class="hidden group-hover:block"
+                          class="mr-2 hidden h-3 w-3 group-hover:block"
                           type="button"
                         >
-                          <div class="fill-red-500">
+                          <div class="fill-red-600">
                             {{svg-jar "pin" class="fill-inherit"}}
                           </div>
                         </button>
-                        <div
-                          class="group-hover:hidden"
-                          {{fill-color (or task.color task.parent.color)}}
-                        >
-                          {{svg-jar "clock" class="fill-inherit"}}
-                        </div>
-                      </div>
-                      <div class="text-sm ml-2">{{task-name task}}</div>
+                        <TaskPowerSelect
+                          {{! class needed for fullcalendar unselectCancel }}
+                          @dropdownClass="work-log-popover"
+                          @excludeTasks={{this.excludeTasks}}
+                          @selectedTask={{task}}
+                          @onChange={{fn this.updateTask workLogEntry}}
+                        />
+                      {{/if}}
                     </div>
                     {{#let (unique-id) as |inputId|}}
                       <DurationInput
@@ -77,53 +80,16 @@
               </li>
             {{/let}}
           {{/each}}
-          {{#each this.addedWorkLogs as |workLogEntry|}}
-            {{#let workLogEntry.task as |task|}}
-              <li>
-                <div class="mt-2 mb-2">
-                  <div class="mt-1 flex justify-between items-center">
-                    <div class="h-10 flex-grow mr-2 group flex items-center">
-                      <button
-                        {{on "click" (fn this.pinTask workLogEntry)}}
-                        class="w-3 h-3 hidden group-hover:block mr-2"
-                        type="button"
-                      >
-                        <div class="fill-red-600">
-                          {{svg-jar "pin" class="fill-inherit"}}
-                        </div>
-                      </button>
-                      <TaskPowerSelect
-                        {{! class needed for fullcalendar unselectCancel }}
-                        @dropdownClass="work-log-popover"
-                        @excludeTasks={{this.excludeTasks}}
-                        @selectedTask={{task}}
-                        @onChange={{fn this.updateTask workLogEntry}}
-                      />
-                    </div>
-                    {{#let (unique-id) as |elementId|}}
-                      <DurationInput
-                        id={{elementId}}
-                        @value={{workLogEntry.duration}}
-                        @onChange={{fn this.updateDuration workLogEntry}}
-                        {{focus-select (eq task.id this.focusTaskEntry)}}
-                      />
-                    {{/let}}
-                  </div>
-                </div>
-              </li>
-            {{/let}}
-          {{/each}}
           <li>
-            <div class="mt-2 mb-2">
-              <div class="mt-1 flex justify-between content-center">
-                <div class="h-10 flex-grow mr-2 flex items-center">
+            <div class="mb-2 mt-2">
+              <div class="mt-1 flex content-center justify-between">
+                <div class="mr-2 flex h-10 flex-grow items-center">
                   {{svg-jar "plus-lg"}}
                   <TaskPowerSelect
                     {{! class needed for fullcalendar unselectCancel }}
                     @dropdownClass="work-log-popover"
                     @registerAPI={{this.registerNewProjectPowerSelect}}
                     @onChange={{this.addTaskToList}}
-
                     {{! This is needed because otherwise 'type / to search' }}
                     {{! does not work if there are no entries in the popover }}
                     {{focus (not this.hasWorkLogEntries)}}
@@ -134,7 +100,7 @@
           </li>
         </ul>
 
-        <div class="flex justify-between mt-4">
+        <div class="mt-4 flex justify-between">
           <Button @skin="mute" {{on "click" this.closePopover}}>
             Cancel
           </Button>

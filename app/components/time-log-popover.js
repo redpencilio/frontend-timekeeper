@@ -14,12 +14,19 @@ export default class WorkLogPopoverComponent extends Component {
 
   @tracked _focusTaskEntry = null;
 
+  get workLogEntries() {
+    return [
+      ...this.pinnedTaskEntries,
+      ...this.recentEntries,
+      ...this.addedWorkLogs,
+    ];
+  }
+
   get focusTaskEntry() {
     return (
       this._focusTaskEntry ??
-      this.args.selectedWorkLog?.task.id ??
-      this.pinnedTaskEntries[0]?.task.id ??
-      this.favoriteTaskWorkLogs[0]?.task.id
+      this.args.selectedWorkLog?.task?.id ??
+      this.workLogEntries[0]?.task?.id
     );
   }
 
@@ -40,7 +47,8 @@ export default class WorkLogPopoverComponent extends Component {
       return this.pinnedTasks
         .map((taskId) => this.store.peekRecord('task', taskId))
         .filter((x) => x)
-        .map(this.initWorkLogEntry);
+        .map(this.initWorkLogEntry)
+        .map((entry) => ({ ...entry, type: 'pinned' }));
     },
   })
   pinnedTaskEntries = [];
@@ -50,10 +58,11 @@ export default class WorkLogPopoverComponent extends Component {
     update() {
       return this.userProfile.favoriteTasks
         .filter((task) => !this.pinnedTasks.includes(task.id))
-        .map(this.initWorkLogEntry);
+        .map(this.initWorkLogEntry)
+        .map((entry) => ({ ...entry, type: 'recent' }));
     },
   })
-  favoriteTaskWorkLogs = [];
+  recentEntries = [];
 
   @trackedReset({
     memo: 'args.workLogs',
@@ -74,17 +83,13 @@ export default class WorkLogPopoverComponent extends Component {
             task: workLog.task,
             workLog,
           })),
-      ];
+      ].map((entry) => ({ ...entry, type: 'added' }));
     },
   })
   addedWorkLogs = [];
 
   get hasWorkLogEntries() {
-    return (
-      this.pinnedTaskEntries.length > 0 ||
-      this.favoriteTaskWorkLogs.length > 0 ||
-      this.addedWorkLogs.length > 0
-    );
+    return this.workLogEntries.length > 0;
   }
 
   newProjectPowerSelectApi = null;
@@ -119,15 +124,14 @@ export default class WorkLogPopoverComponent extends Component {
   addTaskToList(task) {
     // Only create a new entry if it isn't added yet
     if (
-      [
-        ...this.pinnedTaskEntries,
-        ...this.addedWorkLogs,
-        ...this.favoriteTaskWorkLogs,
-      ].every((workLogEntry) => workLogEntry.task.id !== task.id)
+      this.workLogEntries.every(
+        (workLogEntry) => workLogEntry.task.id !== task.id,
+      )
     ) {
       const newEntry = {
         task,
         duration: { hours: 0, minutes: 0 },
+        type: 'added',
       };
       this.addedWorkLogs = [...this.addedWorkLogs, newEntry];
     }
@@ -137,11 +141,7 @@ export default class WorkLogPopoverComponent extends Component {
   @action
   submitWorkLogs(event) {
     event.preventDefault();
-    const workLogTaskPairs = [
-      ...this.pinnedTaskEntries,
-      ...this.favoriteTaskWorkLogs,
-      ...this.addedWorkLogs,
-    ].filter(
+    const workLogTaskPairs = this.workLogEntries.filter(
       ({ duration: { hours, minutes }, workLog }) =>
         workLog || hours > 0 || minutes > 0,
     );
@@ -171,7 +171,7 @@ export default class WorkLogPopoverComponent extends Component {
       (workLogEntry) => workLogEntry.task.id !== task.id,
     );
     // Remove from favoriteTaskWorkLogs
-    this.favoriteTaskWorkLogs = this.favoriteTaskWorkLogs.filter(
+    this.recentEntries = this.recentEntries.filter(
       (workLogEntry) => workLogEntry.task.id !== task.id,
     );
     this._focusTaskEntry = task.id;
@@ -185,9 +185,15 @@ export default class WorkLogPopoverComponent extends Component {
     if (
       this.userProfile.favoriteTasks.some((favTask) => favTask.id === task.id)
     ) {
-      this.favoriteTaskWorkLogs = [...this.favoriteTaskWorkLogs, workLogEntry];
+      this.recentEntries = [
+        ...this.recentEntries,
+        { ...workLogEntry, type: 'recent' },
+      ];
     } else {
-      this.addedWorkLogs = [...this.addedWorkLogs, workLogEntry];
+      this.addedWorkLogs = [
+        ...this.addedWorkLogs,
+        { ...workLogEntry, type: 'added' },
+      ];
     }
   }
 }
