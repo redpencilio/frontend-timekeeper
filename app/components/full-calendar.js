@@ -157,7 +157,8 @@ export default class FullCalendarComponent extends Component {
     eventTitleContainer.classList = 'flex items-center grow truncate';
 
     const statusIndicatorContainer = document.createElement('div');
-    statusIndicatorContainer.classList = 'size-2.5 shrink-0 mr-[0.188rem] flex items-center justify-center';
+    statusIndicatorContainer.classList =
+      'size-2.5 shrink-0 mr-[0.188rem] flex items-center justify-center';
 
     if (note) {
       const colorNote = document.createElement('div');
@@ -171,7 +172,7 @@ export default class FullCalendarComponent extends Component {
       colorDot.style.backgroundColor = info.backgroundColor;
       statusIndicatorContainer.appendChild(colorDot);
     }
-    
+
     eventTitleContainer.appendChild(statusIndicatorContainer);
 
     const eventTitle = document.createElement('div');
@@ -207,7 +208,9 @@ export default class FullCalendarComponent extends Component {
     stickyButton.innerHTML = stickyIcon;
     stickyButton.classList = 'size-4 fill-gray-400 hover:fill-gray-500';
     stickyButton.onclick = (clickEvent) => {
+      this.clearEventHightlights();
       clickEvent.stopPropagation();
+      container.classList.add('highlight-event');
       this.showNotesFor = {
         event,
         el: container,
@@ -229,6 +232,12 @@ export default class FullCalendarComponent extends Component {
     };
   }
 
+  clearEventHightlights() {
+    document.querySelectorAll('.highlight-event').forEach((eventEl) => {
+      eventEl.classList.remove('highlight-event');
+    });
+  }
+
   onEventClick(info) {
     this.clearPopovers();
     this.calendar.select(info.event.startStr);
@@ -238,6 +247,7 @@ export default class FullCalendarComponent extends Component {
   onSelect(info) {
     this.showNotesFor = null;
     this.selectionInfo = info;
+    this.clearEventHightlights();
   }
 
   onUnselect() {
@@ -285,11 +295,17 @@ export default class FullCalendarComponent extends Component {
     this.clearPopovers();
   }
 
+  cancelNotesPopover = () => {
+    this.showNotesFor = null;
+    this.clearEventHightlights();
+  }
+
   clearPopovers() {
     this.clickedDateInfo = null;
     this.clickedEventInfo = null;
     this.selectionInfo = null;
     this.showNotesFor = null;
+    this.clearEventHightlights();
     this.calendar.unselect();
   }
 

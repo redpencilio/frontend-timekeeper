@@ -125,6 +125,10 @@
   @apply text-sm font-normal pr-2 truncate w-full block;
 }
 
+.highlight-event {
+  @apply bg-red-100;
+}
+
 /**
  * links
  */
