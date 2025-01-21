@@ -6,7 +6,7 @@ export default class AdminTimesheetsRoute extends Route {
   @service userProfile;
 
   beforeModel() {
-    if (!this.userProfile.may('view-employee-timesheets')) {
+    if (!this.userProfile.may('view-timesheet-summary')) {
       this.router.transitionTo('forbidden');
     }
   }
