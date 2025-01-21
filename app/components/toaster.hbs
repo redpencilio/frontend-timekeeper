@@ -1,0 +1,24 @@
+{{#if this.toaster.toasts.length}}
+  <div
+    class="fixed bottom-0 left-1/2 z-50 -translate-x-1/2 transform shadow"
+    ...attributes
+  >
+    {{#each this.toaster.toasts as |toast|}}
+      {{#if (eq toast.type "undo")}}
+        <div class="animate-fly-bottom">
+          <Toasts::Undo
+            @onUndo={{toast.undoAction}}
+            @message={{toast.message}}
+            @onClose={{fn this.closeToast toast}}
+          />
+        </div>
+      {{else}}
+        <div
+          class="animate-fly-bottom rounded-t bg-zinc-800 p-4 text-sm font-normal text-white"
+        >
+          {{toast.message}}
+        </div>
+      {{/if}}
+    {{/each}}
+  </div>
+{{/if}}

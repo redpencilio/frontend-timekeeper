@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
+import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -32,6 +33,8 @@ const sortEvents = (event1, event2) => {
 };
 
 export default class FullCalendarComponent extends Component {
+  @service toaster;
+
   @tracked calendar = null;
   calendarEl = null;
 
@@ -57,7 +60,9 @@ export default class FullCalendarComponent extends Component {
       select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
       unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
       dayCellContent: this.renderDayCellContent.bind(this),
-      eventDidMount: this.attachEventRemoveButton.bind(this),
+      eventDidMount: this.args.isDisabled
+        ? undefined
+        : this.attachEventRemoveButton.bind(this),
       eventClick: this.args.isDisabled
         ? () => false
         : this.onEventClick.bind(this),
@@ -241,6 +246,10 @@ export default class FullCalendarComponent extends Component {
       this.args.isDisabled ? () => false : this.onUnselect.bind(this),
     );
     this.calendar.setOption('selectable', !this.args.isDisabled);
+    this.calendar.setOption(
+      'eventDidMount',
+      this.args.isDisabled ? undefined : this.attachEventRemoveButton.bind(this),
+    );
   }
 
   save = ecTask(async (hourTaskPairs) => {
@@ -253,9 +262,27 @@ export default class FullCalendarComponent extends Component {
   });
 
   @action
-  deleteWorkLog() {
+  async deleteWorkLog(workLog) {
     this.clearPopovers();
-    this.args.onDeleteWorkLog?.(...arguments);
+
+    const workLogCopy = {
+      date: workLog.date,
+      duration: { ...workLog.duration },
+      task: await workLog.task,
+      person: await workLog.person,
+      timesheet: await workLog.timesheet,
+    };
+
+    this.toaster.actionWithUndo({
+      actionText: 'Deleting work log…',
+      actionDoneText: 'Work log deleted.',
+      actionUndoneText: 'Work log restored.',
+      action: async () => await this.args.onDeleteWorkLog?.(workLog),
+      undoAction: async () =>
+        await this.args.onUndoDeleteWorkLog?.(workLogCopy),
+      undoTime: 4000,
+      contextKey: 'delete-work-log',
+    });
   }
 
   get clickedWorkLog() {
