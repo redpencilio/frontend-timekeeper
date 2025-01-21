@@ -7,12 +7,8 @@ import { formatDate } from 'frontend-timekeeper/utils/format-date';
 export default class AdminTimesheetsYearRoute extends Route {
   @service store;
   @service router;
-  @service userProfile;
 
   beforeModel() {
-    if (!this.userProfile.may('manage-users')) {
-      this.router.transitionTo('forbidden');
-    }
     const { year } = this.paramsFor(this.routeName);
     this.year = Number(year);
 
