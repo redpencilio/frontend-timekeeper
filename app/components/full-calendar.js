@@ -18,6 +18,7 @@ import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
 import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
 import taskName from 'frontend-timekeeper/helpers/task-name';
+import svgJar from 'ember-svg-jar/helpers/svg-jar';
 
 const sortEvents = (event1, event2) => {
   const task1 = event1.extendedProps.task;
@@ -135,19 +136,7 @@ export default class FullCalendarComponent extends Component {
     const { event } = info;
     const note = info.event.extendedProps.workLog.note;
 
-    const stickyIcon = /*html*/ `
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        class="size-full"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M2.5 1A1.5 1.5 0 0 0 1 2.5v11A1.5 1.5 0 0 0 2.5 15h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 15 8.586V2.5A1.5 1.5 0 0 0 13.5 1zm6 8.5a1 1 0 0 1 1-1h4.396a.25.25 0 0 1 .177.427l-5.146 5.146a.25.25 0 0 1-.427-.177z"
-        />
-      </svg>
-    `;
+    const stickyIcon = svgJar.compute(['sticky-fill'], { class: 'size-full' });
 
     const container = document.createElement('div');
     container.className =
@@ -163,7 +152,7 @@ export default class FullCalendarComponent extends Component {
     if (note) {
       const colorNote = document.createElement('div');
       colorNote.className = 'size-full';
-      colorNote.style.fill = info.backgroundColor;
+      colorNote.style.color = info.backgroundColor;
       colorNote.innerHTML = stickyIcon;
       statusIndicatorContainer.appendChild(colorNote);
     } else {
@@ -206,7 +195,7 @@ export default class FullCalendarComponent extends Component {
 
     const stickyButton = document.createElement('button');
     stickyButton.innerHTML = stickyIcon;
-    stickyButton.classList = 'size-4 fill-gray-400 hover:fill-gray-500';
+    stickyButton.classList = 'size-4 text-gray-400 hover:text-gray-500';
     stickyButton.onclick = (clickEvent) => {
       this.clearEventHightlights();
       clickEvent.stopPropagation();
@@ -298,7 +287,7 @@ export default class FullCalendarComponent extends Component {
   cancelNotesPopover = () => {
     this.showNotesFor = null;
     this.clearEventHightlights();
-  }
+  };
 
   clearPopovers() {
     this.clickedDateInfo = null;
