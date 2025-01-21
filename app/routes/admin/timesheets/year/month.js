@@ -1,5 +1,7 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
+import { startOfMonth, endOfMonth, addDays } from 'date-fns';
+import { formatDate } from 'frontend-timekeeper/utils/format-date';
 
 export default class AdminTimesheetsYearMonthRoute extends Route {
   @service store;
@@ -13,14 +15,21 @@ export default class AdminTimesheetsYearMonthRoute extends Route {
     }
   }
 
-  model() {
-    const { people, tasks, workLogs } = this.modelFor('admin.timesheets.year');
+  async model() {
+    const { people, tasks, year } = this.modelFor('admin.timesheets.year');
+    const firstOfMonth = startOfMonth(new Date(year, this.humanMonth - 1));
+    const firstOfNextMonth = addDays(endOfMonth(firstOfMonth), 1);
+    const workLogs = await this.store.queryAll('work-log', {
+      'filter[:gte:date]': formatDate(firstOfMonth),
+      'filter[:lt:date]': formatDate(firstOfNextMonth),
+      include: 'person,task,task.parent',
+    });
     return {
       people,
       tasks,
-      workLogs: workLogs.filter(
-        (workLog) => workLog.date.getMonth() === this.humanMonth - 1,
-      ),
+      workLogs,
+      year,
+      month: this.humanMonth,
     };
   }
 }
