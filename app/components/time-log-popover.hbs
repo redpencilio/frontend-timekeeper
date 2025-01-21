@@ -31,15 +31,9 @@
                         <div class="ml-2 text-sm">{{task-name task}}</div>
                       {{else if (eq workLogEntry.type "recent")}}
                         <div class="h-4 w-4">
-                          <button
-                            {{on "click" (fn this.pinTask workLogEntry)}}
-                            class="hidden group-hover:block"
-                            type="button"
-                          >
-                            <div class="fill-red-500">
-                              {{svg-jar "pin" class="fill-inherit"}}
-                            </div>
-                          </button>
+                          <TimeLogPopover::Pin
+                            @onClick={{fn this.pinTask workLogEntry}}
+                          />
                           <div
                             class="group-hover:hidden"
                             {{fill-color (task-color task)}}
@@ -49,15 +43,9 @@
                         </div>
                         <div class="ml-2 text-sm">{{task-name task}}</div>
                       {{else if (eq workLogEntry.type "added")}}
-                        <button
-                          {{on "click" (fn this.pinTask workLogEntry)}}
-                          class="mr-2 hidden h-3 w-3 group-hover:block"
-                          type="button"
-                        >
-                          <div class="fill-red-600">
-                            {{svg-jar "pin" class="fill-inherit"}}
-                          </div>
-                        </button>
+                        <TimeLogPopover::Pin
+                          @onClick={{fn this.pinTask workLogEntry}}
+                        />
                         <TaskPowerSelect
                           {{! class needed for fullcalendar unselectCancel }}
                           @dropdownClass="work-log-popover"
