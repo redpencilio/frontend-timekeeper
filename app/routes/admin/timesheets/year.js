@@ -24,7 +24,7 @@ export default class AdminTimesheetsYearRoute extends Route {
       this.store.queryAll('work-log', {
         'filter[:gte:date]': formatDate(firstOfYear),
         'filter[:lt:date]': formatDate(firstOfNextYear),
-        include: 'person',
+        include: 'person,task,task.parent',
       }),
       this.store.queryAll('person', {
         'filter[user-groups][:uri:]': CONSTANTS.USER_GROUPS.EMPLOYEE,
