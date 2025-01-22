@@ -9,7 +9,7 @@ const {
 export default class AdminOverviewTableComponent extends Component {
   @service store;
 
-  getTaskNameById = (id) => this.store.peekRecord('task', id)?.name;
+  getTaskById = (id) => this.store.peekRecord('task', id);
 
   get groupedTasks() {
     const grouped = Object.entries(

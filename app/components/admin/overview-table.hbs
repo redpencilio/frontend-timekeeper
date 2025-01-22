@@ -1,64 +1,64 @@
 <table
-  class="table-auto w-full border-collapse border border-gray-300 bg-white shadow-md"
+  class="w-full table-auto border-collapse border border-gray-300 bg-white shadow-md"
 >
   <thead>
     <tr
-      class="z-10 sticky top-0 bg-gray-200 text-gray-600 uppercase text-sm leading-normal"
+      class="sticky top-0 z-10 bg-gray-200 text-sm uppercase leading-normal text-gray-600"
     >
-      <th class="sticky left-0 bg-gray-200 py-3 px-6 text-left"></th>
+      <th class="sticky left-0 bg-gray-200 px-3 py-2 text-left"></th>
       {{#each @people as |person|}}
-        <th class="py-3 px-6 text-left">{{person.name}}</th>
+        <th class="px-3 py-2 text-left">{{person.name}}</th>
       {{/each}}
     </tr>
   </thead>
-  <tbody class="text-gray-600 text-sm font-light">
+  <tbody class="text-xs font-light text-gray-600">
     {{#each this.groupedTasks as |taskPair|}}
       {{#let (object-at 0 taskPair) as |parentId|}}
         {{#let (object-at 1 taskPair) as |tasks|}}
           <tr class="border-b border-gray-300">
-            <td
-              class="sticky left-0 py-3 px-6 font-medium bg-white"
-            >{{this.getTaskNameById parentId}}</td>
+            {{#let (this.getTaskById parentId) as |parentTask|}}
+              <td
+                class="sticky left-0 flex items-center px-3 py-2 font-medium"
+              ><div
+                  class="mr-2 size-2 rounded-full"
+                  {{bg-color parentTask.color}}
+                />{{parentTask.name}}</td>
+            {{/let}}
             {{#each @people}}
-              <td class="py-3 px-6 bg-white"></td>
+              <td class="px-3 py-2"></td>
             {{/each}}
           </tr>
-          {{#each tasks as |task|}}
+          {{#each tasks as |task index|}}
             <tr class="border-b border-gray-300">
               <td
-                class="sticky left-0 bg-white py-3 px-6 pl-8 text-gray-500"
+                class="sticky left-0 px-3 py-2 pl-5 text-gray-500
+                  {{cycle 'bg-white' 'bg-gray-100' index}}"
               >{{task.name}}</td>
               {{#each @people as |person|}}
-                <td class="py-3 px-6">
-                  {{#let (this.hoursWorked task person) as |totalForTask|}}
-                    {{#if
-                      (or (gt totalForTask.hours 0) (gt totalForTask.minutes 0))
-                    }}
-                      {{totalForTask.hours}}h
-                      {{totalForTask.minutes}}m
-                    {{/if}}
-                  {{/let}}
-                </td>
+                <Admin::OverviewTable::WorkLogTotalCell
+                  class="{{cycle 'bg-white' 'bg-gray-100' index}}"
+                  @totalForTask={{this.hoursWorked task person}}
+                />
               {{/each}}
             </tr>
           {{/each}}
         {{/let}}
       {{/let}}
     {{/each}}
-    {{#each this.singletonTasks as |task|}}
+    {{#each this.singletonTasks as |task index|}}
       <tr class="border-b border-gray-300">
-        <td class="sticky left-0 bg-white py-3 px-6 font-medium">{{task-name
-            task
-          }}</td>
+        <td
+          class="sticky left-0 flex items-center px-3 py-2 font-medium
+            {{cycle 'bg-white' 'bg-gray-100' index}}"
+        ><div
+            class="mr-2 size-2 rounded-full"
+            {{bg-color task.color}}
+          />{{task-name task}}</td>
         {{#each @people as |person|}}
-          <td class="py-3 px-6">
-            {{#let (this.hoursWorked task person) as |totalForTask|}}
-              {{#if (or (gt totalForTask.hours 0) (gt totalForTask.minutes 0))}}
-                {{totalForTask.hours}}h
-                {{totalForTask.minutes}}m
-              {{/if}}
-            {{/let}}
-          </td>
+          <Admin::OverviewTable::WorkLogTotalCell
+            class="{{cycle 'bg-white' 'bg-gray-100' index}}"
+            @totalForTask={{this.hoursWorked task person}}
+          />
         {{/each}}
       </tr>
     {{/each}}
