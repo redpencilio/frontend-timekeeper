@@ -1,22 +1,38 @@
 import Component from '@glimmer/component';
-import { task } from 'ember-concurrency';
+import { action } from '@ember/object';
+import constants from 'frontend-timekeeper/constants';
+const { TIMESHEET_STATUSES } = constants;
 
 export default class TimesheetActionsComponent extends Component {
-  get canSubmitHolidays() {
-    return !this.args.timesheet
-      || this.args.timesheet.isDraft;
+  get absenceComplete() {
+    return [
+      TIMESHEET_STATUSES.ABSENCE_SUBMITTED,
+      TIMESHEET_STATUSES.SUBMITTED,
+      TIMESHEET_STATUSES.EXPORTED,
+    ].includes(this.args.timesheet.status);
   }
 
-  get canSubmitTimesheet() {
-    return !this.canSubmitHolidays
-      && this.args.timesheet.isAbsenceSubmitted;
+  get timesheetComplete() {
+    return [TIMESHEET_STATUSES.SUBMITTED, TIMESHEET_STATUSES.EXPORTED].includes(
+      this.args.timesheet.status,
+    );
   }
 
-  submitHolidays = task(async () => {
-    await this.args.onSubmitHolidays();
-  });
+  @action
+  clickAbsence(checked) {
+    if (checked) {
+      this.args.onStatusChanged(TIMESHEET_STATUSES.ABSENCE_SUBMITTED);
+    } else {
+      this.args.onStatusChanged(TIMESHEET_STATUSES.DRAFT);
+    }
+  }
 
-  submitTimesheet = task(async () => {
-    await this.args.onSubmitTimesheet();
-  });
+  @action
+  clickTimesheet(checked) {
+    if (checked) {
+      this.args.onStatusChanged(TIMESHEET_STATUSES.SUBMITTED);
+    } else {
+      this.args.onStatusChanged(TIMESHEET_STATUSES.ABSENCE_SUBMITTED);
+    }
+  }
 }

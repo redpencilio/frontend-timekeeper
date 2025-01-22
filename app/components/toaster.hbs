@@ -1,5 +1,8 @@
 {{#if this.toaster.toasts.length}}
-  <div class={{this.containerClass}} ...attributes>
+  <div
+    class="fixed bottom-0 left-1/2 z-50 -translate-x-1/2 transform shadow"
+    ...attributes
+  >
     {{#each this.toaster.toasts as |toast|}}
       {{#if (eq toast.type "undo")}}
         <div class="animate-fly-bottom">
@@ -11,7 +14,7 @@
         </div>
       {{else}}
         <div
-          class="animate-fly-bottom bg-zinc-800 text-white text-sm font-normal p-4 rounded-t"
+          class="animate-fly-bottom rounded-t bg-zinc-800 p-4 text-sm font-normal text-white"
         >
           {{toast.message}}
         </div>

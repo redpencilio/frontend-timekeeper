@@ -16,14 +16,11 @@ export default class YearMonthContoller extends Controller {
   @tracked timesheet;
 
   @action
-  async submitHolidays() {
-    this.timesheet.status = TIMESHEET_STATUSES.ABSENCE_SUBMITTED;
-    await this.timesheet.save();
-  }
-
-  @action
-  async submitTimesheet() {
-    this.timesheet.status = TIMESHEET_STATUSES.SUBMITTED;
+  async changeTimesheetStatus(status) {
+    if (!Object.values(TIMESHEET_STATUSES).includes(status)) {
+      throw new Error(`Invalid status: "${status}"`);
+    }
+    this.timesheet.status = status;
     await this.timesheet.save();
   }
 

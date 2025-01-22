@@ -322,6 +322,10 @@ export default class FullCalendarComponent extends Component {
       this.args.isDisabled ? () => false : this.onUnselect.bind(this),
     );
     this.calendar.setOption('selectable', !this.args.isDisabled);
+    this.calendar.setOption(
+      'eventDidMount',
+      this.args.isDisabled ? undefined : this.attachEventRemoveButton.bind(this),
+    );
   }
 
   save = ecTask(async (hourTaskPairs) => {
