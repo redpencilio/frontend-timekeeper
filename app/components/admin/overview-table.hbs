@@ -7,7 +7,9 @@
     >
       <th class="sticky left-0 bg-gray-200 px-3 py-2 text-left"></th>
       {{#each @people as |person|}}
-        <th class="px-3 py-2 text-left">{{person.name}}</th>
+        <th class="px-3 py-2 text-left text-nowrap">{{format-person-name
+            person
+          }}</th>
       {{/each}}
     </tr>
   </thead>
@@ -15,7 +17,7 @@
     {{#each this.groupedTasks as |taskPair|}}
       {{#let (object-at 0 taskPair) as |parentId|}}
         {{#let (object-at 1 taskPair) as |tasks|}}
-          <tr class="border-b border-gray-300">
+          <tr class="border-b border-gray-300 hover:bg-gray-200">
             {{#let (this.getTaskById parentId) as |parentTask|}}
               <td
                 class="sticky left-0 flex items-center px-3 py-2 font-medium"
@@ -29,14 +31,16 @@
             {{/each}}
           </tr>
           {{#each tasks as |task index|}}
-            <tr class="border-b border-gray-300">
+            <tr
+              class="border-b border-gray-300
+                {{cycle 'bg-white' 'bg-gray-100' index}}
+                hover:bg-gray-200"
+            >
               <td
-                class="sticky left-0 px-3 py-2 pl-5 text-gray-500
-                  {{cycle 'bg-white' 'bg-gray-100' index}}"
+                class="sticky left-0 px-3 py-2 pl-5 text-gray-500"
               >{{task.name}}</td>
               {{#each @people as |person|}}
                 <Admin::OverviewTable::WorkLogTotalCell
-                  class="{{cycle 'bg-white' 'bg-gray-100' index}}"
                   @totalForTask={{this.hoursWorked task person}}
                 />
               {{/each}}
@@ -46,17 +50,17 @@
       {{/let}}
     {{/each}}
     {{#each this.singletonTasks as |task index|}}
-      <tr class="border-b border-gray-300">
-        <td
-          class="sticky left-0 flex items-center px-3 py-2 font-medium
-            {{cycle 'bg-white' 'bg-gray-100' index}}"
-        ><div
+      <tr
+        class="border-b border-gray-300
+          {{cycle 'bg-white' 'bg-gray-100' index}}
+          hover:bg-gray-200"
+      >
+        <td class="sticky left-0 flex items-center px-3 py-2 font-medium"><div
             class="mr-2 size-2 rounded-full"
             {{bg-color task.color}}
           />{{task-name task}}</td>
         {{#each @people as |person|}}
           <Admin::OverviewTable::WorkLogTotalCell
-            class="{{cycle 'bg-white' 'bg-gray-100' index}}"
             @totalForTask={{this.hoursWorked task person}}
           />
         {{/each}}
