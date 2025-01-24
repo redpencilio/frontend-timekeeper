@@ -8,45 +8,10 @@ const {
 
 export default class AdminOverviewTableComponent extends Component {
   @service store;
+  @service taskStore;
 
-  getTaskById = (id) => this.store.peekRecord('task', id);
-
-  get groupedTasks() {
-    const grouped = Object.entries(
-      Object.groupBy(this.args.tasks.slice(), (task) =>
-        task.belongsTo('parent')?.id(),
-      ),
-    );
-
-    const groupedTasks = grouped.filter(
-      ([taskKey, taskContent]) => taskContent.length > 1 && taskKey !== 'null',
-    );
-
-    // Move absence to the top
-    const index = groupedTasks.findIndex(([taskId]) => taskId === ABSENCE_ID);
-
-    if (index > -1) {
-      const [item] = groupedTasks.splice(index, 1);
-      groupedTasks.unshift(item);
-    }
-
-    return groupedTasks;
-  }
-
-  get singletonTasks() {
-    const grouped = Object.entries(
-      Object.groupBy(this.args.tasks.slice(), (task) =>
-        task.belongsTo('parent')?.id(),
-      ),
-    );
-
-    return grouped
-      .filter(([_, taskContent]) => taskContent.length === 1)
-      .map(([_, taskContent]) => taskContent[0]);
-  }
-
-  hoursWorked = (task, person) => {
-    return normalizeDuration(
+  hoursWorked = (task, person) =>
+    normalizeDuration(
       this.args.workLogs
         .filter((workLog) => {
           const logTaskId = workLog.belongsTo('task').id();
@@ -61,5 +26,4 @@ export default class AdminOverviewTableComponent extends Component {
           { hours: 0, minutes: 0 },
         ),
     );
-  };
 }

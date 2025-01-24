@@ -5,66 +5,57 @@
     <tr
       class="sticky top-0 z-10 bg-gray-200 text-sm uppercase leading-normal text-gray-600"
     >
-      <th class="sticky left-0 bg-gray-200 px-3 py-2 text-left"></th>
+      <th class="sticky left-0 px-3 py-2 text-left"></th>
       {{#each @people as |person|}}
-        <th class="px-3 py-2 text-left text-nowrap">{{format-person-name
+        <th class="px-3 py-2 text-center text-nowrap">{{format-person-name
             person
           }}</th>
       {{/each}}
     </tr>
   </thead>
   <tbody class="text-xs font-light text-gray-600">
-    {{#each this.groupedTasks as |taskPair|}}
-      {{#let (object-at 0 taskPair) as |parentId|}}
-        {{#let (object-at 1 taskPair) as |tasks|}}
-          <tr class="border-b border-gray-300 hover:bg-gray-200">
-            {{#let (this.getTaskById parentId) as |parentTask|}}
-              <td
-                class="sticky left-0 flex items-center px-3 py-2 font-medium"
-              ><div
-                  class="mr-2 size-2 rounded-full"
-                  {{bg-color parentTask.color}}
-                />{{parentTask.name}}</td>
-            {{/let}}
-            {{#each @people}}
-              <td class="px-3 py-2"></td>
-            {{/each}}
-          </tr>
-          {{#each tasks as |task index|}}
-            <tr
-              class="border-b border-gray-300
-                {{cycle 'bg-white' 'bg-gray-100' index}}
-                hover:bg-gray-200"
-            >
-              <td
-                class="sticky left-0 px-3 py-2 pl-5 text-gray-500"
-              >{{task.name}}</td>
-              {{#each @people as |person|}}
-                <Admin::OverviewTable::WorkLogTotalCell
-                  @totalForTask={{this.hoursWorked task person}}
-                />
-              {{/each}}
-            </tr>
-          {{/each}}
-        {{/let}}
-      {{/let}}
-    {{/each}}
-    {{#each this.singletonTasks as |task index|}}
-      <tr
-        class="border-b border-gray-300
-          {{cycle 'bg-white' 'bg-gray-100' index}}
-          hover:bg-gray-200"
-      >
-        <td class="sticky left-0 flex items-center px-3 py-2 font-medium"><div
-            class="mr-2 size-2 rounded-full"
-            {{bg-color task.color}}
-          />{{task-name task}}</td>
-        {{#each @people as |person|}}
-          <Admin::OverviewTable::WorkLogTotalCell
-            @totalForTask={{this.hoursWorked task person}}
-          />
+    {{#each this.taskStore.groupedTasks as |customerGroup|}}
+      <tr class="border-b border-gray-300 hover:bg-gray-200">
+        <td
+          class="sticky left-0 px-3 py-2 font-medium text-sm bg-white"
+        >{{customerGroup.customer.name}}</td>
+        {{#each @people}}
+          <td class="px-3 py-2 border-l"></td>
         {{/each}}
       </tr>
+      {{#each customerGroup.tasks as |taskGroup|}}
+        <tr class="border-b border-gray-300 hover:bg-gray-200">
+          <td
+            class="text-nowrap sticky left-0 items-center px-3 py-2 pl-5 font-medium bg-white"
+          ><div
+              class="inline-block mr-2 size-2 rounded-full"
+              {{bg-color taskGroup.task.color}}
+            />{{task-name taskGroup.task}}</td>
+          {{#each @people as |person|}}
+            <Admin::OverviewTable::WorkLogTotalCell
+              @totalForTask={{this.hoursWorked taskGroup.task person}}
+            />
+          {{/each}}
+        </tr>
+        {{#each taskGroup.subTasks as |subTask index|}}
+          <tr
+            class="border-b border-gray-300
+              {{cycle 'bg-white' 'bg-gray-100' index}}
+              hover:bg-gray-200"
+          >
+            <td
+              class="sticky left-0 px-3 py-2 pl-8 text-gray-500
+                {{cycle 'bg-white' 'bg-gray-100' index}}
+                "
+            >{{task-name subTask}}</td>
+            {{#each @people as |person|}}
+              <Admin::OverviewTable::WorkLogTotalCell
+                @totalForTask={{this.hoursWorked subTask person}}
+              />
+            {{/each}}
+          </tr>
+        {{/each}}
+      {{/each}}
     {{/each}}
   </tbody>
 </table>
