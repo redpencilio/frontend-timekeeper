@@ -10,6 +10,4 @@ export default class AdminTimesheetsRoute extends Route {
       this.router.transitionTo('forbidden');
     }
   }
-
-  model() {}
 }
