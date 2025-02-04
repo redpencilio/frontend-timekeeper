@@ -39,7 +39,6 @@ export default class FullCalendarComponent extends Component {
   calendarEl = null;
 
   @tracked clickedEventInfo = null;
-  @tracked clickedDateInfo = null;
   @tracked selectionInfo = null;
 
   async eventSource(_info, successCallback) {
@@ -237,7 +236,6 @@ export default class FullCalendarComponent extends Component {
   }
 
   clearPopovers() {
-    this.clickedDateInfo = null;
     this.clickedEventInfo = null;
     this.selectionInfo = null;
     this.calendar.unselect();
