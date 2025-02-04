@@ -6,16 +6,17 @@ import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import {
-  startOfMonth,
   endOfMonth,
   addDays,
+  differenceInDays,
+  subDays,
+  eachDayOfInterval,
   isSameDay,
   isAfter,
   isBefore,
 } from 'date-fns';
 import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
-import { differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
 import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
 import taskName from 'frontend-timekeeper/helpers/task-name';
 
@@ -70,10 +71,6 @@ export default class FullCalendarComponent extends Component {
   async setupCalendar(element) {
     this.calendarEl = element;
 
-    const focusDate = this.args.focusDate;
-    const firstDayOfMonth = startOfMonth(this.args.focusDate);
-    const firstDayOfNextMonth = addDays(endOfMonth(this.args.focusDate), 1);
-
     this.calendar = new Calendar(element, {
       // General calendar settings
       plugins: [interactionPlugin, dayGridPlugin],
@@ -109,13 +106,8 @@ export default class FullCalendarComponent extends Component {
       select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
       unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
       unselectCancel: '.work-log-popover',
-      selectConstraint: {
-        start: firstDayOfMonth,
-        end: firstDayOfNextMonth,
-      },
     });
-
-    this.calendar.gotoDate(focusDate);
+    this.goToMonth();
     this.calendar.render();
     // TODO improve by putting addEventListener and removeEventListener
     // together
@@ -296,18 +288,13 @@ export default class FullCalendarComponent extends Component {
   }
 
   @action
-  gotoFocusDate() {
-    const firstDayOfMonth = startOfMonth(this.args.focusDate);
-    const firstDayOfNextMonth = addDays(endOfMonth(this.args.focusDate), 1);
+  goToMonth() {
+    const firstDayOfNextMonth = addDays(endOfMonth(this.args.firstDayOfMonth), 1);
     this.calendar.setOption('selectConstraint', {
-      start: firstDayOfMonth,
+      start: this.args.firstDayOfMonth,
       end: firstDayOfNextMonth,
     });
-    this.calendar.setOption('selectConstraint', {
-      start: firstDayOfMonth,
-      end: firstDayOfNextMonth,
-    });
-    this.calendar.gotoDate(this.args.focusDate);
+    this.calendar.gotoDate(this.args.firstDayOfMonth);
   }
 
   handleKeydown(event) {

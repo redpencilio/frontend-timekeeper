@@ -14,6 +14,10 @@ export default class YearMonthContoller extends Controller {
 
   @tracked timesheet;
 
+  get firstDayOfMonth() {
+    return new Date(this.model.year, this.model.month, 1);
+  }
+
   @action
   async changeTimesheetStatus(status) {
     if (!Object.values(TIMESHEET_STATUSES).includes(status)) {
@@ -103,9 +107,5 @@ export default class YearMonthContoller extends Controller {
     const newWorkLog = this.store.createRecord('work-log', workLogCopy);
     await newWorkLog.save();
     this.router.refresh(this.router.currentRouteName);
-  }
-
-  get activeDate() {
-    return new Date(this.model.year, this.model.month);
   }
 }
