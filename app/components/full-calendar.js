@@ -42,8 +42,33 @@ export default class FullCalendarComponent extends Component {
   @tracked clickedDateInfo = null;
   @tracked selectionInfo = null;
 
+  async eventSource(_info, successCallback) {
+    const workLogToCalendarEvent = async (workLog) => {
+      const task = await workLog.task;
+      if (task) {
+        const name = taskName(task);
+        const { hours, minutes } = workLog.duration;
+        return {
+          id: workLog.id,
+          title: `${hours > 0 ? `${hours}h` : ''}${minutes > 0 ? `${minutes}m` : ''}: ${name}`,
+          start: workLog.date,
+          allDay: true,
+          backgroundColor: task.color,
+          borderColor: task.color,
+          extendedProps: {
+            workLog,
+            task,
+          },
+        };
+      }
+    }
+
+    const events = await Promise.all(this.args.workLogs.map(workLogToCalendarEvent));
+    successCallback(events);
+  };
+
   @action
-  setupCalendar(element) {
+  async setupCalendar(element) {
     this.calendarEl = element;
 
     const focusDate = this.args.focusDate;
@@ -53,7 +78,7 @@ export default class FullCalendarComponent extends Component {
     this.calendar = new Calendar(element, {
       plugins: [interactionPlugin, dayGridPlugin],
       initialView: 'dayGridMonth',
-      events: this.args.events || [],
+      eventSources: [this.eventSource.bind(this)],
       droppable: false, // Allows for drag and drop of external elements
       selectable: !this.args.isDisabled,
       unselectCancel: '.work-log-popover',
@@ -102,15 +127,10 @@ export default class FullCalendarComponent extends Component {
   }
 
   renderDayCellContent(info) {
-    const events = this.calendar
-      .getEvents()
-      .filter((event) => isSameDay(event.start, info.date));
-    if (events.length === 0) {
-      return info.dayNumberText;
-    }
-
-    const totalDuration = events
-      .map((event) => event.extendedProps.workLog.duration)
+    const workLogs = this.args.workLogs.filter((workLog) => isSameDay(workLog.date, info.date));
+    if (workLogs.length) {
+      const totalDuration = workLogs
+      .map((workLog) => workLog.duration)
       .reduce(
         (acc, duration) => ({
           hours: acc.hours + duration.hours,
@@ -118,19 +138,21 @@ export default class FullCalendarComponent extends Component {
         }),
         { hours: 0, minutes: 0 },
       );
+      const { hours, minutes } = normalizeDuration(totalDuration);
 
-    const { hours, minutes } = normalizeDuration(totalDuration);
-
-    return {
-      html: `
-        <div class="flex justify-between w-full">
-          <div class="grow">${info.dayNumberText}</div>
-          <div class="flex items-center text-gray-400 text-sm">
+      return {
+        html: `
+        <div class="flex justify-between items-center w-full pr-1">
+          <div class="fc-daygrid-day-number">${info.dayNumberText}</div>
+          <div class="text-gray-400 text-sm shrink-0">
             ${hours}h ${minutes > 0 ? `${minutes}m` : ''}
           </div>
         </div>
       `,
-    };
+      };
+    } else {
+      return { html: `<div class="fc-daygrid-day-number">${info.dayNumberText}</div>` };
+    }
   }
 
   attachEventRemoveButton({ el, event }) {
@@ -199,15 +221,13 @@ export default class FullCalendarComponent extends Component {
   }
 
   get workLogsForSelection() {
-    if (!this.selectionInfo) {
-      return [];
-    } else {
+    if (this.selectionInfo) {
       const { start, end } = this.selectionInfo;
-      return this.args.events
-        .filter(
-          (event) => isAfter(event.start, start) && isBefore(event.start, end),
-        )
-        .map((event) => event.extendedProps.workLog);
+      return this.args.workLogs.filter((workLog) => {
+        return isAfter(workLog.date, start) && isBefore(workLog.date, end)
+      });
+    } else {
+      return [];
     }
   }
 
@@ -224,11 +244,8 @@ export default class FullCalendarComponent extends Component {
   }
 
   @action
-  updateAndRerenderCalendar() {
-    const sources = this.calendar.getEventSources();
-    sources.forEach((source) => source.remove());
-    this.calendar.addEventSource(this.args.events);
-    this.calendar.render();
+  reloadCalendarEvents() {
+    this.calendar.refetchEvents();
   }
 
   @action
