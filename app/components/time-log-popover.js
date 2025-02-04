@@ -11,7 +11,7 @@ export default class WorkLogPopoverComponent extends Component {
   @service taskSuggestion;
 
   @tracked workLogEntries = [];
-  @tracked _focusTaskEntry = null;
+  @tracked focusedTaskId = null;
   newTaskPowerSelectApi = null;
 
   constructor() {
@@ -38,16 +38,15 @@ export default class WorkLogPopoverComponent extends Component {
       }
     }
 
-    this.workLogEntries = new TrackedArray(workLogEntries);
-  }
+    // initialize focused element
+    if (this.args.selectedWorkLog) {
+      const selectedTask = await this.args.selectedWorkLog.task;
+      this.focusedTaskId = selectedTask.id;
+    } else {
+      this.focusedTaskId = workLogEntries[0]?.task.id;
+    }
 
-  // TODO update. Purpose?
-  get focusTaskEntry() {
-    return (
-      this._focusTaskEntry ??
-      this.args.selectedWorkLog?.task?.id ??
-      this.workLogEntries[0]?.task?.id
-    );
+    this.workLogEntries = new TrackedArray(workLogEntries);
   }
 
   get sortedWorkLogEntries() {
@@ -63,9 +62,7 @@ export default class WorkLogPopoverComponent extends Component {
     if (workLogEntry.type != 'pinned') {
       workLogEntry.type = 'pinned';
       this.taskSuggestion.pinTask(workLogEntry.task);
-
-      // TODO purpose?
-      this._focusTaskEntry = workLogEntry.task.id;
+      this.focusedTaskId = workLogEntry.task.id;
     } else {
       // already pinned. Nothing must happen.
     }
@@ -88,8 +85,7 @@ export default class WorkLogPopoverComponent extends Component {
     if (!workLogEntry) {
       this.workLogEntries.push(new WorkLogEntry('added', task));
     }
-    // TODO purpose?
-    this._focusTaskEntry = task.id;
+    this.focusedTaskId = task.id;
   }
 
   @action
@@ -100,8 +96,7 @@ export default class WorkLogPopoverComponent extends Component {
   @action
   updateTask(workLogEntry, task) {
     workLogEntry.task = task;
-    // TODO purpose?
-    this._focusTaskEntry = task.id;
+    this.focusedTaskId = task.id;
   }
 
   @action

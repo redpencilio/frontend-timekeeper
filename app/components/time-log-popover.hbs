@@ -60,7 +60,7 @@
                         id={{inputId}}
                         @value={{workLogEntry.duration}}
                         @onChange={{fn this.updateDuration workLogEntry}}
-                        {{focus-select (eq this.focusTaskEntry task.id)}}
+                        {{focus-select (eq this.focusedTaskId task.id)}}
                       />
                     {{/let}}
                   </div>
