@@ -140,23 +140,25 @@ export default class FullCalendarComponent extends Component {
 
   @action
   setCalendarHandlers() {
-    this.calendar.setOption(
-      'eventClick',
-      this.args.isDisabled ? () => false : this.onEventClick.bind(this),
-    );
-    this.calendar.setOption(
-      'eventDidMount',
-      this.args.isDisabled ? undefined : this.attachEventRemoveButton.bind(this),
-    );
+    const handler = (fn) => {
+      if (this.args.isDisabled) {
+        return () => false;
+      } else {
+        return fn.bind(this);
+      }
+    }
+    this.calendar.setOption('eventClick', handler((info) => {
+      this.selectedWorkLog = info.event.extendedProps.workLog;
+      this.calendar.select(info.event.start);
+    }));
+    this.calendar.setOption('eventDidMount', handler(this.attachEventRemoveButton));
     this.calendar.setOption('selectable', !this.args.isDisabled);
-    this.calendar.setOption(
-      'select',
-      this.args.isDisabled ? () => false : this.onSelect.bind(this),
-    );
-    this.calendar.setOption(
-      'unselect',
-      this.args.isDisabled ? () => false : this.onUnselect.bind(this),
-    );
+    this.calendar.setOption('select', handler((info) => {
+      this.selectedDateRange = { start: info.start, end: info.end };
+    }));
+    this.calendar.setOption('unselect', handler(() => {
+      this.clearPopovers();
+    }));
   }
 
   @action
@@ -227,19 +229,6 @@ export default class FullCalendarComponent extends Component {
     };
   }
 
-  onEventClick(info) {
-    this.selectedWorkLog = info.event.extendedProps.workLog;
-    this.calendar.select(info.event.start);
-  }
-
-  onSelect(info) {
-    this.selectedDateRange = { start: info.start, end: info.end };
-  }
-
-  onUnselect() {
-    this.clearPopovers();
-  }
-
   @action
   cancel() {
     this.clearPopovers();
@@ -256,10 +245,10 @@ export default class FullCalendarComponent extends Component {
     this.calendar.refetchEvents();
   }
 
-  save = ecTask(async (hourTaskPairs) => {
+  save = ecTask(async (workLogEntries) => {
     const { start, end } = this.selectedDateRange;
     await this.args.onSave(
-      hourTaskPairs,
+      workLogEntries,
       eachDayOfInterval({ start, end: subDays(end, 1) }),
     );
     this.clearPopovers();
