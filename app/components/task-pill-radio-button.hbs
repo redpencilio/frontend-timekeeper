@@ -13,7 +13,7 @@
     <div class="flex items-center">
       <span
         class="inline-block w-3 h-3 rounded-full mr-3"
-        {{bg-color (or @task.color @task.parent.color)}}
+        {{bg-color (task-color @task)}}
       ></span>
       <span class="text-red-700">{{task-name @task}}</span>
     </div>

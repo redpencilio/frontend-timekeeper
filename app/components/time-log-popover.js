@@ -2,120 +2,125 @@ import Component from '@glimmer/component';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { trackedReset } from 'tracked-toolbox';
-import { v4 as uuidv4 } from 'uuid';
-import { uniqueBy } from '../utils/unique-by-key';
+import { TrackedArray } from 'tracked-built-ins';
+import { compare } from '@ember/utils';
+import WorkLogEntry from '../utils/work-log-entry';
 
 export default class WorkLogPopoverComponent extends Component {
   @service store;
-  @service userProfile;
+  @service taskSuggestion;
 
-  @tracked focusHoursInput = null;
+  @tracked workLogEntries = [];
+  @tracked focusedTaskId = null;
+  newTaskPowerSelectApi = null;
 
-  @trackedReset({
-    memo: 'args.workLogs',
-    update() {
-      return this.userProfile.favoriteTasks.map((task) => {
-        const workLog = this.args.workLogs.find(
-          (workLog) => workLog.task.id === task.id,
-        );
-        return {
-          task,
-          duration: workLog?.duration ?? { hours: 0, minutes: 0 },
-          workLog,
-        };
-      });
-    },
-  })
-  favoriteTaskWorkLogs = [];
+  constructor() {
+    super(...arguments);
+    this.initWorkLogEntries();
+  }
 
-  @trackedReset({
-    memo: 'args.workLogs',
-    update() {
-      return [
-        // Allow a single workLog per task
-        ...uniqueBy(this.args.workLogs, (workLog) => workLog.task.id)
-          // Exclude tasks that are in favorites
-          .filter(
-            (workLog) =>
-              !this.userProfile.favoriteTasks
-                .map((task) => task.id)
-                .includes(workLog.task.id),
-          )
-          .map(
-            (workLog) =>
-              ({
-                duration: workLog.duration,
-                task: workLog.task,
-                workLog,
-              }),
-          ),
-      ];
-    },
-  })
-  addedWorkLogs = [];
+  async initWorkLogEntries() {
+    const pinnedWorkLogEntries = this.taskSuggestion.pinnedTasks
+      .map((task) => new WorkLogEntry('pinned', task));
+    const mostUsedWorkLogEntries = this.taskSuggestion.mostUsedTasks
+      .filter((mostUsedTask) => !this.taskSuggestion.pinnedTasks.includes(mostUsedTask))
+      .map((task) => new WorkLogEntry('recent', task));
+    const workLogEntries = [...pinnedWorkLogEntries, ...mostUsedWorkLogEntries];
 
-  newProjectPowerSelectApi = null;
+    for (const workLog of this.args.workLogs) {
+      const task = await workLog.task;
+      const workLogEntry = workLogEntries.find((entry) => entry.task.id == task.id);
+      if (workLogEntry) {
+        workLogEntry.workLog = workLog;
+        workLogEntry.duration = workLog.duration;
+      } else {
+        workLogEntries.push(new WorkLogEntry('added', task, workLog));
+      }
+    }
 
-  get excludeTasks() {
-    return [
-      ...this.userProfile.favoriteTasks,
-      ...this.addedWorkLogs.map((log) => log.task),
-    ];
+    // initialize focused element
+    if (this.args.selectedWorkLog) {
+      const selectedTask = await this.args.selectedWorkLog.task;
+      this.focusedTaskId = selectedTask.id;
+    } else {
+      this.focusedTaskId = workLogEntries[0]?.task.id;
+    }
+
+    this.workLogEntries = new TrackedArray(workLogEntries);
+  }
+
+  get sortedWorkLogEntries() {
+    return this.workLogEntries.slice(0).sort((a, b) => compare(a.priority, b.priority));
+  }
+
+  get visibleTasks() {
+    return this.workLogEntries.map((workLogEntry) => workLogEntry.task);
   }
 
   @action
-  closePopover() {
-    this.args.onCancel?.();
+  pinTask(workLogEntry) {
+    if (workLogEntry.type != 'pinned') {
+      workLogEntry.type = 'pinned';
+      this.taskSuggestion.pinTask(workLogEntry.task);
+      this.focusedTaskId = workLogEntry.task.id;
+    } else {
+      // already pinned. Nothing must happen.
+    }
   }
 
   @action
-  updateDuration(workLog, duration) {
-    workLog.duration = duration;
+  unpinTask(workLogEntry) {
+    if (workLogEntry.type == 'pinned') {
+      const { task } = workLogEntry;
+      workLogEntry.type = this.taskSuggestion.mostUsedTasks.includes(task) ? 'recent' : 'added';
+      this.taskSuggestion.unpinTask(task);
+    } else {
+      // not pinned. Nothing must happen.
+    }
   }
 
   @action
-  updateTask(workLog, task) {
-    this.focusHoursInput = this.addedWorkLogs.indexOf(workLog);
-    // We need to do it like this so the component rerenders
-    this.addedWorkLogs = this.addedWorkLogs.map((workLogIt) =>
-      workLogIt === workLog ? { ...workLog, task } : workLogIt,
-    );
+  addWorkLogEntry(task) {
+    const workLogEntry = this.workLogEntries.find((workLogEntry) => workLogEntry.task == task);
+    if (!workLogEntry) {
+      this.workLogEntries.push(new WorkLogEntry('added', task));
+    }
+    this.focusedTaskId = task.id;
   }
 
   @action
-  addTaskToList(task) {
-    const newEntry = {
-      task,
-      duration: { hours: 0, minutes: 0 },
-    };
-    this.addedWorkLogs = [...this.addedWorkLogs, newEntry];
-    this.focusHoursInput = this.addedWorkLogs.length - 1;
+  updateDuration(workLogEntry, duration) {
+    workLogEntry.duration = duration;
+  }
+
+  @action
+  updateTask(workLogEntry, task) {
+    workLogEntry.task = task;
+    this.focusedTaskId = task.id;
   }
 
   @action
   submitWorkLogs(event) {
     event.preventDefault();
-    const workLogTaskPairs = [
-      ...this.favoriteTaskWorkLogs,
-      ...this.addedWorkLogs,
-    ].filter(
-      ({ duration: { hours, minutes }, workLog }) =>
-        workLog || hours > 0 || minutes > 0,
+    // Only pass workLogEntries that have either:
+    // - an existing workLog record (existing workLog that needs to be updated)
+    // - a duration that is > 0 (new workLog that need to be created)
+    const changedWorkLogEntries = this.workLogEntries.filter(
+      (workLogEntry) => workLogEntry.workLog || workLogEntry.hasDuration
     );
-    this.args.onSave?.perform(workLogTaskPairs);
+    this.args.onSave?.perform(changedWorkLogEntries);
   }
 
   @action
   handleKeydown(event) {
     if (event.key === '/') {
       event.preventDefault();
-      this.newProjectPowerSelectApi?.actions.open();
+      this.newTaskPowerSelectApi?.actions.open();
     }
   }
 
   @action
-  registerNewProjectPowerSelect(api) {
-    this.newProjectPowerSelectApi = api;
+  registerNewTaskPowerSelect(api) {
+    this.newTaskPowerSelectApi = api;
   }
 }

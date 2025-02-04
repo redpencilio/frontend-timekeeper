@@ -21,7 +21,7 @@
   <div class="flex items-center text-sm h-6">
     <span
       class="inline-block w-2 h-2 rounded-full mr-3"
-      {{bg-color (or task.color task.parent.color)}}
+      {{bg-color (task-color task)}}
     ></span>
     <span class="text-gray-700 font-light">{{task-name task}}</span>
   </div>
