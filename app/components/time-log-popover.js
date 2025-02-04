@@ -2,26 +2,46 @@ import Component from '@glimmer/component';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { trackedReset } from 'tracked-toolbox';
-import { uniqueBy } from '../utils/unique-by-key';
+import { TrackedArray } from 'tracked-built-ins';
 import { storageFor } from 'ember-local-storage';
+import WorkLogEntry from '../utils/work-log-entry';
 
 export default class WorkLogPopoverComponent extends Component {
   @service store;
-  @service userProfile;
+  @service taskSuggestion;
 
-  @storageFor('pinned-tasks') pinnedTasks;
-
+  @tracked workLogEntries = [];
   @tracked _focusTaskEntry = null;
+  newTaskPowerSelectApi = null;
 
-  get workLogEntries() {
-    return [
-      ...this.pinnedTaskEntries,
-      ...this.recentEntries,
-      ...this.addedWorkLogs,
-    ];
+  constructor() {
+    super(...arguments);
+    this.initWorkLogEntries();
   }
 
+  async initWorkLogEntries() {
+    const pinnedWorkLogEntries = this.taskSuggestion.pinnedTasks
+      .map((task) => new WorkLogEntry('pinned', task));
+    const mostUsedWorkLogEntries = this.taskSuggestion.mostUsedTasks
+      .filter((mostUsedTask) => !this.taskSuggestion.pinnedTasks.includes(mostUsedTask))
+      .map((task) => new WorkLogEntry('recent', task));
+    const workLogEntries = [...pinnedWorkLogEntries, ...mostUsedWorkLogEntries];
+
+    for (const workLog of this.args.workLogs) {
+      const task = await workLog.task;
+      const workLogEntry = workLogEntries.find((entry) => entry.task.id == task.id);
+      if (workLogEntry) {
+        workLogEntry.workLog = workLog;
+        workLogEntry.duration = workLog.duration;
+      } else {
+        workLogEntries.push(new WorkLogEntry('added', task, workLog));
+      }
+    }
+
+    this.workLogEntries = new TrackedArray(workLogEntries);
+  }
+
+  // TODO update. Purpose?
   get focusTaskEntry() {
     return (
       this._focusTaskEntry ??
@@ -30,80 +50,47 @@ export default class WorkLogPopoverComponent extends Component {
     );
   }
 
-  initWorkLogEntry = (task) => {
-    const workLog = this.args.workLogs.find(
-      (workLog) => workLog.task.id === task.id,
-    );
-    return {
-      task,
-      duration: workLog?.duration ?? { hours: 0, minutes: 0 },
-      workLog,
-    };
-  };
-
-  @trackedReset({
-    memo: 'pinnedTasks.length',
-    update() {
-      return this.pinnedTasks
-        .map((taskId) => this.store.peekRecord('task', taskId))
-        .filter((x) => x)
-        .map(this.initWorkLogEntry)
-        .map((entry) => ({ ...entry, type: 'pinned' }));
-    },
-  })
-  pinnedTaskEntries = [];
-
-  @trackedReset({
-    memo: 'args.workLogs',
-    update() {
-      return this.userProfile.favoriteTasks
-        .filter((task) => !this.pinnedTasks.includes(task.id))
-        .map(this.initWorkLogEntry)
-        .map((entry) => ({ ...entry, type: 'recent' }));
-    },
-  })
-  recentEntries = [];
-
-  @trackedReset({
-    memo: 'args.workLogs',
-    update() {
-      return [
-        // Allow a single workLog per task
-        ...uniqueBy(this.args.workLogs, (workLog) => workLog.task.id)
-          // Exclude tasks that are in favorites
-          .filter(
-            (workLog) =>
-              ![
-                ...this.userProfile.favoriteTasks.map((task) => task.id),
-                ...this.pinnedTasks.slice(),
-              ].includes(workLog.task.id),
-          )
-          .map((workLog) => ({
-            duration: workLog.duration,
-            task: workLog.task,
-            workLog,
-          })),
-      ].map((entry) => ({ ...entry, type: 'added' }));
-    },
-  })
-  addedWorkLogs = [];
-
-  get hasWorkLogEntries() {
-    return this.workLogEntries.length > 0;
+  // TODO sort by type (pinned - recent - added), next by label?
+  get sortedWorkLogEntries() {
+    return this.workLogEntries;
   }
 
-  newProjectPowerSelectApi = null;
-
-  get excludeTasks() {
-    return [
-      ...this.userProfile.favoriteTasks,
-      ...this.addedWorkLogs.map((log) => log.task),
-    ];
+  get visibleTasks() {
+    return this.workLogEntries.map((workLogEntry) => workLogEntry.task);
   }
 
   @action
-  closePopover() {
-    this.args.onCancel?.();
+  pinTask(workLogEntry) {
+    if (workLogEntry.type != 'pinned') {
+      workLogEntry.type = 'pinned';
+      this.taskSuggestion.pinTask(workLogEntry.task);
+
+      // TODO purpose?
+      this._focusTaskEntry = workLogEntry.task.id;
+    } else {
+      // already pinned. Nothing must happen.
+    }
+  }
+
+  @action
+  unpinTask(workLogEntry) {
+    if (workLogEntry.type == 'pinned') {
+      const { task } = workLogEntry;
+      workLogEntry.type = this.taskSuggestion.mostUsedTasks.includes(task) ? 'recent' : 'added';
+      this.taskSuggestion.unpinTask(task);
+    } else {
+      // not pinned. Nothing must happen.
+    }
+  }
+
+  @action
+  addWorkLogEntry(task) {
+    const workLogEntry = this.workLogEntries.find((workLogEntry) => workLogEntry.task == task);
+    if (!workLogEntry) {
+      this.workLogEntries.push(new WorkLogEntry('added', task));
+    }
+    // TODO purpose?
+    this._focusTaskEntry = task.id;
   }
 
   @action
@@ -113,87 +100,33 @@ export default class WorkLogPopoverComponent extends Component {
 
   @action
   updateTask(workLogEntry, task) {
-    this._focusTaskEntry = task.id;
-    // We need to do it like this so the component rerenders
-    this.addedWorkLogs = this.addedWorkLogs.map((workLogIt) =>
-      workLogIt === workLogEntry ? { ...workLogEntry, task } : workLogIt,
-    );
-  }
-
-  @action
-  addTaskToList(task) {
-    // Only create a new entry if it isn't added yet
-    if (
-      this.workLogEntries.every(
-        (workLogEntry) => workLogEntry.task.id !== task.id,
-      )
-    ) {
-      const newEntry = {
-        task,
-        duration: { hours: 0, minutes: 0 },
-        type: 'added',
-      };
-      this.addedWorkLogs = [...this.addedWorkLogs, newEntry];
-    }
+    workLogEntry.task = task;
+    // TODO purpose?
     this._focusTaskEntry = task.id;
   }
 
   @action
   submitWorkLogs(event) {
     event.preventDefault();
-    const workLogTaskPairs = this.workLogEntries.filter(
-      ({ duration: { hours, minutes }, workLog }) =>
-        workLog || hours > 0 || minutes > 0,
+    // Only pass workLogEntries that have either:
+    // - an existing workLog record (existing workLog that needs to be updated)
+    // - a duration that is > 0 (new workLog that need to be created)
+    const changedWorkLogEntries = this.workLogEntries.filter(
+      (workLogEntry) => workLogEntry.workLog || workLogEntry.hasDuration
     );
-    this.args.onSave?.perform(workLogTaskPairs);
+    this.args.onSave?.perform(changedWorkLogEntries);
   }
 
   @action
   handleKeydown(event) {
     if (event.key === '/') {
       event.preventDefault();
-      this.newProjectPowerSelectApi?.actions.open();
+      this.newTaskPowerSelectApi?.actions.open();
     }
   }
 
   @action
-  registerNewProjectPowerSelect(api) {
-    this.newProjectPowerSelectApi = api;
-  }
-
-  @action
-  pinTask(workLogEntry) {
-    const { task } = workLogEntry;
-    // TODO: bug: the pinned task's duration gets set to 0
-    this.pinnedTasks.insertAt(0, task.id);
-    // Remove from addedWorkLogs
-    this.addedWorkLogs = this.addedWorkLogs.filter(
-      (workLogEntry) => workLogEntry.task.id !== task.id,
-    );
-    // Remove from favoriteTaskWorkLogs
-    this.recentEntries = this.recentEntries.filter(
-      (workLogEntry) => workLogEntry.task.id !== task.id,
-    );
-    this._focusTaskEntry = task.id;
-  }
-
-  @action
-  unpinTask(workLogEntry) {
-    const { task } = workLogEntry;
-    this.pinnedTasks.removeObject(task.id);
-
-    if (
-      this.userProfile.favoriteTasks.some((favTask) => favTask.id === task.id)
-    ) {
-      this.recentEntries = [
-        ...this.recentEntries,
-        { ...workLogEntry, type: 'recent' },
-      ];
-    } else {
-      this.addedWorkLogs = [
-        ...this.addedWorkLogs,
-        { ...workLogEntry, type: 'added' },
-      ];
-    }
+  registerNewTaskPowerSelect(api) {
+    this.newTaskPowerSelectApi = api;
   }
 }

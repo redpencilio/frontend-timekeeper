@@ -7,14 +7,14 @@
     <div role="none">
       <form {{on "submit" this.submitWorkLogs}}>
         <ul class="divide-y divide-dotted">
-          {{#each this.workLogEntries as |workLogEntry|}}
+          {{#each this.sortedWorkLogEntries as |workLogEntry|}}
             {{#let workLogEntry.task as |task|}}
               <li>
                 <div class="mb-2 mt-2">
                   <div class="mt-1 flex items-center justify-between">
                     <div
                       class="group flex grow items-center
-                        {{if (eq workLogEntry.type 'added') 'mr-2'}}"
+                      {{if (eq workLogEntry.type "added") "mr-2"}}"
                     >
                       {{#if (eq workLogEntry.type "pinned")}}
                         <div class="h-4 w-4">
@@ -49,7 +49,7 @@
                         <TaskPowerSelect
                           {{! class needed for fullcalendar unselectCancel }}
                           @dropdownClass="work-log-popover"
-                          @excludeTasks={{this.excludeTasks}}
+                          @excludeTasks={{this.visibleTasks}}
                           @selectedTask={{task}}
                           @onChange={{fn this.updateTask workLogEntry}}
                         />
@@ -76,11 +76,11 @@
                   <TaskPowerSelect
                     {{! class needed for fullcalendar unselectCancel }}
                     @dropdownClass="work-log-popover"
-                    @registerAPI={{this.registerNewProjectPowerSelect}}
-                    @onChange={{this.addTaskToList}}
+                    @registerAPI={{this.registerNewTaskPowerSelect}}
+                    @onChange={{this.addWorkLogEntry}}
                     {{! This is needed because otherwise 'type / to search' }}
                     {{! does not work if there are no entries in the popover }}
-                    {{focus (not this.hasWorkLogEntries)}}
+                    {{focus (not this.sortedWorkLogEntries.length)}}
                   />
                 </div>
               </div>
@@ -89,7 +89,7 @@
         </ul>
 
         <div class="mt-4 flex justify-between">
-          <Button @skin="mute" {{on "click" this.closePopover}}>
+          <Button @skin="mute" {{on "click" @onCancel}}>
             Cancel
           </Button>
           <Button

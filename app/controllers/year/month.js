@@ -24,11 +24,11 @@ export default class YearMonthContoller extends Controller {
     await this.timesheet.save();
   }
 
-  save = ecTask(async (workLogTaskPairs, dates) => {
+  save = ecTask(async (workLogEntries, dates) => {
     // Selection only contains one date, we don't want to overwrite
     if (dates.length === 1) {
       await Promise.all(
-        workLogTaskPairs.map(async ({ duration, task, workLog }) => {
+        workLogEntries.map(async ({ duration, task, workLog }) => {
           if (workLog) {
             if (duration.hours === 0 && duration.minutes === 0) {
               // An existing worklog was set to 0, remove it
@@ -68,7 +68,7 @@ export default class YearMonthContoller extends Controller {
         // Insert new workLogs
         ...dates.map(async (date) => {
           await Promise.all(
-            workLogTaskPairs
+            workLogEntries
               .filter(
                 ({ duration: { hours, minutes } }) => hours > 0 || minutes > 0,
               )
