@@ -1,9 +1,23 @@
-<button
-  {{on "click" @onClick}}
-  class="mr-2 hidden group-hover:block"
-  type="button"
->
-  <div class="fill-red-600">
-    {{svg-jar "pin" class="fill-inherit"}}
+{{#if @pinned}}
+  <div ...attributes>
+    <button {{on "click" @onClick}} tabindex="-1" type="button">
+      <div {{fill-color @color}} class="group">
+        {{svg-jar "pin-fill" class="block group-hover:hidden fill-inherit"}}
+        {{svg-jar "pin" class="hidden group-hover:block fill-inherit"}}
+      </div>
+    </button>
   </div>
-</button>
+{{else}}
+  <div ...attributes>
+    <button {{on "click" @onClick}} class="mr-2 hidden group-hover:block" type="button">
+      <div {{fill-color @color}}>
+        {{svg-jar "pin" class="fill-inherit"}}
+      </div>
+    </button>
+    {{#if (has-block)}}
+      <div class="group-hover:hidden">
+        {{yield}}
+      </div>
+    {{/if}}
+  </div>
+{{/if}}

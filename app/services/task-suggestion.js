@@ -16,7 +16,7 @@ export default class TaskSuggestionService extends Service {
     this.mostUsedTasks = await this.loadMostUsedTasks(user);
   }
 
-  async reset() {
+  reset() {
     this.pinnedTasks = [];
     this.mostUsedTasks = [];
   }

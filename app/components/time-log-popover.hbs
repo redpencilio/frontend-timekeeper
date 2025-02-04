@@ -17,35 +17,28 @@
                       {{if (eq workLogEntry.type "added") "mr-2"}}"
                     >
                       {{#if (eq workLogEntry.type "pinned")}}
-                        <div class="h-4 w-4">
-                          <button
-                            {{on "click" (fn this.unpinTask workLogEntry)}}
-                            tabindex="-1"
-                            type="button"
-                          >
-                            <div {{fill-color (task-color task)}}>
-                              {{svg-jar "pin-fill" class="fill-inherit"}}
-                            </div>
-                          </button>
-                        </div>
+                        <TimeLogPopover::Pin
+                          @pinned={{true}}
+                          @color={{task-color task}}
+                          @onClick={{fn this.unpinTask workLogEntry}}
+                          class="h-4 w-4" />
                         <div class="ml-2 text-sm">{{task-name task}}</div>
                       {{else if (eq workLogEntry.type "recent")}}
-                        <div class="h-4 w-4">
-                          <TimeLogPopover::Pin
-                            @onClick={{fn this.pinTask workLogEntry}}
-                          />
-                          <div
-                            class="group-hover:hidden"
-                            {{fill-color (task-color task)}}
-                          >
+                        <TimeLogPopover::Pin
+                          @pinned={{false}}
+                          @color={{task-color task}}
+                          @onClick={{fn this.pinTask workLogEntry}}
+                          class="h-4 w-4">
+                          <div {{fill-color (task-color task)}}>
                             {{svg-jar "clock" class="fill-inherit"}}
                           </div>
-                        </div>
+                        </TimeLogPopover::Pin>
                         <div class="ml-2 text-sm">{{task-name task}}</div>
                       {{else if (eq workLogEntry.type "added")}}
                         <TimeLogPopover::Pin
-                          @onClick={{fn this.pinTask workLogEntry}}
-                        />
+                          @pinned={{false}}
+                          @color={{task-color task}}
+                          @onClick={{fn this.pinTask workLogEntry}} />
                         <TaskPowerSelect
                           {{! class needed for fullcalendar unselectCancel }}
                           @dropdownClass="work-log-popover"
