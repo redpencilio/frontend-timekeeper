@@ -11,7 +11,6 @@ export default class TaskSuggestionService extends Service {
   @tracked mostUsedTasks = [];
 
   async loadTasks(user) {
-    console.log('load tasks called');
     this.pinnedTasks = await this.loadPinnedTasks();
     this.mostUsedTasks = await this.loadMostUsedTasks(user);
   }
