@@ -6,6 +6,7 @@ import { getPermissionsForGroups } from '../permissions';
 export default class UserProfileService extends Service {
   @service session;
   @service store;
+  @service taskSuggestion;
 
   @tracked user;
   @tracked userGroups;
@@ -22,11 +23,11 @@ export default class UserProfileService extends Service {
       });
       this.user = await this.account.person;
       this.userGroups = await this.user.userGroups;
-      this.favoriteTasks = await this.loadFavoriteTasks();
+      await this.taskSuggestion.loadTasks(this.user);
     } else {
       this.user = null;
       this.userGroups = [];
-      this.favoriteTasks = [];
+      await this.taskSuggestion.reset();
     }
   }
 
@@ -40,37 +41,5 @@ export default class UserProfileService extends Service {
 
   may(permission) {
     return this.permissions.includes(permission);
-  }
-
-  async loadFavoriteTasks() {
-    const logs = await this.store.query('work-log', {
-      sort: '-date',
-      page: {
-        size: 12,
-      },
-      'filter[person][:id:]': this.user?.id,
-      include: 'task',
-    });
-
-    const counts = {};
-    for( let log of logs ) {
-      const taskId = (await log.task)?.id;
-      if( taskId ) {
-        counts[taskId] = (counts[taskId] || 0) + 1;
-      }
-    }
-
-    const top3TaskIds = Object.entries(counts)
-      .sort(([, countA], [, countB]) => countB - countA)
-      .slice(0, 3)
-      .map(([taskId]) => taskId);
-
-    const top3Tasks = await Promise.all(
-      top3TaskIds.map(async (taskId) => {
-        return await this.store.findRecord('task', taskId);
-      }),
-    );
-
-    return top3Tasks;
   }
 }
