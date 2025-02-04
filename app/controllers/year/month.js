@@ -1,5 +1,4 @@
 import Controller from '@ember/controller';
-import taskName from 'frontend-timekeeper/helpers/task-name';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { task as ecTask } from 'ember-concurrency';

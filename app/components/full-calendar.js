@@ -95,21 +95,14 @@ export default class FullCalendarComponent extends Component {
       eventOrder: sortEvents,
       dayMaxEvents: 6,
       dayCellContent: this.renderDayCellContent.bind(this),
+      editable: false, // Allows for drag and drop/resize of internal events
+      droppable: false, // Allows for drag and drop of external elements
       eventDidMount: this.args.isDisabled
         ? undefined
         : this.attachEventRemoveButton.bind(this),
       eventClick: this.args.isDisabled
         ? () => false
         : this.onEventClick.bind(this),
-      // Drag and Drop
-      eventConstraint: {
-        // Where events can be dragged to
-        start: formatDate(firstDayOfMonth),
-        end: formatDate(firstDayOfNextMonth),
-      },
-      eventDrop: this.onEventDrop.bind(this),
-      editable: false, // Allows for drag and drop of internal events
-      droppable: false, // Allows for drag and drop of external elements
 
       // Properties and handlers related to day selections in the calendar
       selectable: !this.args.isDisabled,
@@ -198,12 +191,6 @@ export default class FullCalendarComponent extends Component {
 
   onUnselect() {
     this.clearPopovers();
-  }
-
-  async onEventDrop(info) {
-    const { workLog } = info.oldEvent.extendedProps;
-    workLog.date = info.event.start;
-    await workLog.save();
   }
 
   // Returns the last date cell element of the selection
