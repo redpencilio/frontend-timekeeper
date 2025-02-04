@@ -23,7 +23,7 @@
 <div
   class="full-calendar h-full"
   {{did-update this.goToMonth @firstDayOfMonth}}
-  {{did-update this.updateDisabled @isDisabled @focusDate}}
+  {{did-update this.setCalendarHandlers @isDisabled @firstDayOfMonth}}
   {{did-update this.reloadCalendarEvents @workLogs}}
   {{did-insert this.setupCalendar}}
 ></div>

@@ -94,24 +94,47 @@ export default class FullCalendarComponent extends Component {
       dayCellContent: this.renderDayCellContent.bind(this),
       editable: false, // Allows for drag and drop/resize of internal events
       droppable: false, // Allows for drag and drop of external elements
-      eventDidMount: this.args.isDisabled
-        ? undefined
-        : this.attachEventRemoveButton.bind(this),
-      eventClick: this.args.isDisabled
-        ? () => false
-        : this.onEventClick.bind(this),
 
       // Properties and handlers related to day selections in the calendar
-      selectable: !this.args.isDisabled,
-      select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
-      unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
       unselectCancel: '.work-log-popover',
     });
+    this.setCalendarHandlers();
     this.goToMonth();
     this.calendar.render();
     // TODO improve by putting addEventListener and removeEventListener
     // together
     document.addEventListener('keydown', this.handleKeydown.bind(this));
+  }
+
+  @action
+  setCalendarHandlers() {
+    this.calendar.setOption(
+      'eventClick',
+      this.args.isDisabled ? () => false : this.onEventClick.bind(this),
+    );
+    this.calendar.setOption(
+      'eventDidMount',
+      this.args.isDisabled ? undefined : this.attachEventRemoveButton.bind(this),
+    );
+    this.calendar.setOption('selectable', !this.args.isDisabled);
+    this.calendar.setOption(
+      'select',
+      this.args.isDisabled ? () => false : this.onSelect.bind(this),
+    );
+    this.calendar.setOption(
+      'unselect',
+      this.args.isDisabled ? () => false : this.onUnselect.bind(this),
+    );
+  }
+
+  @action
+  goToMonth() {
+    const firstDayOfNextMonth = addDays(endOfMonth(this.args.firstDayOfMonth), 1);
+    this.calendar.setOption('selectConstraint', {
+      start: this.args.firstDayOfMonth,
+      end: firstDayOfNextMonth,
+    });
+    this.calendar.gotoDate(this.args.firstDayOfMonth);
   }
 
   renderDayCellContent(info) {
@@ -231,23 +254,6 @@ export default class FullCalendarComponent extends Component {
 
   @action
   updateDisabled() {
-    this.calendar.setOption(
-      'eventClick',
-      this.args.isDisabled ? () => false : this.onEventClick.bind(this),
-    );
-    this.calendar.setOption(
-      'select',
-      this.args.isDisabled ? () => false : this.onSelect.bind(this),
-    );
-    this.calendar.setOption(
-      'unselect',
-      this.args.isDisabled ? () => false : this.onUnselect.bind(this),
-    );
-    this.calendar.setOption('selectable', !this.args.isDisabled);
-    this.calendar.setOption(
-      'eventDidMount',
-      this.args.isDisabled ? undefined : this.attachEventRemoveButton.bind(this),
-    );
   }
 
   save = ecTask(async (hourTaskPairs) => {
@@ -285,16 +291,6 @@ export default class FullCalendarComponent extends Component {
 
   get clickedWorkLog() {
     return this.clickedEventInfo?.event.extendedProps.workLog;
-  }
-
-  @action
-  goToMonth() {
-    const firstDayOfNextMonth = addDays(endOfMonth(this.args.firstDayOfMonth), 1);
-    this.calendar.setOption('selectConstraint', {
-      start: this.args.firstDayOfMonth,
-      end: firstDayOfNextMonth,
-    });
-    this.calendar.gotoDate(this.args.firstDayOfMonth);
   }
 
   handleKeydown(event) {
