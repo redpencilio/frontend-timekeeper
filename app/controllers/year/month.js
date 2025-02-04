@@ -89,21 +89,21 @@ export default class YearMonthContoller extends Controller {
         this.model.workLogs.removeObject(workLog),
       );
     }
-    this.router.refresh();
+    this.router.refresh(this.router.currentRouteName);
   });
 
   @action
   async deleteWorkLog(workLog) {
     await workLog.destroyRecord();
     this.model.workLogs.removeObject(workLog);
-    this.router.refresh();
+    this.router.refresh(this.router.currentRouteName);
   }
 
   @action
   async undoDeleteWorkLog(workLogCopy) {
     const newWorkLog = this.store.createRecord('work-log', workLogCopy);
     await newWorkLog.save();
-    this.router.refresh();
+    this.router.refresh(this.router.currentRouteName);
   }
 
   get events() {
