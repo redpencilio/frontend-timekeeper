@@ -75,14 +75,25 @@ export default class FullCalendarComponent extends Component {
     const firstDayOfNextMonth = addDays(endOfMonth(this.args.focusDate), 1);
 
     this.calendar = new Calendar(element, {
+      // General calendar settings
       plugins: [interactionPlugin, dayGridPlugin],
       initialView: 'dayGridMonth',
+      headerToolbar: {
+        start: null,
+        center: 'title',
+        end: null,
+      },
+      firstDay: 1,
+      businessHours: {
+        daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday (0=Sunday)
+      },
+      height: '100%',
+
+      // Properties and handlers related to calendar-events
       eventSources: [this.eventSource.bind(this)],
-      droppable: false, // Allows for drag and drop of external elements
-      selectable: !this.args.isDisabled,
-      unselectCancel: '.work-log-popover',
-      select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
-      unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
+      eventDisplay: 'list-item',
+      eventOrder: sortEvents,
+      dayMaxEvents: 6,
       dayCellContent: this.renderDayCellContent.bind(this),
       eventDidMount: this.args.isDisabled
         ? undefined
@@ -90,32 +101,25 @@ export default class FullCalendarComponent extends Component {
       eventClick: this.args.isDisabled
         ? () => false
         : this.onEventClick.bind(this),
-      eventDisplay: 'list-item',
-      eventOrder: sortEvents,
-      dayMaxEvents: 6,
-      height: 'parent',
-      firstDay: 1,
-      businessHours: {
-        // days of week. an array of zero-based day of week integers (0=Sunday)
-        daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday
-      },
-      headerToolbar: {
-        start: null,
-        center: 'title',
-        end: null,
-      },
-      selectConstraint: {
-        start: firstDayOfMonth,
-        end: firstDayOfNextMonth,
-      },
       // Drag and Drop
-      // editable: !this.args.isDisabled, // Allows for drag and drop of internal events
       eventConstraint: {
         // Where events can be dragged to
         start: formatDate(firstDayOfMonth),
         end: formatDate(firstDayOfNextMonth),
       },
       eventDrop: this.onEventDrop.bind(this),
+      editable: false, // Allows for drag and drop of internal events
+      droppable: false, // Allows for drag and drop of external elements
+
+      // Properties and handlers related to day selections in the calendar
+      selectable: !this.args.isDisabled,
+      select: this.args.isDisabled ? () => false : this.onSelect.bind(this),
+      unselect: this.args.isDisabled ? () => false : this.onUnselect.bind(this),
+      unselectCancel: '.work-log-popover',
+      selectConstraint: {
+        start: firstDayOfMonth,
+        end: firstDayOfNextMonth,
+      },
     });
 
     this.calendar.gotoDate(focusDate);
