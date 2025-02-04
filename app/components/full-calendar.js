@@ -39,8 +39,40 @@ export default class FullCalendarComponent extends Component {
   @tracked calendar = null;
   calendarEl = null;
 
-  @tracked clickedEventInfo = null;
-  @tracked selectionInfo = null;
+  @tracked selectedWorkLog = null;
+  @tracked selectedDateRange = null;
+
+  get hasSelection() {
+    return this.selectedDateRange?.start && this.selectedDateRange?.end;
+  }
+
+  get isMultiDaySelection() {
+    return (
+      this.hasSelection &&
+      differenceInDays(this.selectedDateRange.end, this.selectedDateRange.start) > 1
+    );
+  }
+
+  get workLogsForSelection() {
+    if (this.hasSelection) {
+      const { start, end } = this.selectedDateRange;
+      return this.args.workLogs.filter((workLog) => {
+        return isAfter(workLog.date, start) && isBefore(workLog.date, end)
+      });
+    } else {
+      return [];
+    }
+  }
+
+  get selectionAnchorElement() {
+    if (this.hasSelection) {
+      // Get the cell for the last day of the selection
+      const dateStr = formatDate(subDays(this.selectedDateRange.end, 1));
+      return this.calendarEl.querySelector(`[data-date="${dateStr}"]`);
+    } else {
+      return null;
+    }
+  }
 
   async eventSource(_info, successCallback) {
     const workLogToCalendarEvent = async (workLog) => {
@@ -196,44 +228,16 @@ export default class FullCalendarComponent extends Component {
   }
 
   onEventClick(info) {
-    this.calendar.select(info.event.startStr);
-    this.clickedEventInfo = info;
+    this.selectedWorkLog = info.event.extendedProps.workLog;
+    this.calendar.select(info.event.start);
   }
 
   onSelect(info) {
-    this.selectionInfo = info;
+    this.selectedDateRange = { start: info.start, end: info.end };
   }
 
   onUnselect() {
     this.clearPopovers();
-  }
-
-  // Returns the last date cell element of the selection
-  get clickedDateElement() {
-    if (!this.selectionInfo) {
-      return null;
-    }
-
-    const dateStr = formatDate(subDays(this.selectionInfo.end, 1));
-    return this.calendarEl.querySelector(`[data-date="${dateStr}"]`);
-  }
-
-  get hasSelectedMultipleDates() {
-    return (
-      this.selectionInfo &&
-      differenceInDays(this.selectionInfo.end, this.selectionInfo.start) > 1
-    );
-  }
-
-  get workLogsForSelection() {
-    if (this.selectionInfo) {
-      const { start, end } = this.selectionInfo;
-      return this.args.workLogs.filter((workLog) => {
-        return isAfter(workLog.date, start) && isBefore(workLog.date, end)
-      });
-    } else {
-      return [];
-    }
   }
 
   @action
@@ -242,8 +246,8 @@ export default class FullCalendarComponent extends Component {
   }
 
   clearPopovers() {
-    this.clickedEventInfo = null;
-    this.selectionInfo = null;
+    this.selectedWorkLog = null;
+    this.selectedDateRange = null;
     this.calendar.unselect();
   }
 
@@ -252,12 +256,8 @@ export default class FullCalendarComponent extends Component {
     this.calendar.refetchEvents();
   }
 
-  @action
-  updateDisabled() {
-  }
-
   save = ecTask(async (hourTaskPairs) => {
-    const { start, end } = this.selectionInfo;
+    const { start, end } = this.selectedDateRange;
     await this.args.onSave(
       hourTaskPairs,
       eachDayOfInterval({ start, end: subDays(end, 1) }),
@@ -287,10 +287,6 @@ export default class FullCalendarComponent extends Component {
       undoTime: 4000,
       contextKey: 'delete-work-log',
     });
-  }
-
-  get clickedWorkLog() {
-    return this.clickedEventInfo?.event.extendedProps.workLog;
   }
 
   handleKeydown(event) {
