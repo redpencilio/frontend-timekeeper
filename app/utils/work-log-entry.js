@@ -22,4 +22,8 @@ export default class WorkLogEntry {
   get hasDuration() {
     return this.duration.hours > 0 || this.duration.minutes > 0;
   }
+
+  get priority() {
+    return this.type == 'pinned' ? 1 : this.type == 'recent' ? 2 : 3;
+  }
 }

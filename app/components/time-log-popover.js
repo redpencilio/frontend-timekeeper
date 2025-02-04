@@ -3,7 +3,7 @@ import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { TrackedArray } from 'tracked-built-ins';
-import { storageFor } from 'ember-local-storage';
+import { compare } from '@ember/utils';
 import WorkLogEntry from '../utils/work-log-entry';
 
 export default class WorkLogPopoverComponent extends Component {
@@ -50,9 +50,8 @@ export default class WorkLogPopoverComponent extends Component {
     );
   }
 
-  // TODO sort by type (pinned - recent - added), next by label?
   get sortedWorkLogEntries() {
-    return this.workLogEntries;
+    return this.workLogEntries.slice(0).sort((a, b) => compare(a.priority, b.priority));
   }
 
   get visibleTasks() {
