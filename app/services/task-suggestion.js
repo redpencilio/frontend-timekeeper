@@ -22,8 +22,15 @@ export default class TaskSuggestionService extends Service {
 
   loadPinnedTasks() {
     return Promise.all(
-      this.pinnedTaskIds.map(taskId => this.store.findRecord('task', taskId))
-    );
+      this.pinnedTaskIds.map((taskId) => {
+        try {
+          return this.store.findRecord('task', taskId);
+        } catch {
+          // Ignore pinned task that fails to load
+          return null;
+        }
+      }),
+    ).filter((task) => task);
   }
 
   async loadMostUsedTasks(user) {
@@ -48,7 +55,7 @@ export default class TaskSuggestionService extends Service {
       Object.entries(counts)
         .sort(([, countA], [, countB]) => countB - countA)
         .slice(0, 3)
-        .map(([taskId]) => this.store.findRecord('task', taskId))
+        .map(([taskId]) => this.store.findRecord('task', taskId)),
     );
 
     return mostUsedTasks;
@@ -60,7 +67,9 @@ export default class TaskSuggestionService extends Service {
   }
 
   unpinTask(task) {
-    this.pinnedTasks = this.pinnedTasks.filter((pinnedTask) => pinnedTask.id != task.id);
+    this.pinnedTasks = this.pinnedTasks.filter(
+      (pinnedTask) => pinnedTask.id != task.id,
+    );
     this.pinnedTaskIds.removeObject(task.id);
   }
 }
