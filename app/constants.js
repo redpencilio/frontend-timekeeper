@@ -14,4 +14,7 @@ export default {
     EMPLOYEE: 'http://mu.semte.ch/user-groups/employee',
   },
   KIMAI_SERVICE_HOMEPAGE: 'http://kimai.redpencil.io',
+  CONCEPT_SCHEMES: {
+    HOLIDAY_TYPES: "8d0407eb-36b9-4ef5-b6df-e63df460446d"
+  }
 };
