@@ -20,8 +20,8 @@ export default class TaskSuggestionService extends Service {
     this.mostUsedTasks = [];
   }
 
-  loadPinnedTasks() {
-    return Promise.all(
+  async loadPinnedTasks() {
+    const pinnedTasks = await Promise.all(
       this.pinnedTaskIds.map((taskId) => {
         try {
           return this.store.findRecord('task', taskId);
@@ -30,7 +30,8 @@ export default class TaskSuggestionService extends Service {
           return null;
         }
       }),
-    ).filter((task) => task);
+    );
+    return pinnedTasks.filter((task) => task);
   }
 
   async loadMostUsedTasks(user) {
