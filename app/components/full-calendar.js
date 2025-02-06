@@ -51,16 +51,20 @@ export default class FullCalendarComponent extends Component {
   get isMultiDaySelection() {
     return (
       this.hasSelection &&
-      differenceInDays(this.selectedDateRange.end, this.selectedDateRange.start) > 1
+      differenceInDays(
+        this.selectedDateRange.end,
+        this.selectedDateRange.start,
+      ) > 1
     );
   }
 
   get workLogsForSelection() {
     if (this.hasSelection) {
       const { start, end } = this.selectedDateRange;
-      return this.args.workLogs.filter((workLog) => {
-        return isAfter(workLog.date, start) && isBefore(workLog.date, end)
-      });
+      return this.args.workLogs.filter(
+        (workLog) =>
+          isAfter(workLog.date, start) && isBefore(workLog.date, end),
+      );
     } else {
       return [];
     }
@@ -95,11 +99,13 @@ export default class FullCalendarComponent extends Component {
           },
         };
       }
-    }
+    };
 
-    const events = await Promise.all(this.args.workLogs.map(workLogToCalendarEvent));
+    const events = await Promise.all(
+      this.args.workLogs.map(workLogToCalendarEvent),
+    );
     successCallback(events);
-  };
+  }
 
   @action
   async setupCalendar(element) {
@@ -149,26 +155,38 @@ export default class FullCalendarComponent extends Component {
       } else {
         return fn.bind(this);
       }
-    }
-    this.calendar.setOption('eventClick', handler((info) => {
-      this.clearPopovers();
-      this.selectedWorkLog = info.event.extendedProps.workLog;
-      this.calendar.select(info.event.start);
-    }));
+    };
+    this.calendar.setOption(
+      'eventClick',
+      handler((info) => {
+        this.clearPopovers();
+        this.selectedWorkLog = info.event.extendedProps.workLog;
+        this.calendar.select(info.event.start);
+      }),
+    );
     this.calendar.setOption('selectable', !this.args.isDisabled);
-    this.calendar.setOption('select', handler((info) => {
-      this.showNotesFor = null;
-      this.selectedDateRange = { start: info.start, end: info.end };
-      this.clearEventHightlights();
-    }));
-    this.calendar.setOption('unselect', handler(() => {
-      this.clearPopovers();
-    }));
+    this.calendar.setOption(
+      'select',
+      handler((info) => {
+        this.showNotesFor = null;
+        this.selectedDateRange = { start: info.start, end: info.end };
+        this.clearEventHightlights();
+      }),
+    );
+    this.calendar.setOption(
+      'unselect',
+      handler(() => {
+        this.clearPopovers();
+      }),
+    );
   }
 
   @action
   goToMonth() {
-    const firstDayOfNextMonth = addDays(endOfMonth(this.args.firstDayOfMonth), 1);
+    const firstDayOfNextMonth = addDays(
+      endOfMonth(this.args.firstDayOfMonth),
+      1,
+    );
     this.calendar.setOption('selectConstraint', {
       start: this.args.firstDayOfMonth,
       end: firstDayOfNextMonth,
@@ -177,17 +195,19 @@ export default class FullCalendarComponent extends Component {
   }
 
   renderDayCellContent(info) {
-    const workLogs = this.args.workLogs.filter((workLog) => isSameDay(workLog.date, info.date));
+    const workLogs = this.args.workLogs.filter((workLog) =>
+      isSameDay(workLog.date, info.date),
+    );
     if (workLogs.length) {
       const totalDuration = workLogs
-      .map((workLog) => workLog.duration)
-      .reduce(
-        (acc, duration) => ({
-          hours: acc.hours + duration.hours,
-          minutes: acc.minutes + duration.minutes,
-        }),
-        { hours: 0, minutes: 0 },
-      );
+        .map((workLog) => workLog.duration)
+        .reduce(
+          (acc, duration) => ({
+            hours: acc.hours + duration.hours,
+            minutes: acc.minutes + duration.minutes,
+          }),
+          { hours: 0, minutes: 0 },
+        );
       const { hours, minutes } = normalizeDuration(totalDuration);
 
       return {
@@ -201,7 +221,9 @@ export default class FullCalendarComponent extends Component {
       `,
       };
     } else {
-      return { html: `<div class="fc-daygrid-day-number">${info.dayNumberText}</div>` };
+      return {
+        html: `<div class="fc-daygrid-day-number">${info.dayNumberText}</div>`,
+      };
     }
   }
 
