@@ -1,5 +1,4 @@
 import Controller from '@ember/controller';
-import taskName from 'frontend-timekeeper/helpers/task-name';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { task as ecTask } from 'ember-concurrency';
@@ -15,6 +14,10 @@ export default class YearMonthContoller extends Controller {
 
   @tracked timesheet;
 
+  get firstDayOfMonth() {
+    return new Date(this.model.year, this.model.month, 1);
+  }
+
   @action
   async changeTimesheetStatus(status) {
     if (!Object.values(TIMESHEET_STATUSES).includes(status)) {
@@ -24,11 +27,11 @@ export default class YearMonthContoller extends Controller {
     await this.timesheet.save();
   }
 
-  save = ecTask(async (workLogTaskPairs, dates) => {
+  save = ecTask(async (workLogEntries, dates) => {
     // Selection only contains one date, we don't want to overwrite
     if (dates.length === 1) {
       await Promise.all(
-        workLogTaskPairs.map(async ({ duration, task, workLog }) => {
+        workLogEntries.map(async ({ duration, task, workLog }) => {
           if (workLog) {
             if (duration.hours === 0 && duration.minutes === 0) {
               // An existing worklog was set to 0, remove it
@@ -68,7 +71,7 @@ export default class YearMonthContoller extends Controller {
         // Insert new workLogs
         ...dates.map(async (date) => {
           await Promise.all(
-            workLogTaskPairs
+            workLogEntries
               .filter(
                 ({ duration: { hours, minutes } }) => hours > 0 || minutes > 0,
               )
@@ -89,56 +92,20 @@ export default class YearMonthContoller extends Controller {
         this.model.workLogs.removeObject(workLog),
       );
     }
-    this.router.refresh();
+    this.router.refresh(this.router.currentRouteName);
   });
 
   @action
   async deleteWorkLog(workLog) {
     await workLog.destroyRecord();
     this.model.workLogs.removeObject(workLog);
-    this.router.refresh();
+    this.router.refresh(this.router.currentRouteName);
   }
 
   @action
   async undoDeleteWorkLog(workLogCopy) {
     const newWorkLog = this.store.createRecord('work-log', workLogCopy);
     await newWorkLog.save();
-    this.router.refresh();
-  }
-
-  get events() {
-    return this.model.workLogs
-      .map((workLog) => {
-        const {
-          duration: { hours, minutes },
-          date,
-          id,
-        } = workLog;
-        // TODO: use trackedFunction of https://github.com/NullVoxPopuli/ember-resources
-        // instead of fetching async data in a getter
-        const task = workLog.belongsTo('task')?.value();
-        if (task) {
-          const name = taskName(task);
-          return {
-            id,
-            title: `${hours > 0 ? `${hours}h` : ''}${minutes > 0 ? `${minutes}m` : ''}: ${name}`,
-            start: date,
-            allDay: true,
-            backgroundColor: task?.color,
-            borderColor: task?.color,
-            extendedProps: {
-              workLog,
-              task,
-            },
-          };
-        } else {
-          return null;
-        }
-      })
-      .filter((x) => x);
-  }
-
-  get activeDate() {
-    return new Date(this.model.year, this.model.month);
+    this.router.refresh(this.router.currentRouteName);
   }
 }

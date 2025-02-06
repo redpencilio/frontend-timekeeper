@@ -4,8 +4,8 @@
     @onDeleteWorkLog={{this.deleteWorkLog}}
     @onUndoDeleteWorkLog={{this.undoDeleteWorkLog}}
     @onSave={{perform this.save}}
-    @events={{this.events}}
-    @focusDate={{this.activeDate}}
+    @workLogs={{@model.workLogs}}
+    @firstDayOfMonth={{this.firstDayOfMonth}}
   />
 </div>
 <div class="h-full w-96">
