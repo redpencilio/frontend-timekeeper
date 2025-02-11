@@ -22,9 +22,9 @@ export default class TaskSuggestionService extends Service {
 
   async loadPinnedTasks() {
     const pinnedTasks = await Promise.all(
-      this.pinnedTaskIds.map((taskId) => {
+      this.pinnedTaskIds.map(async (taskId) => {
         try {
-          return this.store.findRecord('task', taskId);
+          return await this.store.findRecord('task', taskId);
         } catch {
           // Ignore pinned task that fails to load
           return null;
