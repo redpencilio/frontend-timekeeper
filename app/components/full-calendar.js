@@ -19,6 +19,7 @@ import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
 import taskName from 'frontend-timekeeper/helpers/task-name';
+import svgJar from 'ember-svg-jar/helpers/svg-jar';
 
 const sortEvents = (event1, event2) => {
   const task1 = event1.extendedProps.task;
@@ -41,6 +42,7 @@ export default class FullCalendarComponent extends Component {
 
   @tracked selectedWorkLog = null;
   @tracked selectedDateRange = null;
+  @tracked showNotesFor = null;
 
   get hasSelection() {
     return this.selectedDateRange?.start && this.selectedDateRange?.end;
@@ -49,16 +51,20 @@ export default class FullCalendarComponent extends Component {
   get isMultiDaySelection() {
     return (
       this.hasSelection &&
-      differenceInDays(this.selectedDateRange.end, this.selectedDateRange.start) > 1
+      differenceInDays(
+        this.selectedDateRange.end,
+        this.selectedDateRange.start,
+      ) > 1
     );
   }
 
   get workLogsForSelection() {
     if (this.hasSelection) {
       const { start, end } = this.selectedDateRange;
-      return this.args.workLogs.filter((workLog) => {
-        return isAfter(workLog.date, start) && isBefore(workLog.date, end)
-      });
+      return this.args.workLogs.filter(
+        (workLog) =>
+          isAfter(workLog.date, start) && isBefore(workLog.date, end),
+      );
     } else {
       return [];
     }
@@ -93,11 +99,13 @@ export default class FullCalendarComponent extends Component {
           },
         };
       }
-    }
+    };
 
-    const events = await Promise.all(this.args.workLogs.map(workLogToCalendarEvent));
+    const events = await Promise.all(
+      this.args.workLogs.map(workLogToCalendarEvent),
+    );
     successCallback(events);
-  };
+  }
 
   @action
   async setupCalendar(element) {
@@ -124,6 +132,7 @@ export default class FullCalendarComponent extends Component {
       eventOrder: sortEvents,
       dayMaxEvents: 6,
       dayCellContent: this.renderDayCellContent.bind(this),
+      eventContent: this.renderEvent.bind(this),
       editable: false, // Allows for drag and drop/resize of internal events
       droppable: false, // Allows for drag and drop of external elements
 
@@ -146,24 +155,38 @@ export default class FullCalendarComponent extends Component {
       } else {
         return fn.bind(this);
       }
-    }
-    this.calendar.setOption('eventClick', handler((info) => {
-      this.selectedWorkLog = info.event.extendedProps.workLog;
-      this.calendar.select(info.event.start);
-    }));
-    this.calendar.setOption('eventDidMount', handler(this.attachEventRemoveButton));
+    };
+    this.calendar.setOption(
+      'eventClick',
+      handler((info) => {
+        this.clearPopovers();
+        this.selectedWorkLog = info.event.extendedProps.workLog;
+        this.calendar.select(info.event.start);
+      }),
+    );
     this.calendar.setOption('selectable', !this.args.isDisabled);
-    this.calendar.setOption('select', handler((info) => {
-      this.selectedDateRange = { start: info.start, end: info.end };
-    }));
-    this.calendar.setOption('unselect', handler(() => {
-      this.clearPopovers();
-    }));
+    this.calendar.setOption(
+      'select',
+      handler((info) => {
+        this.showNotesFor = null;
+        this.selectedDateRange = { start: info.start, end: info.end };
+        this.clearEventHightlights();
+      }),
+    );
+    this.calendar.setOption(
+      'unselect',
+      handler(() => {
+        this.clearPopovers();
+      }),
+    );
   }
 
   @action
   goToMonth() {
-    const firstDayOfNextMonth = addDays(endOfMonth(this.args.firstDayOfMonth), 1);
+    const firstDayOfNextMonth = addDays(
+      endOfMonth(this.args.firstDayOfMonth),
+      1,
+    );
     this.calendar.setOption('selectConstraint', {
       start: this.args.firstDayOfMonth,
       end: firstDayOfNextMonth,
@@ -172,21 +195,23 @@ export default class FullCalendarComponent extends Component {
   }
 
   renderDayCellContent(info) {
-    const workLogs = this.args.workLogs.filter((workLog) => isSameDay(workLog.date, info.date));
+    const workLogs = this.args.workLogs.filter((workLog) =>
+      isSameDay(workLog.date, info.date),
+    );
     if (workLogs.length) {
       const totalDuration = workLogs
-      .map((workLog) => workLog.duration)
-      .reduce(
-        (acc, duration) => ({
-          hours: acc.hours + duration.hours,
-          minutes: acc.minutes + duration.minutes,
-        }),
-        { hours: 0, minutes: 0 },
-      );
+        .map((workLog) => workLog.duration)
+        .reduce(
+          (acc, duration) => ({
+            hours: acc.hours + duration.hours,
+            minutes: acc.minutes + duration.minutes,
+          }),
+          { hours: 0, minutes: 0 },
+        );
       const { hours, minutes } = normalizeDuration(totalDuration);
 
       return {
-        html: `
+        html: /*html*/ `
         <div class="flex justify-between items-center w-full pr-1">
           <div class="fc-daygrid-day-number">${info.dayNumberText}</div>
           <div class="text-gray-400 text-sm shrink-0">
@@ -196,13 +221,56 @@ export default class FullCalendarComponent extends Component {
       `,
       };
     } else {
-      return { html: `<div class="fc-daygrid-day-number">${info.dayNumberText}</div>` };
+      return {
+        html: `<div class="fc-daygrid-day-number">${info.dayNumberText}</div>`,
+      };
     }
   }
 
-  attachEventRemoveButton({ el, event }) {
+  renderEvent(info) {
+    const { event } = info;
+    const note = info.event.extendedProps.workLog.note;
+
+    const stickyIcon = svgJar.compute(['sticky-fill'], { class: 'size-full' });
+
+    const container = document.createElement('div');
+    container.className =
+      'w-full truncate flex items-center pl-[0.188rem] pt-[0.188rem] pb-0.5 pr-0.5';
+
+    const eventTitleContainer = document.createElement('div');
+    eventTitleContainer.classList = 'flex items-center grow truncate';
+
+    const statusIndicatorContainer = document.createElement('div');
+    statusIndicatorContainer.classList =
+      'size-2.5 shrink-0 mr-[0.188rem] flex items-center justify-center';
+
+    if (note) {
+      const colorNote = document.createElement('div');
+      colorNote.className = 'size-full';
+      colorNote.style.color = info.backgroundColor;
+      colorNote.innerHTML = stickyIcon;
+      statusIndicatorContainer.appendChild(colorNote);
+    } else {
+      const colorDot = document.createElement('div');
+      colorDot.className = 'size-2 rounded-full';
+      colorDot.style.backgroundColor = info.backgroundColor;
+      statusIndicatorContainer.appendChild(colorDot);
+    }
+
+    eventTitleContainer.appendChild(statusIndicatorContainer);
+
+    const eventTitle = document.createElement('div');
+    eventTitle.className = 'truncate shrink';
+    eventTitle.textContent = `${info.event.title}`;
+
+    eventTitleContainer.appendChild(eventTitle);
+    container.appendChild(eventTitleContainer);
+
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.classList = 'ml-1 h-5 flex items-center';
+
     const deleteButton = document.createElement('button');
-    deleteButton.innerHTML = `
+    deleteButton.innerHTML = /*html*/ `
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -214,18 +282,37 @@ export default class FullCalendarComponent extends Component {
         />
       </svg>
     `;
-    deleteButton.classList = 'fill-gray-500 rounded hover:fill-red-500';
+    deleteButton.classList = 'fill-gray-400 hover:fill-red-500';
     deleteButton.onclick = (clickEvent) => {
       clickEvent.stopPropagation();
       this.deleteWorkLog(event.extendedProps.workLog);
     };
-    deleteButton.style.visibility = 'collapse';
-    el.appendChild(deleteButton);
-    el.onmouseenter = () => {
-      deleteButton.style.visibility = 'visible';
+
+    const stickyButton = document.createElement('button');
+    stickyButton.innerHTML = stickyIcon;
+    stickyButton.classList = 'size-4 text-gray-400 hover:text-gray-500';
+    stickyButton.onclick = (clickEvent) => {
+      this.clearEventHightlights();
+      clickEvent.stopPropagation();
+      container.classList.add('highlight-event');
+      this.showNotesFor = {
+        event,
+        el: container,
+      };
     };
-    el.onmouseleave = () => {
-      deleteButton.style.visibility = 'collapse';
+
+    buttonsDiv.appendChild(stickyButton);
+    buttonsDiv.appendChild(deleteButton);
+    buttonsDiv.style.visibility = 'collapse';
+    container.appendChild(buttonsDiv);
+    container.onmouseenter = () => {
+      buttonsDiv.style.visibility = 'visible';
+    };
+    container.onmouseleave = () => {
+      buttonsDiv.style.visibility = 'collapse';
+    };
+    return {
+      domNodes: [container],
     };
   }
 
@@ -234,14 +321,28 @@ export default class FullCalendarComponent extends Component {
     this.clearPopovers();
   }
 
+  cancelNotesPopover = () => {
+    this.showNotesFor = null;
+    this.clearEventHightlights();
+  };
+
   clearPopovers() {
     this.selectedWorkLog = null;
     this.selectedDateRange = null;
+    this.showNotesFor = null;
+    this.clearEventHightlights();
     this.calendar.unselect();
+  }
+
+  clearEventHightlights() {
+    document.querySelectorAll('.highlight-event').forEach((eventEl) => {
+      eventEl.classList.remove('highlight-event');
+    });
   }
 
   @action
   reloadCalendarEvents() {
+    this.clearPopovers();
     this.calendar.refetchEvents();
   }
 
@@ -274,8 +375,29 @@ export default class FullCalendarComponent extends Component {
       undoAction: async () =>
         await this.args.onUndoDeleteWorkLog?.(workLogCopy),
       undoTime: 4000,
-      contextKey: 'delete-work-log',
+      contextKey: 'event-edit-actions',
     });
+  }
+
+  @action
+  saveNote(workLog, noteContent) {
+    const previousContent = workLog.note;
+    workLog.note = noteContent.trim();
+    this.toaster.actionWithUndo({
+      actionText: 'Updating note…',
+      actionDoneText: 'Note saved.',
+      actionUndoneText: 'Note reverted.',
+      action: async () => await workLog.save(),
+      undoAction: async () => {
+        workLog.note = previousContent;
+        await workLog.save();
+        this.calendar.render();
+      },
+      undoTime: 4000,
+      contextKey: 'event-edit-actions',
+    });
+    this.showNotesFor = null;
+    this.calendar.render();
   }
 
   handleKeydown(event) {
