@@ -11,7 +11,13 @@ export default class Duration {
     return new Duration({
       hours: this.hours + other.hours,
       minutes: this.minutes + other.minutes,
-    });
+    }).normalized();
+  }
+
+  cmp(other) {
+    const thisMin = this.hours * 60 + this.minutes;
+    const otherMin = other.hours * 60 + other.minutes;
+    return thisMin < otherMin ? -1 : thisMin === otherMin ? 0 : 1;
   }
 
   normalized() {

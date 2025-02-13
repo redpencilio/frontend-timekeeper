@@ -1,0 +1,59 @@
+<div
+  {{on "mouseenter" (set this "showDetails" true)}}
+  {{on "mouseleave" (set this "showDetails" false)}}
+  {{create-tracked-ref "holiday-counter"}}
+  class="box-sizing group flex select-none items-center rounded-lg p-2 transition duration-200 ease-in-out hover:bg-gray-50"
+>
+  <div class="flex items-center">
+    {{svg-jar "suitcase" class="size-7 text-red-700"}}
+  </div>
+  <div class="flex flex-col pl-2">
+    <span class="font-normal text-gray-900">
+      Holidays
+    </span>
+    {{format-duration this.holidaysTotal "dh"}}
+  </div>
+</div>
+
+{{#if (and this.showDetails this.holidayCounterNode)}}
+  <Popover
+    class="animate-fade-in shadow-md"
+    @placement="bottom"
+    @middleware={{this.floatingUIMiddleware}}
+    @anchorElement={{this.holidayCounterNode}}
+  >
+    <Alert @skin="info" @title="Remaining holidays:">
+      {{#if this.sortedCounters}}
+        <div class="pb-2 pl-2 pr-1 pt-3">
+          <ul class="space-y-2">
+            {{#each this.sortedCounters as |holidayCounter|}}
+              <li>
+                <div class="flex items-center justify-between space-x-4">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-sm">
+                      {{holidayCounter.holidayType.label}}
+                    </span>
+                  </div>
+                  <div class="text-sm font-normal">{{format-duration
+                      holidayCounter.value
+                      "dh"
+                    }}</div>
+                </div>
+              </li>
+            {{/each}}
+          </ul>
+          <div>
+            <div class="mt-4 h-0 border-t border-dashed border-zinc-400"></div>
+            <div class="flex justify-between pt-2 text-sm font-normal">
+              <span>Total</span>
+              <span class="text-sm">{{format-duration
+                  this.holidaysTotal
+                  "dh"
+                }}</span>
+            </div>
+          </div>
+        </div>
+      {{/if}}
+    </Alert>
+  </Popover>
+{{/if}}
