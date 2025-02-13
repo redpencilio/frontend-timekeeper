@@ -17,8 +17,8 @@ import {
 } from 'date-fns';
 import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
-import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
 import taskName from 'frontend-timekeeper/helpers/task-name';
+import Duration from '../utils/duration';
 
 const sortEvents = (event1, event2) => {
   const task1 = event1.extendedProps.task;
@@ -177,13 +177,10 @@ export default class FullCalendarComponent extends Component {
       const totalDuration = workLogs
       .map((workLog) => workLog.duration)
       .reduce(
-        (acc, duration) => ({
-          hours: acc.hours + duration.hours,
-          minutes: acc.minutes + duration.minutes,
-        }),
-        { hours: 0, minutes: 0 },
+        (acc, duration) => acc.add(duration),
+        new Duration(),
       );
-      const { hours, minutes } = normalizeDuration(totalDuration);
+      const { hours, minutes } = totalDuration.normalized();
 
       return {
         html: `
