@@ -1,0 +1,12 @@
+<div class="size-full flex items-center justify-center">
+  <div class="flex flex-col items-center">
+    <Loading::Spinner />
+    <span class="mt-4 font-normal">
+      {{#if @message}}
+        {{@message}}
+      {{else}}
+        Loading...
+      {{/if}}
+    </span>
+  </div>
+</div>

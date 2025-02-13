@@ -1,0 +1,7 @@
+<td class="px-3 py-2 border-l" ...attributes>
+  {{#let @totalForTask as |totalForTask|}}
+    {{#if (or (gt totalForTask.hours 0) (gt totalForTask.minutes 0))}}
+      {{format-duration totalForTask}}
+    {{/if}}
+  {{/let}}
+</td>

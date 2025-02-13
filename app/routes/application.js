@@ -3,11 +3,12 @@ import { service } from '@ember/service';
 
 export default class ApplicationRoute extends Route {
   @service session;
+  @service taskStore;
   @service router;
   @service userProfile;
 
   async beforeModel() {
-    await this.session.setup();
+    await Promise.all([this.session.setup(), this.taskStore.setup()]);
 
     if (this.session.isAuthenticated) {
       try {

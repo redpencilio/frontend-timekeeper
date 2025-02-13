@@ -1,0 +1,61 @@
+<table
+  class="w-full table-auto border-collapse border border-gray-300 bg-white shadow-md"
+>
+  <thead>
+    <tr
+      class="sticky top-0 z-10 bg-gray-200 text-sm uppercase leading-normal text-gray-600"
+    >
+      <th class="sticky left-0 px-3 py-2 text-left"></th>
+      {{#each @people as |person|}}
+        <th class="px-3 py-2 text-center text-nowrap">{{format-person-name
+            person
+          }}</th>
+      {{/each}}
+    </tr>
+  </thead>
+  <tbody class="text-xs font-light text-gray-600">
+    {{#each this.taskStore.groupedTasks as |customerGroup|}}
+      <tr class="border-b border-gray-300 hover:bg-gray-200">
+        <td
+          class="sticky left-0 px-3 py-2 font-medium text-sm bg-white"
+        >{{customerGroup.customer.name}}</td>
+        {{#each @people}}
+          <td class="px-3 py-2 border-l"></td>
+        {{/each}}
+      </tr>
+      {{#each customerGroup.tasks as |taskGroup|}}
+        <tr class="border-b border-gray-300 hover:bg-gray-200">
+          <td
+            class="text-nowrap sticky left-0 items-center px-3 py-2 pl-5 font-medium bg-white"
+          ><div
+              class="inline-block mr-2 size-2 rounded-full"
+              {{bg-color taskGroup.task.color}}
+            />{{task-name taskGroup.task}}</td>
+          {{#each @people as |person|}}
+            <Admin::OverviewTable::WorkLogTotalCell
+              @totalForTask={{this.hoursWorked taskGroup.task person}}
+            />
+          {{/each}}
+        </tr>
+        {{#each taskGroup.subTasks as |subTask index|}}
+          <tr
+            class="border-b border-gray-300
+              {{cycle 'bg-white' 'bg-gray-100' index}}
+              hover:bg-gray-200"
+          >
+            <td
+              class="sticky left-0 px-3 py-2 pl-8 text-gray-500
+                {{cycle 'bg-white' 'bg-gray-100' index}}
+                "
+            >{{task-name subTask}}</td>
+            {{#each @people as |person|}}
+              <Admin::OverviewTable::WorkLogTotalCell
+                @totalForTask={{this.hoursWorked subTask person}}
+              />
+            {{/each}}
+          </tr>
+        {{/each}}
+      {{/each}}
+    {{/each}}
+  </tbody>
+</table>

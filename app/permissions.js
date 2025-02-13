@@ -9,7 +9,7 @@ const permissionsForGroup = [
   },
   {
     uri: ADMIN,
-    permissions: ['manage-users'],
+    permissions: ['manage-users', 'view-timesheet-summary'],
   },
 ];
 
