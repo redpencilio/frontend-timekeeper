@@ -1,3 +1,5 @@
+import Duration from "../utils/duration";
+
 export default function formatDuration(duration, format = 'hm') {
   const normalized = duration?.normalized() ?? new Duration();
   const { hours, minutes } = normalized;

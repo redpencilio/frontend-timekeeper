@@ -14,6 +14,13 @@ export default class Duration {
     }).normalized();
   }
 
+  subtract(other) {
+    return new Duration({
+      hours: this.hours - other.hours,
+      minutes: this.minutes - other.minutes,
+    }).normalized();
+  }
+
   cmp(other) {
     const thisMin = this.hours * 60 + this.minutes;
     const otherMin = other.hours * 60 + other.minutes;

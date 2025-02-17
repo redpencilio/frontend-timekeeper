@@ -13,7 +13,7 @@
     class="bg-white-100 mr-2 flex h-full flex-col border-solid border-red-600"
   >
     <div class="flex justify-start items-center h-[82px]">
-      <HolidaysOverview @holidayCounters={{@model.holidayCounters}} />
+      <HolidaysOverview @year={{@model.year}} @holidayCounters={{@model.holidayCounters}} />
     </div>
     <TimesheetActions
       @timesheet={{this.timesheet}}
