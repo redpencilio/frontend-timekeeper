@@ -14,13 +14,13 @@
   {{on "click" (set this "_showSummary" true)}}
 >{{svg-jar "list" class="size-7"}}</button>
 <div
-  class="absolute right-0 z-10 rounded-l-xl border bg-white shadow-lg transition-transform duration-150 ease-in-out lg:static lg:rounded-none lg:border-none lg:shadow-none
+  class="absolute right-0 z-10 rounded-l-xl border bg-white shadow-lg transition-transform duration-150 ease-in-out lg:static lg:rounded-none lg:border-none lg:shadow-none lg:transition-none
     {{if this.showSummary 'translate-0' 'translate-x-full'}}
     h-full w-96"
 >
   <button
     type="button"
-    class="absolute right-3 top-5 hover:bg-gray-100 p-2 rounded-full lg:collapse"
+    class="absolute right-3 top-5 rounded-full p-2 hover:bg-gray-100 lg:collapse"
     {{on "click" (set this "_showSummary" false)}}
   >{{svg-jar "x-lg" class="size-4 fill-gray-600"}}</button>
   <div
