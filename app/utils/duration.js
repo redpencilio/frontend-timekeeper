@@ -3,8 +3,12 @@
  */
 export default class Duration {
   constructor({ hours = 0, minutes = 0 } = { hours: 0, minutes: 0 }) {
-    this.hours = hours;
-    this.minutes = minutes;
+    this.hours = hours + Math.floor(minutes / 60);
+    this.minutes = minutes % 60;
+  }
+
+  get asMinutes() {
+    return this.hours * 60 + this.minutes;
   }
 
   add(other) {
@@ -28,12 +32,6 @@ export default class Duration {
   }
 
   normalized() {
-    const result = { ...this };
-    if (this.minutes >= 60) {
-      result.hours = this.hours + Math.floor(this.minutes / 60);
-      result.minutes = this.minutes % 60;
-    }
-
-    return new Duration(result);
+    return new Duration({ ...this });
   }
 }
