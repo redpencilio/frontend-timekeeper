@@ -21,7 +21,7 @@ export default class YearMonthContoller extends Controller {
   }
 
   get showSummary() {
-    return this.media.isLg || this._showSummary;
+    return this.media.isXl || this._showSummary;
   }
 
 
