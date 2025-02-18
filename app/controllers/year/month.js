@@ -20,10 +20,6 @@ export default class YearMonthContoller extends Controller {
     return new Date(this.model.year, this.model.month, 1);
   }
 
-  toggleShowSummary = () => {
-    this._showSummary = !this._showSummary;
-  }
-
   get showSummary() {
     return this.media.isLg || this._showSummary;
   }
