@@ -11,7 +11,11 @@ Router.map(function () {
     this.route('month', { path: '/:month' });
   });
   this.route('admin', function () {
-    this.route('users');
+    this.route('users', function () {
+      this.route('user', { path: '/:user' }, function () {
+        this.route('holidays');
+      });
+    });
   });
   this.route('forbidden');
   this.route('not-found');
