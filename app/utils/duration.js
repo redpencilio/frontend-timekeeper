@@ -31,6 +31,10 @@ export default class Duration {
     return thisMin < otherMin ? -1 : thisMin === otherMin ? 0 : 1;
   }
 
+  eq(other) {
+    return this.cmp(other) === 0;
+  }
+
   normalized() {
     return new Duration({ ...this });
   }
