@@ -8,6 +8,8 @@ import { service } from '@ember/service';
 import { startOfYear } from 'date-fns';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { use } from 'ember-resources';
+import constants from 'frontend-timekeeper/constants';
+const { HOLIDAY_TASK_LABEL } = constants;
 
 export default class HolidaysOverviewComponent extends Component {
   @trackedRef('holiday-counter') holidayCounterNode = null;
@@ -24,7 +26,7 @@ export default class HolidaysOverviewComponent extends Component {
       'filter[:gte:date]': formatDate(firstOfYear),
       'filter[:lt:date]': formatDate(firstOfNextYear),
       'filter[person][:id:]': this.userProfile.user.id,
-      'filter[task][:id:]': '70d068d0-ea04-11ef-9b73-3390ae8e10f4',
+      'filter[task][:exact:name]': HOLIDAY_TASK_LABEL,
     });
 
     return workLogs
