@@ -9,8 +9,8 @@ export default class AdminUsersUserHolidaysController extends Controller {
   editHolidayCounters = async (holidayCounterEntries) => {
     await Promise.all(
       holidayCounterEntries.map(async (entry) => {
-        if (entry.value !== entry.counter.value.asMinutes) {
-          entry.counter.value = new Duration({ minutes: entry.value });
+        if (!entry.value.eq(entry.counter.value)) {
+          entry.counter.value = entry.value;
           await entry.counter.save();
         }
       }),

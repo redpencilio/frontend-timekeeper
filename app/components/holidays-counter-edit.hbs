@@ -25,15 +25,10 @@
             >
               {{holidayCounterEntry.counter.holidayType.label}}
             </label>
-            <input
-              class="w-full rounded border-gray-300"
-              id={{id}}
-              type="number"
-              value={{holidayCounterEntry.value}}
-              {{on
-                "change"
-                (with-value (fn this.updateEntry holidayCounterEntry))
-              }}
+            <DurationInput
+            class="w-full"
+              @value={{holidayCounterEntry.value}}
+              @onChange={{fn this.updateEntry holidayCounterEntry}}
             />
           {{/let}}
         {{/each}}

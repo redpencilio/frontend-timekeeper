@@ -21,7 +21,7 @@ export default class HolidaysCounterEditComponent extends Component {
 
       return this.holidayCounters.value.slice().map((counter) => ({
         counter,
-        value: counter.value.asMinutes,
+        value: counter.value,
       }));
     },
   })
@@ -40,7 +40,7 @@ export default class HolidaysCounterEditComponent extends Component {
   });
 
   updateEntry = (holidayCounterEntry, value) => {
-    holidayCounterEntry.value = Math.floor(Number(value));
+    holidayCounterEntry.value = value;
   };
 
   submit = task(async (event) => {
