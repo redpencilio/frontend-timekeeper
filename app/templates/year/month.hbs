@@ -1,4 +1,4 @@
-<div class="p-4 grow">
+<div class="grow p-4">
   <FullCalendar
     @isDisabled={{this.timesheet.isExported}}
     @onDeleteWorkLog={{this.deleteWorkLog}}
@@ -8,14 +8,30 @@
     @firstDayOfMonth={{this.firstDayOfMonth}}
   />
 </div>
-<div class="h-full w-96">
-  <div class="flex flex-col border-solid border-red-600 bg-white-100 h-full mr-2">
+<button
+  type="button"
+  class="absolute right-0 top-5 rounded-l-full border bg-white p-2 shadow lg:collapse"
+  {{on "click" this.toggleShowSummary}}
+>{{svg-jar "list" class="size-7"}}</button>
+<div
+  class="absolute right-0 z-10 rounded-l-xl border bg-white shadow-lg transition-transform duration-150 ease-in-out lg:static lg:rounded-none lg:border-none lg:shadow-none
+    {{if this.showSummary 'translate-0' 'translate-x-full'}}
+    h-full w-96"
+>
+  <button
+    type="button"
+    class="absolute right-3 top-5 hover:bg-gray-100 p-2 rounded-full lg:collapse"
+    {{on "click" (set this "_showSummary" false)}}
+  >{{svg-jar "x-lg" class="size-4 fill-gray-600"}}</button>
+  <div
+    class="bg-white-100 mr-2 flex h-full flex-col border-solid border-red-600"
+  >
     <TimesheetActions
       @timesheet={{this.timesheet}}
       @onStatusChanged={{this.changeTimesheetStatus}}
-      class="mt-6 -mb-6"
-      />
-    <h1 class="px-4 mt-6 text-xl text-red-700 font-semibold mb-3">Summary</h1>
+      class="-mb-6 mt-6"
+    />
+    <h1 class="mb-3 mt-6 px-4 text-xl font-semibold text-red-700">Summary</h1>
     <Stats @workLogs={{@model.workLogs}} />
   </div>
 </div>

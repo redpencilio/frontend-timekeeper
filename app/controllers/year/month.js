@@ -11,12 +11,23 @@ export default class YearMonthContoller extends Controller {
   @service router;
   @service store;
   @service userProfile;
+  @service media;
 
   @tracked timesheet;
+  @tracked _showSummary = false;
 
   get firstDayOfMonth() {
     return new Date(this.model.year, this.model.month, 1);
   }
+
+  toggleShowSummary = () => {
+    this._showSummary = !this._showSummary;
+  }
+
+  get showSummary() {
+    return this.media.isLg || this._showSummary;
+  }
+
 
   @action
   async changeTimesheetStatus(status) {
