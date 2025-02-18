@@ -26,7 +26,8 @@
               {{holidayCounterEntry.counter.holidayType.label}}
             </label>
             <DurationInput
-            class="w-full"
+              class="w-full"
+              id={{id}}
               @value={{holidayCounterEntry.value}}
               @onChange={{fn this.updateEntry holidayCounterEntry}}
             />
