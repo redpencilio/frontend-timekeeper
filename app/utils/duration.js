@@ -4,7 +4,8 @@
 export default class Duration {
   constructor({ hours = 0, minutes = 0 } = { hours: 0, minutes: 0 }) {
     const totalMinutes = hours * 60 + minutes;
-    this.hours = Math.floor(totalMinutes / 60);
+    const rounding = totalMinutes < 0 ? Math.ceil : Math.floor;
+    this.hours = rounding(totalMinutes / 60);
     this.minutes = totalMinutes % 60;
   }
 
