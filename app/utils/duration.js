@@ -3,8 +3,9 @@
  */
 export default class Duration {
   constructor({ hours = 0, minutes = 0 } = { hours: 0, minutes: 0 }) {
-    this.hours = hours + Math.floor(minutes / 60);
-    this.minutes = minutes % 60;
+    const totalMinutes = hours * 60 + minutes;
+    this.hours = Math.floor(totalMinutes / 60);
+    this.minutes = totalMinutes % 60;
   }
 
   get asMinutes() {
@@ -15,19 +16,19 @@ export default class Duration {
     return new Duration({
       hours: this.hours + other.hours,
       minutes: this.minutes + other.minutes,
-    }).normalized();
+    });
   }
 
   subtract(other) {
     return new Duration({
       hours: this.hours - other.hours,
       minutes: this.minutes - other.minutes,
-    }).normalized();
+    });
   }
 
   cmp(other) {
-    const thisMin = this.hours * 60 + this.minutes;
-    const otherMin = other.hours * 60 + other.minutes;
+    const thisMin = this.asMinutes;
+    const otherMin = other.asMinutes;
     return thisMin < otherMin ? -1 : thisMin === otherMin ? 0 : 1;
   }
 
