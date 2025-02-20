@@ -13,10 +13,8 @@ Router.map(function () {
   this.route('admin', function () {
     this.route('users');
     this.route('timesheets', function () {
-      this.route('year', function () {
-        this.route('month', function () {
-          this.route('completeness-overview');
-        });
+      this.route('year', { path: '/:year' }, function () {
+        this.route('month', { path: '/:month' });
       });
     });
   });

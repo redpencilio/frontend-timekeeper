@@ -1,0 +1,6 @@
+{{#each @model.timesheets as |timesheet|}}
+  {{timesheet.person.name}}
+  <span>
+    <TimesheetStatusIcon @timesheet={{timesheet}} />
+  </span>
+{{/each}}
