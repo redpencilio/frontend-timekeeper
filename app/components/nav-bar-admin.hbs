@@ -1,5 +1,5 @@
-<div class="flex h-full flex-col bg-zinc-800 text-white w-44">
-  <div class="flex flex-grow flex-col justify-between px-6 py-4">
+<div class="flex h-full w-44 flex-col bg-zinc-800 text-white">
+  <div class="flex flex-grow flex-col px-6 py-4 gap-3">
     <div>
       <LinkTo
         @route="admin.users"
@@ -7,6 +7,15 @@
       >
         {{svg-jar "people" class="size-4"}}
         <span>Users</span>
+      </LinkTo>
+    </div>
+    <div>
+      <LinkTo
+        @route="admin.timesheets"
+        class="flex items-center space-x-2 text-sm tracking-wide"
+      >
+        {{svg-jar "calendar" class="size-4"}}
+        <span>Timesheets</span>
       </LinkTo>
     </div>
   </div>

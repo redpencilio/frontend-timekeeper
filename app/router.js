@@ -12,6 +12,13 @@ Router.map(function () {
   });
   this.route('admin', function () {
     this.route('users');
+    this.route('timesheets', function () {
+      this.route('year', function () {
+        this.route('month', function () {
+          this.route('completeness-overview');
+        });
+      });
+    });
   });
   this.route('forbidden');
   this.route('not-found');
