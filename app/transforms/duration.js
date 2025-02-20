@@ -1,4 +1,5 @@
 import { parse, serialize } from 'tinyduration';
+import Duration from '../utils/duration';
 
 export default class DurationTransform {
   deserialize(serialized) {
@@ -6,7 +7,7 @@ export default class DurationTransform {
       return null;
     }
 
-    return { minutes: 0, hours: 0, ...parse(serialized) };
+    return new Duration(parse(serialized));
   }
 
   serialize(deserialized) {

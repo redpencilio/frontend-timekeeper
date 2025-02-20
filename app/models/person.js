@@ -7,4 +7,6 @@ export default class PersonModel extends Model {
   @hasMany('timesheet', { inverse: 'person', async: true }) timesheets;
   @hasMany('work-log', { inverse: 'person', async: true }) workLogs;
   @hasMany('user-group', { inverse: 'members', async: true }) userGroups;
+  @hasMany('quantity', { inverse: 'person', async: true })
+  quantities;
 }

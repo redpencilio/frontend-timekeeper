@@ -5,6 +5,7 @@ import { tracked } from '@glimmer/tracking';
 import { TrackedArray } from 'tracked-built-ins';
 import { compare } from '@ember/utils';
 import WorkLogEntry from '../utils/work-log-entry';
+import { offset } from '@floating-ui/dom';
 
 export default class WorkLogPopoverComponent extends Component {
   @service store;
@@ -13,6 +14,12 @@ export default class WorkLogPopoverComponent extends Component {
   @tracked workLogEntries = [];
   @tracked focusedTaskId = null;
   newTaskPowerSelectApi = null;
+  floatingUIMiddleware = [
+    offset({
+      mainAxis: 8,
+      crossAxis: -8,
+    }),
+  ];
 
   constructor() {
     super(...arguments);

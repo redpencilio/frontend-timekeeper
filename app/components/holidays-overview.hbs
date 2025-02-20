@@ -1,0 +1,88 @@
+<div
+  {{on "mouseenter" (set this "showDetails" true)}}
+  {{on "mouseleave" (set this "showDetails" false)}}
+  {{create-tracked-ref "holiday-counter"}}
+  class="box-sizing group flex select-none items-center rounded-lg p-2 transition duration-200 ease-in-out hover:bg-gray-50"
+>
+  <div class="flex items-center">
+    {{svg-jar "suitcase" class="size-7 text-red-700"}}
+  </div>
+  <div class="flex flex-col pl-2">
+    <span class="font-normal text-gray-900">
+      Holidays
+    </span>
+    {{#if (and (not this.holidaysUsedLatest) this.holidaysUsed.isLoading)}}
+      <div class="flex h-6 w-12 animate-pulse items-center">
+        <div class="h-3 grow rounded bg-gray-200"></div>
+      </div>
+    {{else if this.holidaysUsedLatest}}
+      {{format-duration this.remainingHolidays "dh"}}
+    {{/if}}
+  </div>
+</div>
+
+{{#if (and this.showDetails this.holidayCounterNode)}}
+  <Popover
+    class="animate-fade-in shadow-md"
+    @placement="bottom"
+    @middleware={{this.floatingUIMiddleware}}
+    @anchorElement={{this.holidayCounterNode}}
+  >
+    <Alert @skin="info" @title="Holiday composition">
+      {{#if this.sortedCounters}}
+        <div class="pb-2 pl-2 pr-1 pt-3">
+          <ul class="space-y-2">
+            {{#each this.sortedCounters as |holidayCounter|}}
+              <li>
+                <div class="flex items-center justify-between space-x-4">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-sm">
+                      {{holidayCounter.quantityKind.label}}
+                    </span>
+                  </div>
+                  <div class="text-sm font-normal">
+                    {{format-duration holidayCounter.value "dh"}}
+                  </div>
+                </div>
+              </li>
+            {{/each}}
+          </ul>
+          <div>
+            <div class="mt-4 h-0 border-t border-dashed border-zinc-400"></div>
+            <div class="flex justify-between pt-2 text-sm font-normal">
+              <span>Total</span>
+              <span class="text-sm">
+                {{format-duration this.holidaysTotal "dh"}}
+              </span>
+            </div>
+            <div class="flex justify-between text-sm font-normal">
+              <span>Used</span>
+              {{#if this.holidaysUsed.isLoading}}
+                <div class="flex h-5 w-12 animate-pulse items-center">
+                  <div class="h-3 grow rounded bg-gray-200"></div>
+                </div>
+              {{else if this.holidaysUsed.isResolved}}
+                <span class="text-sm">
+                  {{format-duration this.holidaysUsed.value "dh"}}
+                </span>
+              {{/if}}
+            </div>
+            <div class="mt-2 h-0 border-t border-dashed border-zinc-400"></div>
+            <div class="mt-2 flex justify-between text-sm font-normal">
+              <span>Remaining</span>
+              {{#if this.holidaysUsed.isLoading}}
+                <div class="flex h-5 w-12 animate-pulse items-center">
+                  <div class="h-3 grow rounded bg-gray-200"></div>
+                </div>
+              {{else}}
+                <span class="text-sm">
+                  {{format-duration this.remainingHolidays "dh"}}
+                </span>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+      {{/if}}
+    </Alert>
+  </Popover>
+{{/if}}

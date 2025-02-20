@@ -1,4 +1,4 @@
-<div class="p-4 rounded-md {{this.backgroundColor}}">
+<div class="rounded-md p-4 {{this.backgroundColor}}">
   <div class="flex">
     <div class="w-5 shrink-0">
       {{#let (concat "size-4 mt-0.5 ml-0.5" " " this.iconColor) as |iconClass|}}
@@ -15,9 +15,12 @@
     </div>
     <div class="ml-3">
       {{#if @title}}
-        <h3 class={{concat "font-medium text-sm " this.titleColor}}>
+        <h3 class="text-sm font-medium {{this.titleColor}}">
           {{@title}}
         </h3>
+      {{/if}}
+      {{#if (has-block)}}
+        {{yield}}
       {{/if}}
       {{#if @message}}
         <div

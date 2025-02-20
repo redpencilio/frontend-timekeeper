@@ -28,12 +28,21 @@ export default class YearRoute extends Route {
   async model() {
     const firstOfYear = startOfYear(new Date(this.year, 0));
     const firstOfNextYear = startOfYear(new Date(this.year + 1, 0));
-    const timesheets = await this.store.queryAll('timesheet', {
-      sort: 'start',
-      'filter[:gte:start]': formatDate(firstOfYear),
-      'filter[:lt:start]': formatDate(firstOfNextYear),
-      'filter[person][:id:]': this.userProfile.user.id,
-    });
+
+    const [timesheets, holidayCounters] = await Promise.all([
+      this.store.queryAll('timesheet', {
+        sort: 'start',
+        'filter[:gte:start]': formatDate(firstOfYear),
+        'filter[:lt:start]': formatDate(firstOfNextYear),
+        'filter[person][:id:]': this.userProfile.user.id,
+      }),
+      this.store.queryAll('quantity', {
+        'filter[:gte:valid-from]': formatDate(firstOfYear),
+        'filter[:lte:valid-till]': formatDate(firstOfNextYear),
+        'filter[person][:id:]': this.userProfile.user.id,
+        include: 'quantity-kind',
+      }),
+    ]);
 
     // Create draft records for missing timesheets
     const draftTimesheets = [];
@@ -55,6 +64,7 @@ export default class YearRoute extends Route {
     return {
       year: this.year,
       timesheets: [...timesheets.toArray(), ...draftTimesheets],
+      holidayCounters,
     };
   }
 }
