@@ -31,11 +31,11 @@ export default class HolidaysCounterEditComponent extends Component {
     const firstOfYear = startOfYear(new Date(this.year, 0));
     const firstOfNextYear = startOfYear(new Date(this.year + 1, 0));
 
-    return await this.store.queryAll('holiday-counter', {
+    return await this.store.queryAll('quantity', {
       'filter[:gte:valid-from]': formatDate(firstOfYear),
       'filter[:lte:valid-till]': formatDate(firstOfNextYear),
       'filter[person][:id:]': this.args.user.id,
-      include: 'holiday-type',
+      include: 'quantity-kind',
     });
   });
 
