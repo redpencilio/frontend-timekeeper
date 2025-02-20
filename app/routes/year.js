@@ -36,11 +36,11 @@ export default class YearRoute extends Route {
         'filter[:lt:start]': formatDate(firstOfNextYear),
         'filter[person][:id:]': this.userProfile.user.id,
       }),
-      this.store.queryAll('holiday-counter', {
+      this.store.queryAll('quantity', {
         'filter[:gte:valid-from]': formatDate(firstOfYear),
         'filter[:lte:valid-till]': formatDate(firstOfNextYear),
         'filter[person][:id:]': this.userProfile.user.id,
-        include: 'holiday-type',
+        include: 'quantity-kind',
       }),
     ]);
 
