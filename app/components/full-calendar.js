@@ -356,29 +356,20 @@ export default class FullCalendarComponent extends Component {
   async deleteWorkLog(workLog) {
     this.clearPopovers();
 
-    // Remove the event visually
-    this.calendar
-      .getEvents()
-      .find(event => event.extendedProps.workLog === workLog)
-      ?.remove();
+    const workLogCopy = {
+      date: workLog.date,
+      duration: { ...workLog.duration },
+      task: await workLog.task,
+      person: await workLog.person,
+      timesheet: await workLog.timesheet,
+    };
 
     this.toaster.actionWithUndo({
       actionText: 'Deleting work log…',
       actionDoneText: 'Work log deleted.',
       actionUndoneText: 'Work log restored.',
-      action: async () => {
-        const workLogCopy = {
-          date: workLog.date,
-          duration: { ...workLog.duration },
-          task: await workLog.task,
-          person: await workLog.person,
-          timesheet: await workLog.timesheet,
-        };
-
-        await this.args.onDeleteWorkLog?.(workLog)
-        return workLogCopy;
-      },
-      undoAction: async (workLogCopy) =>
+      action: async () => await this.args.onDeleteWorkLog?.(workLog),
+      undoAction: async () =>
         await this.args.onUndoDeleteWorkLog?.(workLogCopy),
       undoTime: 4000,
       contextKey: 'event-edit-actions',
