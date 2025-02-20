@@ -43,7 +43,7 @@
  */
 
 .ember-power-select-trigger {
-  @apply appearance-none py-2 px-1 w-full min-h-9 text-sm border border-red-300 rounded-md bg-white opacity-100;
+  @apply appearance-none py-2 px-1 w-full min-h-9 text-sm border rounded-md bg-white opacity-100;
 }
 
 .ember-power-select-trigger.ember-power-select-multiple-trigger {
@@ -76,11 +76,11 @@
 }
 
 .ember-power-select-option[aria-current="true"] {
-  @apply bg-gray-200 text-red-900;
+  @apply bg-gray-200;
 }
 
 .ember-power-select-option[aria-selected="true"] {
-  @apply bg-indigo-100 text-red-900;
+  @apply bg-indigo-100;
 }
 
 .ember-power-select-clear-btn {
