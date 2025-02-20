@@ -27,4 +27,4 @@
 *~
 
 # Ignore favicon, this is added by npm
-app/public/assets/favicon
+public/assets/favicon.ico
