@@ -2,7 +2,7 @@ import Controller from '@ember/controller';
 
 export default class AdminTimesheetsYearMonthController extends Controller {
   get sortedUsersWithTimesheet() {
-    return this.model.personsWithTimesheet.sort(
+    return this.model.usersWithTimesheet.sort(
       ({ timesheet: timesheetA }, { timesheet: timesheetB }) => {
         if (timesheetA && timesheetB) {
           return timesheetA.statusRank - timesheetB.statusRank;
