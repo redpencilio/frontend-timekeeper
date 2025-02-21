@@ -2,6 +2,8 @@ import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
+import constants from '../../../../constants';
+const { TIMESHEET_STATUSES } = constants;
 
 export default class AdminTimesheetsYearMonthRoute extends Route {
   @service store;
@@ -17,6 +19,7 @@ export default class AdminTimesheetsYearMonthRoute extends Route {
 
   async model() {
     const { year } = this.modelFor('admin.timesheets.year');
+    const { users } = this.modelFor('admin');
 
     const timesheets = await this.store.queryAll('timesheet', {
       'filter[start]': formatDate(
@@ -28,10 +31,24 @@ export default class AdminTimesheetsYearMonthRoute extends Route {
       include: 'person',
     });
 
+    const timesheetsWithPerson = await Promise.all(
+      timesheets.slice().map(async (timesheet) => ({
+        timesheet,
+        person: await timesheet.person,
+      })),
+    );
+
+    const personsWithTimesheet = users.slice().map((user) => ({
+      user,
+      timesheet: timesheetsWithPerson.find(
+        ({ person }) => person.id === user.id,
+      )?.timesheet,
+    }));
+
     return {
       year,
       month: this.humanMonth,
-      timesheets,
+      personsWithTimesheet,
     };
   }
 }
