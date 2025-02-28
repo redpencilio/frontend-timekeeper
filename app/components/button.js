@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import disabled from 'frontend-timekeeper/modifiers/disabled';
 
 export default class ButtonComponent extends Component {
   get class() {
@@ -20,19 +19,4 @@ export default class ButtonComponent extends Component {
 
     return `${baseClass} ${primaryClass} ${errorClass} ${muteClass} ${disabledClass}`.trim();
   }
-
-  <template>
-    <button
-      type='button'
-      class={{this.class}}
-      {{disabled @isDisabled}}
-      ...attributes
-    >
-      {{#if @isLoading}}
-        Loading...
-      {{else}}
-        {{yield}}
-      {{/if}}
-    </button>
-  </template>
 }
