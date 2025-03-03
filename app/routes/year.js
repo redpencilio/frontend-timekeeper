@@ -1,8 +1,7 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
-import { startOfYear, startOfMonth, endOfMonth } from 'date-fns';
+import { startOfMonth, endOfMonth } from 'date-fns';
 import { monthsInYear } from 'date-fns/constants';
-import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import constants from 'frontend-timekeeper/constants';
 const { TIMESHEET_STATUSES } = constants;
 
@@ -11,6 +10,7 @@ export default class YearRoute extends Route {
   @service session;
   @service store;
   @service userProfile;
+  @service timesheets;
 
   async beforeModel(transition) {
     this.session.requireAuthentication(transition, 'login');
@@ -26,14 +26,7 @@ export default class YearRoute extends Route {
   }
 
   async model() {
-    const firstOfYear = startOfYear(new Date(this.year, 0));
-    const firstOfNextYear = startOfYear(new Date(this.year + 1, 0));
-    const timesheets = await this.store.queryAll('timesheet', {
-      sort: 'start',
-      'filter[:gte:start]': formatDate(firstOfYear),
-      'filter[:lt:start]': formatDate(firstOfNextYear),
-      'filter[person][:id:]': this.userProfile.user.id,
-    });
+    const timesheets = await this.timesheets.getForYear(this.year);
 
     // Create draft records for missing timesheets
     const draftTimesheets = [];

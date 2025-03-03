@@ -41,6 +41,5 @@ export default class YearMonthRoute extends Route {
       (timesheet) => timesheet.start.getMonth() === model.month,
     );
     controller.timesheet = timesheet;
-    controller.timesheets = timesheets;
   }
 }

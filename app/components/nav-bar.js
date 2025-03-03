@@ -3,13 +3,26 @@ import { sub, add, format } from 'date-fns';
 import { monthsInYear } from 'date-fns/constants';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
+import { localCopy } from 'tracked-toolbox';
+import { trackedFunction } from 'reactiveweb/function';
 
 export default class NavBarComponent extends Component {
   @service userProfile;
+  @service('timesheets') timesheetsService;
+
+  @localCopy('args.year') year;
   @tracked datePickerVisible = false;
 
-  showDatePicker = () => {
-    this.datePickerVisible = true;
+  timesheets = trackedFunction(this, async () => {
+    return await this.timesheetsService.getForYear(this.year);
+  });
+
+  decrementYear = () => {
+    this.year -= 1;
+  };
+
+  incrementYear = () => {
+    this.year += 1;
   };
 
   get months() {
@@ -20,7 +33,7 @@ export default class NavBarComponent extends Component {
         number: i,
         humanNumber: i + 1,
         label: format(dateInMonth, 'LLLL'),
-        timesheet: this.args.timesheets.find(
+        timesheet: this.timesheets.value?.find(
           (timesheet) => timesheet.start.getMonth() === i,
         ),
       });
@@ -53,5 +66,5 @@ export default class NavBarComponent extends Component {
 
   closeDropdown = (dropdown) => {
     dropdown.actions.close();
-  }
+  };
 }
