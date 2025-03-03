@@ -1,48 +1,47 @@
-<div class="h-full bg-zinc-800 text-white flex flex-col">
-  <div
-    class="px-6 py-4 flex items-center justify-between"
-  >
-    <LinkTo @route="year.month" @models={{array (sub @year 1) 12}}>
-      {{svg-jar "chevron-left" class="h-5 w-5"}}
+<div class="group flex h-12 items-center justify-between border-b">
+  <div></div>
+  <div class="flex items-center justify-between gap-4 px-6 py-4">
+    <LinkTo
+      @route="year.month"
+      @models={{this.previousMonthRouteModel}}
+      class="text-red-700 opacity-0 transition-opacity duration-150 ease-in-out group-hover:opacity-100"
+    >
+      {{svg-jar "chevron-left" class="size-5"}}
     </LinkTo>
-    <div class="font-medium text-white">{{@year}}</div>
-    <LinkTo @route="year.month" @models={{array (add @year 1) 1}}>
-      {{svg-jar "chevron-right" class="h-5 w-5"}}
-    </LinkTo>
-  </div>
-
-  <div class="flex-grow px-6 py-4 flex flex-col justify-between">
-    <ul class="space-y-4">
-      {{#each this.months as |month|}}
-        <li class="flex items-center justify-between space-x-12">
-          <LinkTo
-            @route="year.month"
-            @models={{array @year month.humanNumber}}
-            class="text-sm tracking-wide grow"
+    <div class="w-64">
+      <BasicDropdown as |dd|>
+        <dd.Trigger
+          class="flex items-center justify-center gap-2 text-xl font-medium text-red-700"
+        >
+          {{this.monthYearLabel}}
+          <div
+            class="opacity-0 transition-opacity duration-150 ease-in-out group-hover:opacity-100"
           >
-            {{month.label}}
-          </LinkTo>
-          <span>
-            <TimesheetStatusIcon @timesheet={{month.timesheet}} />
-          </span>
-        </li>
-      {{/each}}
-    </ul>
-
-    <div>
-      {{#if (user-may "manage-users")}}
-        <LinkTo @route="admin.users" class="text-sm tracking-wide flex items-center space-x-2">
-          {{svg-jar "people" class="size-4"}}
-          <span>Users</span>
-        </LinkTo>
-      {{/if}}
+            {{svg-jar "chevron-down" class="size-5"}}
+          </div>
+        </dd.Trigger>
+        <dd.Content>
+          <div class="w-96 rounded bg-white p-4 shadow">
+            Test
+          </div>
+        </dd.Content>
+      </BasicDropdown>
     </div>
-  </div>
-
-  <div class="px-6 py-3 flex items-center justify-between border-red-500 border-t-2">
-    <LinkTo class="text-sm text-white font-medium" @route="profile">
-      {{this.userProfile.user.name}}
+    <LinkTo
+      @route="year.month"
+      @models={{this.nextMonthRouteModel}}
+      class="text-red-700 opacity-0 transition-opacity duration-150 ease-in-out group-hover:opacity-100"
+    >
+      {{svg-jar "chevron-right" class="size-5"}}
     </LinkTo>
-    <MuLogout />
+  </div>
+  <div class="mr-4 flex items-center justify-between">
+    <LinkTo class="text-sm font-medium text-red-700" @route="profile">
+      <div class="flex items-center gap-2">
+
+        {{svg-jar "person-circle"}}
+        {{person-first-name this.userProfile.user.name}}
+      </div>
+    </LinkTo>
   </div>
 </div>
