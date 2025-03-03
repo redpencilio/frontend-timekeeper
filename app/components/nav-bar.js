@@ -1,8 +1,8 @@
 import Component from '@glimmer/component';
 import { sub, add, format } from 'date-fns';
+import { monthsInYear } from 'date-fns/constants';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import { ref } from 'ember-ref-bucket';
 
 export default class NavBarComponent extends Component {
   @service userProfile;
@@ -11,6 +11,22 @@ export default class NavBarComponent extends Component {
   showDatePicker = () => {
     this.datePickerVisible = true;
   };
+
+  get months() {
+    const items = [];
+    for (let i = 0; i < monthsInYear; i++) {
+      const dateInMonth = new Date(this.args.year, i, 1);
+      items.push({
+        number: i,
+        humanNumber: i + 1,
+        label: format(dateInMonth, 'LLLL'),
+        timesheet: this.args.timesheets.find(
+          (timesheet) => timesheet.start.getMonth() === i,
+        ),
+      });
+    }
+    return items;
+  }
 
   addSubMonth = (isAdd = false) => {
     const year = this.args.year ?? new Date().getFullYear();
@@ -33,5 +49,9 @@ export default class NavBarComponent extends Component {
   get monthYearLabel() {
     const date = new Date(this.args.year, this.args.month);
     return `${format(date, 'LLLL')} ${this.args.year}`;
+  }
+
+  closeDropdown = (dropdown) => {
+    dropdown.actions.close();
   }
 }
