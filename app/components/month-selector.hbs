@@ -30,20 +30,18 @@
           <ul>
             {{#each this.months as |month|}}
               <a href="#" {{on "click" (fn this.closeDropdown dd)}}>
-                <LinkTo
-                  @route="year.month"
-                  @models={{array this.year month.humanNumber}}
-                  class="grow text-sm tracking-wide"
-                >
-                  <li
-                    class="flex items-center justify-between rounded p-2 font-light hover:bg-gray-100"
+                <li>
+                  <LinkTo
+                    @route="year.month"
+                    @models={{array this.year month.humanNumber}}
+                    class="flex grow items-center justify-between rounded p-2 text-sm font-light tracking-wide hover:bg-gray-100"
                   >
                     {{month.label}}
                     <span>
                       <TimesheetStatusIcon @timesheet={{month.timesheet}} />
                     </span>
-                  </li>
-                </LinkTo>
+                  </LinkTo>
+                </li>
               </a>
             {{/each}}
           </ul>
