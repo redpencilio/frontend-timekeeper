@@ -1,68 +1,6 @@
 <div class="group flex h-12 items-center justify-between border-b">
   <div></div>
-  <div class="box-border flex h-full items-center justify-between gap-4 px-6">
-    <LinkTo
-      @route="year.month"
-      @models={{this.previousMonthRouteModel}}
-      class="rounded p-2 text-red-700 opacity-0 transition-opacity duration-150 ease-in-out hover:bg-gray-100 group-hover:opacity-100"
-    >
-      {{svg-jar "chevron-left" class="size-5"}}
-    </LinkTo>
-    <div class="h-full w-52">
-      <BasicDropdown
-        @horizontalPosition="center"
-        @matchTriggerWidth={{true}}
-        as |dd|
-      >
-        <dd.Trigger
-          class="flex h-full items-center justify-center gap-2 text-xl font-medium text-red-700"
-        >
-          {{this.monthYearLabel}}
-          <div
-            class="opacity-0 transition-opacity duration-150 ease-in-out group-hover:opacity-100"
-          >
-            {{svg-jar "chevron-down" class="size-5"}}
-          </div>
-        </dd.Trigger>
-        <dd.Content>
-          <div class="rounded-lg border bg-white p-2 shadow">
-            <YearSelector
-              @year={{this.year}}
-              @onDecrementYear={{this.decrementYear}}
-              @onIncrementYear={{this.incrementYear}}
-            />
-            <ul>
-              {{#each this.months as |month|}}
-                <a href="#" {{on "click" (fn this.closeDropdown dd)}}>
-                  <LinkTo
-                    @route="year.month"
-                    @models={{array this.year month.humanNumber}}
-                    class="grow text-sm tracking-wide"
-                  >
-                    <li
-                      class="flex items-center justify-between rounded p-2 font-light hover:bg-gray-100"
-                    >
-                      {{month.label}}
-                      <span>
-                        <TimesheetStatusIcon @timesheet={{month.timesheet}} />
-                      </span>
-                    </li>
-                  </LinkTo>
-                </a>
-              {{/each}}
-            </ul>
-          </div>
-        </dd.Content>
-      </BasicDropdown>
-    </div>
-    <LinkTo
-      @route="year.month"
-      @models={{this.nextMonthRouteModel}}
-      class="rounded p-2 text-red-700 opacity-0 transition-opacity duration-150 ease-in-out hover:bg-gray-100 group-hover:opacity-100"
-    >
-      {{svg-jar "chevron-right" class="size-5"}}
-    </LinkTo>
-  </div>
+  <MonthSelector @year={{@year}} @month={{@month}} />
   <div class="mr-4 flex items-center justify-between">
     <LinkTo class="text-sm font-medium text-red-700" @route="profile">
       <div class="flex items-center gap-2">
