@@ -9,7 +9,7 @@
   <div class="h-full w-52">
     <BasicDropdown @horizontalPosition="center" as |dd|>
       <dd.Trigger
-        class="flex h-full items-center justify-center gap-2 text-xl font-medium text-red-700"
+        class="flex h-full select-none items-center justify-center gap-2 text-xl font-medium text-red-700"
       >
         {{this.monthYearLabel}}
         <div
@@ -20,7 +20,7 @@
       </dd.Trigger>
       <dd.Content>
         <div
-          class="w-48 rounded-lg bg-white p-2 shadow ring-1 ring-black ring-opacity-5"
+          class="w-56 rounded-lg bg-white p-2 shadow ring-1 ring-black ring-opacity-5"
         >
           <YearSelector
             @year={{this.year}}

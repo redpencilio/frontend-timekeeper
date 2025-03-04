@@ -1,13 +1,23 @@
-<div class="group flex h-12 items-center justify-between border-b">
-  <div></div>
-  <MonthSelector @year={{@year}} @month={{@month}} />
-  <div class="mr-4 flex items-center justify-between">
-    <LinkTo class="text-sm font-medium text-red-700" @route="profile">
-      <div class="flex items-center gap-2">
-
-        {{svg-jar "person-circle"}}
-        {{person-first-name this.userProfile.user.name}}
-      </div>
+<div class="group flex h-12 items-center border-b">
+  <div class="mx-4 flex grow items-center justify-between">
+    <LinkTo
+      @route="year.month"
+      @models={{this.todayRouteModel}}
+      class="box-border rounded px-2 py-1.5 font-normal text-red-700 hover:bg-gray-100"
+    >
+      Today
     </LinkTo>
+    <MonthSelector @year={{@year}} @month={{@month}} />
+    <div class="flex items-center justify-between">
+      <LinkTo
+        class="box-border rounded p-2 text-sm font-medium text-red-700 hover:bg-gray-100"
+        @route="profile"
+      >
+        <div class="flex items-center gap-2">
+          {{svg-jar "person-circle"}}
+          {{person-first-name this.userProfile.user.name}}
+        </div>
+      </LinkTo>
+    </div>
   </div>
 </div>
