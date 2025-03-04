@@ -388,14 +388,15 @@ export default class FullCalendarComponent extends Component {
     });
   }
 
-  @action
-  saveNote(workLog, noteContent) {
+  saveNote = (workLog, noteContent) => {
     const previousContent = workLog.note;
-    workLog.note = noteContent.trim();
+    const trimmedContent = noteContent?.trim();
+    const isDelete = !trimmedContent;
+    workLog.note = trimmedContent;
     this.toaster.actionWithUndo({
-      actionText: 'Updating note…',
-      actionDoneText: 'Note saved.',
-      actionUndoneText: 'Note reverted.',
+      actionText: isDelete ? 'Deleting note…' : 'Updating note…',
+      actionDoneText: isDelete ? 'Note deleted.' : 'Note saved.',
+      actionUndoneText: isDelete ? 'Note restored.' : 'Note reverted.',
       action: async () => await workLog.save(),
       undoAction: async () => {
         workLog.note = previousContent;
@@ -407,7 +408,7 @@ export default class FullCalendarComponent extends Component {
     });
     this.showNotesFor = null;
     this.calendar.render();
-  }
+  };
 
   handleKeydown(event) {
     if (event.key === 'Escape' || event.key === 'Esc') {
