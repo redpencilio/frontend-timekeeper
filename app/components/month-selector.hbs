@@ -2,7 +2,7 @@
   <LinkTo
     @route="year.month"
     @models={{this.previousMonthRouteModel}}
-    class="rounded p-2 text-red-700 opacity-0 transition-opacity duration-150 ease-in-out hover:bg-gray-100 group-hover:opacity-100"
+    class="group-hover-appear rounded p-2 text-red-700 hover:bg-gray-100"
   >
     {{svg-jar "chevron-left" class="size-5"}}
   </LinkTo>
@@ -12,9 +12,7 @@
         class="flex h-full select-none items-center justify-center gap-2 text-xl font-medium text-red-700"
       >
         {{this.monthYearLabel}}
-        <div
-          class="opacity-0 transition-opacity duration-150 ease-in-out group-hover:opacity-100"
-        >
+        <div class="group-hover-appear">
           {{svg-jar "chevron-down" class="size-4"}}
         </div>
       </dd.Trigger>
@@ -52,7 +50,7 @@
   <LinkTo
     @route="year.month"
     @models={{this.nextMonthRouteModel}}
-    class="rounded p-2 text-red-700 opacity-0 transition-opacity duration-150 ease-in-out hover:bg-gray-100 group-hover:opacity-100"
+    class="group-hover-appear rounded p-2 text-red-700 hover:bg-gray-100"
   >
     {{svg-jar "chevron-right" class="size-5"}}
   </LinkTo>

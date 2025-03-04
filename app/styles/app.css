@@ -136,3 +136,15 @@
 .active {
   @apply font-medium;
 }
+
+/**
+ * Utility Classes
+ */
+
+.hover-appear {
+  @apply opacity-0 transition-opacity duration-150 ease-in-out hover:opacity-100;
+}
+
+.group-hover-appear {
+  @apply opacity-0 transition-opacity duration-150 ease-in-out group-hover:opacity-100;
+}
