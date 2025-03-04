@@ -13,7 +13,6 @@ export default class YearMonthContoller extends Controller {
   @service userProfile;
 
   @tracked timesheet;
-  @tracked timesheets;
 
   get firstDayOfMonth() {
     return new Date(this.model.year, this.model.month, 1);

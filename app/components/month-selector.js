@@ -37,22 +37,21 @@ export default class MonthSelectComponent extends Component {
     return items;
   }
 
-  addSubMonth = (isAdd = false) => {
+  applyToMonth = (operation) => {
     const year = this.args.year ?? new Date().getFullYear();
     const month = this.args.month ?? new Date().getMonth();
     const current = new Date(year, month);
-    const f = isAdd ? add : sub;
-    const newMonth = f(current, { months: 1 });
+    const newMonth = operation(current, { months: 1 });
 
     return [newMonth.getFullYear(), newMonth.getMonth() + 1];
   };
 
   get nextMonthRouteModel() {
-    return this.addSubMonth(true);
+    return this.applyToMonth(add);
   }
 
   get previousMonthRouteModel() {
-    return this.addSubMonth(false);
+    return this.applyToMonth(sub);
   }
 
   get monthYearLabel() {
