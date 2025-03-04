@@ -25,3 +25,6 @@
 /DEBUG/
 
 *~
+
+# Ignore favicon, this is added by npm
+public/assets/favicon.ico

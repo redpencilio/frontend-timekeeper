@@ -1,0 +1,10 @@
+{{#if this.currentAccount.isResolved}}
+  <PowerSelect
+    @selected={{this.selectedAccount}}
+    @options={{this.accountLinkOptions.value}}
+    @onChange={{this.selectNewAccount}}
+    as |account|
+  >
+    {{account.accountName}}
+  </PowerSelect>
+{{/if}}

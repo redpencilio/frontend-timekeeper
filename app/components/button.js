@@ -27,19 +27,4 @@ export default class ButtonComponent extends Component {
 
     return `${baseClass} ${primaryClass} ${bgColorClass} ${muteClass} ${disabledClass}`.trim();
   }
-
-  <template>
-    <button
-      type='button'
-      class={{this.class}}
-      disabled={{@isDisabled}}
-      ...attributes
-    >
-      {{#if @isLoading}}
-        Loading...
-      {{else}}
-        {{yield}}
-      {{/if}}
-    </button>
-  </template>
 }

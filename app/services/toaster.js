@@ -53,7 +53,8 @@ export default class ToasterService extends Service {
     this.closeBy((toast) => toast.contextKey === contextKey);
     const actionToast = { message: actionText, contextKey, options: {} };
     this.displayToast.perform(actionToast);
-    await action();
+    // Save the return value to pass it to the undo action
+    const actionReturnValue = await action();
     // If the toast was already closed by someone else
     // we don't show any follow up toasts (sorry, hacky)
     if (!this.toasts.includes(actionToast)) return;
@@ -70,7 +71,7 @@ export default class ToasterService extends Service {
           options: {},
         };
         this.displayToast.perform(undoingToast);
-        await undoAction();
+        await undoAction(actionReturnValue);
         // If the toast was already closed by someone else
         // we don't show any follow up toasts (sorry, hacky)
         if (!this.toasts.includes(undoingToast)) return;
