@@ -11,4 +11,5 @@ export default class TaskModel extends Model {
   @belongsTo('workspace', { async: true, inverse: 'projects' }) workspace;
   @hasMany('work-log', { async: true, inverse: 'task' }) workLogs;
   @belongsTo('customer', { async: true, inverse: 'projects' }) customer;
+  @hasMany('person', { async: true, inverse: 'tasks' }) visibleTo;
 }

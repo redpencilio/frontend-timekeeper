@@ -9,4 +9,5 @@ export default class PersonModel extends Model {
   @hasMany('user-group', { inverse: 'members', async: true }) userGroups;
   @hasMany('quantity', { inverse: 'person', async: true })
   quantities;
+  @hasMany('task', { inverse: 'visibleTo', async: true }) tasks;
 }
