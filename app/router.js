@@ -14,6 +14,7 @@ Router.map(function () {
     this.route('users', function () {
       this.route('user', { path: '/:user' }, function () {
         this.route('holidays');
+        this.route('visible-tasks');
       });
     });
   });

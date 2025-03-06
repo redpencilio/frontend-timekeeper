@@ -6,30 +6,14 @@
     <table class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
         <tr>
-          <th
-            scope="col"
-            class="py-3 pl-6 pr-3 text-left text-sm font-semibold text-gray-700 sm:pl-8"
-          >
-            Name
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-sm font-semibold text-gray-700"
-          >
-            Kimai Account
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-sm font-semibold text-gray-700"
-          >
-            User Groups
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-sm font-semibold text-gray-700"
-          >
-            Holidays
-          </th>
+          {{#each (array 'Name' 'Kimai Account' 'User Groups' '') as |header|}}
+            <th
+              scope="col"
+              class="py-3 pl-6 pr-3 text-left text-sm font-semibold text-gray-700"
+            >
+              {{header}}
+            </th>
+          {{/each}}
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-200 bg-white">
