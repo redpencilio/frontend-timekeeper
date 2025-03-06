@@ -73,7 +73,6 @@
     "ember-power-select": "^8.6.0",
     "ember-qunit": "^8.1.0",
     "ember-resolver": "^11.0.1",
-    "ember-responsive": "^5.0.0",
     "ember-set-helper": "^3.0.1",
     "ember-simple-auth": "^6.1.0",
     "ember-source": "~5.10.0",
