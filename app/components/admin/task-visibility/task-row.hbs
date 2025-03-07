@@ -1,0 +1,21 @@
+<button
+  type="button"
+  class="flex w-full items-center gap-{{sum 2 (mult @level 2)}}
+    rounded border-b p-1.5
+    {{if
+      (eq @level 0)
+      'font-semibold'
+      (if (eq @level 1) 'font-normal' 'font-light')
+    }}
+    hover:bg-gray-100"
+  {{on "click" (if @taskIsVisible @onHide @onShow)}}
+>
+  {{#if @taskIsVisible}}
+    {{svg-jar "eye"}}
+  {{else}}
+    {{svg-jar "eye-slash"}}
+  {{/if}}
+  <span class="{{unless @taskIsVisible 'text-gray-500'}}">
+    {{yield}}
+  </span>
+</button>

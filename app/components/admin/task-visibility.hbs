@@ -1,0 +1,66 @@
+<div class="mt-2 overflow-auto" ...attributes>
+  {{#if this.tasksForUserLatest}}
+    <ul>
+      {{#each this.tasks.groupedTasks as |customerWithTasks|}}
+        <Admin::TaskVisibility::TaskRow
+          @taskIsVisible={{this.customerIsVisible customerWithTasks}}
+          @onShow={{fn
+            this.doAndRefresh
+            (fn this.showCustomer customerWithTasks)
+          }}
+          @onHide={{fn
+            this.doAndRefresh
+            (fn this.hideCustomer customerWithTasks)
+          }}
+          @level={{0}}
+        >
+          {{customerWithTasks.customer.name}}
+        </Admin::TaskVisibility::TaskRow>
+        <ul>
+          {{#each customerWithTasks.tasks as |taskWithSubTasks|}}
+            <li>
+              <Admin::TaskVisibility::TaskRow
+                @taskIsVisible={{this.taskIsVisible taskWithSubTasks}}
+                @onShow={{fn
+                  this.doAndRefresh
+                  (fn this.showTask taskWithSubTasks)
+                }}
+                @onHide={{fn
+                  this.doAndRefresh
+                  (fn this.hideTask taskWithSubTasks)
+                }}
+                @level={{1}}
+              >
+                {{task-name taskWithSubTasks.task}}
+              </Admin::TaskVisibility::TaskRow>
+              <ul>
+                {{#unless (this.isSingleGeneral taskWithSubTasks)}}
+                  {{#each taskWithSubTasks.subTasks as |subTask|}}
+                    <li>
+                      <Admin::TaskVisibility::TaskRow
+                        @taskIsVisible={{this.subTaskIsVisible subTask}}
+                        @onShow={{fn
+                          this.doAndRefresh
+                          (fn this.showSubTask subTask)
+                        }}
+                        @onHide={{fn
+                          this.doAndRefresh
+                          (fn this.hideSubTask subTask)
+                        }}
+                        @level={{2}}
+                      >
+                        {{task-name subTask}}
+                      </Admin::TaskVisibility::TaskRow>
+                    </li>
+                  {{/each}}
+                {{/unless}}
+              </ul>
+            </li>
+          {{/each}}
+        </ul>
+      {{/each}}
+    </ul>
+  {{else if this.tasksForUser.isLoading}}
+    Loading...
+  {{/if}}
+</div>
