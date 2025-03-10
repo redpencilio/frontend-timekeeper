@@ -1,0 +1,28 @@
+<div class="flex grow flex-col border-l p-4">
+  <div class="self-start text-lg">
+    <span class="font-semibold">
+      {{@model.user.name}}
+    </span>
+  </div>
+  <ul class="mt-4 flex gap-3 font-normal text-gray-900 border-b">
+    {{#each
+      (array
+        (hash name="Holidays" route="holidays")
+        (hash name="Visible Tasks" route="visible-tasks")
+      )
+      as |tabInfo|
+    }}
+      <li>
+        <LinkTo
+          @route="admin.users.user.{{tabInfo.route}}"
+          @model={{@model.user.id}}
+          @activeClass="border-b-2 border-red-600"
+          class="p-2 block"
+        >
+          {{tabInfo.name}}
+        </LinkTo>
+      </li>
+    {{/each}}
+  </ul>
+  {{outlet}}
+</div>

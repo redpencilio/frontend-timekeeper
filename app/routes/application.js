@@ -5,9 +5,10 @@ export default class ApplicationRoute extends Route {
   @service session;
   @service router;
   @service userProfile;
+  @service tasks;
 
   async beforeModel() {
-    await this.session.setup();
+    await Promise.all([this.session.setup(), this.tasks.setup()]);
 
     if (this.session.isAuthenticated) {
       try {
