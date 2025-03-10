@@ -3,8 +3,8 @@
   class="flex w-full items-center rounded border-b p-1.5
     {{if
       (eq @level 0)
-      'gap-2 font-semibold'
-      (if (eq @level 1) 'gap-4 font-normal' 'gap-6 font-light')
+      'gap-2 font-semibold text-base'
+      (if (eq @level 1) 'gap-4 font-normal text-sm' 'gap-6 font-light text-sm')
     }}
     hover:bg-gray-100"
   {{on "click" (if @taskIsVisible @onHide @onShow)}}
