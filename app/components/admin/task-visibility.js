@@ -42,26 +42,30 @@ export default class AdminTaskVisibilityComponent extends Component {
     const subTasks = customerWithTasks.tasks
       .map(({ subTasks }) => subTasks)
       .flat();
-    await this.submitHideSubTasks(subTasks);
+    await this.submitEditVisibleSubTasks(subTasks);
   };
 
   hideTask = async (taskWithSubTasks) => {
-    await this.submitHideSubTasks(taskWithSubTasks.subTasks);
+    await this.submitEditVisibleSubTasks(taskWithSubTasks.subTasks);
   };
 
   hideSubTask = async (subTask) => {
-    await this.submitHideSubTasks([subTask]);
+    await this.submitEditVisibleSubTasks([subTask]);
   };
 
-  submitHideSubTasks = async (subTasks) => {
+  submitEditVisibleSubTasks = async (subTasks, operation = 'hide') => {
     const visibleTasks = await this.store.queryAll('task', {
       'filter[visible-to][:id:]': this.args.person.id,
     });
-    this.args.person.tasks = visibleTasks
-      .slice()
-      .filter(
-        (visibleTask) => !subTasks.find((task) => task.id === visibleTask.id),
-      );
+    this.args.person.tasks =
+      operation === 'hide'
+        ? visibleTasks
+            .slice()
+            .filter(
+              (visibleTask) =>
+                !subTasks.find((task) => task.id === visibleTask.id),
+            )
+        : visibleTasks.slice().concat(subTasks);
     await this.args.person.save();
   };
 
@@ -69,33 +73,30 @@ export default class AdminTaskVisibilityComponent extends Component {
     const subTasks = customerWithTasks.tasks
       .map(({ subTasks }) => subTasks)
       .flat();
-    await this.submitShowSubTasks(subTasks);
+    await this.submitEditVisibleSubTasks(subTasks, 'show');
   };
 
   showTask = async (taskWithSubTasks) => {
-    await this.submitShowSubTasks(taskWithSubTasks.subTasks);
+    await this.submitEditVisibleSubTasks(taskWithSubTasks.subTasks, 'show');
   };
 
   showSubTask = async (subTask) => {
-    await this.submitShowSubTasks([subTask]);
-  };
-
-  submitShowSubTasks = async (subTasks) => {
-    const visibleTasks = await this.store.queryAll('task', {
-      'filter[visible-to][:id:]': this.args.person.id,
-    });
-    this.args.person.tasks = visibleTasks.slice().concat(subTasks);
-
-    await this.args.person.save();
+    await this.submitEditVisibleSubTasks([subTask], 'show');
   };
 
   showAllTasks = async () => {
-    await this.submitShowSubTasks(this.tasksService.tasks.slice());
+    await this.submitEditVisibleSubTasks(
+      this.tasksService.tasks.slice(),
+      'show',
+    );
   };
 
   hideAllTasks = async () => {
-    await this.submitHideSubTasks(this.tasksService.tasks.slice());
-  }
+    await this.submitEditVisibleSubTasks(
+      this.tasksService.tasks.slice(),
+      'hide',
+    );
+  };
 
   // TODO: Maybe we need to put this in the model file?
   isSingleGeneral = ({ subTasks }) =>
