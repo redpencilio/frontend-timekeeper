@@ -1,7 +1,17 @@
 <div class="mt-2 overflow-auto" ...attributes>
-  {{#if this.tasksForUserLatest}}
+  <div class="flex justify-end">
+    <Button
+      {{on "click" (fn this.doAndRefresh this.hideAllTasks)}}
+      @skin="mute"
+    >Hide all</Button>
+    <Button
+      {{on "click" (fn this.doAndRefresh this.showAllTasks)}}
+      @skin="mute"
+    >Show all</Button>
+  </div>
+  {{#if (not (is-none this.tasksForUserLatest))}}
     <ul>
-      {{#each this.tasks.groupedTasks as |customerWithTasks|}}
+      {{#each this.tasksService.groupedTasks as |customerWithTasks|}}
         <Admin::TaskVisibility::TaskRow
           @taskIsVisible={{this.customerIsVisible customerWithTasks}}
           @onShow={{fn
