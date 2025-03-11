@@ -10,46 +10,49 @@
           {{#each this.sortedWorkLogEntries as |workLogEntry|}}
             {{#let workLogEntry.task as |task|}}
               <li>
-                <div class="group my-2 flex items-center justify-between min-h-12">
-                    <div
-                      class="flex grow items-center
-                        {{if (eq workLogEntry.type 'added') 'mr-2'}}"
-                    >
-                      {{#if (eq workLogEntry.type "pinned")}}
-                        <TimeLogPopover::Pin
-                          @pinned={{true}}
-                          @color={{task-color task}}
-                          @onClick={{fn this.unpinTask workLogEntry}}
-                          class="size-4"
-                        />
-                      {{else if (eq workLogEntry.type "recent")}}
-                        <TimeLogPopover::Pin
-                          @pinned={{false}}
-                          @color={{task-color task}}
-                          @onClick={{fn this.pinTask workLogEntry}}
-                          class="size-4"
-                        >
-                          <div {{fill-color (task-color task)}}>
-                            {{svg-jar "clock" class="fill-inherit"}}
-                          </div>
-                        </TimeLogPopover::Pin>
-                      {{else if (eq workLogEntry.type "added")}}
-                        <TimeLogPopover::Pin
-                          @pinned={{false}}
-                          @color={{task-color task}}
-                          @onClick={{fn this.pinTask workLogEntry}}
-                          class="size-4"
-                        >
-                          <div class="flex size-4 items-center justify-center">
-                            <div
-                              {{bg-color (task-color task)}}
-                              class="size-2 rounded-full"
-                            ></div>
-                          </div>
-                        </TimeLogPopover::Pin>
-                      {{/if}}
-                      <div class="ml-2 mr-1 flex grow flex-col gap-1">
-                        <span class="text-sm">{{task-name task}}</span>
+                <div
+                  class="group my-2 flex min-h-12 items-center justify-between"
+                >
+                  <div
+                    class="flex grow items-center
+                      {{if (eq workLogEntry.type 'added') 'mr-2'}}"
+                  >
+                    {{#if (eq workLogEntry.type "pinned")}}
+                      <TimeLogPopover::Pin
+                        @pinned={{true}}
+                        @color={{task-color task}}
+                        @onClick={{fn this.unpinTask workLogEntry}}
+                        class="size-4"
+                      />
+                    {{else if (eq workLogEntry.type "recent")}}
+                      <TimeLogPopover::Pin
+                        @pinned={{false}}
+                        @color={{task-color task}}
+                        @onClick={{fn this.pinTask workLogEntry}}
+                        class="size-4"
+                      >
+                        <div {{fill-color (task-color task)}}>
+                          {{svg-jar "clock" class="fill-inherit"}}
+                        </div>
+                      </TimeLogPopover::Pin>
+                    {{else if (eq workLogEntry.type "added")}}
+                      <TimeLogPopover::Pin
+                        @pinned={{false}}
+                        @color={{task-color task}}
+                        @onClick={{fn this.pinTask workLogEntry}}
+                        class="size-4"
+                      >
+                        <div class="flex size-4 items-center justify-center">
+                          <div
+                            {{bg-color (task-color task)}}
+                            class="size-2 rounded-full"
+                          ></div>
+                        </div>
+                      </TimeLogPopover::Pin>
+                    {{/if}}
+                    <div class="ml-2 mr-1 flex grow flex-col gap-1">
+                      <span class="text-sm">{{task-name task}}</span>
+                      {{#let (unique-id) as |textAreaId|}}
                         <textarea
                           {{spellcheck-on-focus}}
                           {{dynamic-textarea-height}}
@@ -58,14 +61,15 @@
                             (with-value (fn (set workLogEntry "note")))
                           }}
                           name="Notes"
-                          id="notes"
+                          id={{textAreaId}}
                           class="{{if workLogEntry.note 'visible' 'hidden'}}
                             w-full resize-none rounded border-none p-0 px-0.5 py-0.5 text-xs text-gray-600 placeholder:text-xs placeholder:text-gray-400 hover:bg-gray-100 focus:inline-block focus:bg-white focus:ring-0 group-hover:inline-block"
                           placeholder="Add notes"
                           rows="1"
                         >{{workLogEntry.note}}</textarea>
-                      </div>
+                      {{/let}}
                     </div>
+                  </div>
                   {{#let (unique-id) as |inputId|}}
                     <DurationInput
                       id={{inputId}}
