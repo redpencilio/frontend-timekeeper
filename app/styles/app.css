@@ -52,7 +52,7 @@
 
 .ember-power-select-trigger:focus,
 .ember-power-select-trigger--active {
-  @apply ring-blue-200 border-2 border-blue-200 outline-none;
+  @apply ring-red-200 border-2 border-red-200 outline-none;
 }
 
 .ember-power-select-selected-item {
