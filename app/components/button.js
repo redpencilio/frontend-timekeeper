@@ -10,11 +10,11 @@ export default class ButtonComponent extends Component {
   }
 
   get class() {
-    const baseClass = 'px-4 py-2 inline-flex justify-center font-medium';
-    const primaryClass =
-      this.isPrimary
-        ? 'border border-transparent rounded-md shadow-sm text-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
-        : '';
+    const baseClass =
+      'px-4 py-2 inline-flex justify-center font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500';
+    const primaryClass = this.isPrimary
+      ? 'border border-transparent rounded-md shadow-sm text-sm text-white'
+      : '';
 
     const bgColorClass = this.args.isDisabled
       ? 'bg-red-300 hover:bg-red-300 '
@@ -23,7 +23,7 @@ export default class ButtonComponent extends Component {
         : '';
     const disabledClass = this.args.isDisabled ? 'cursor-not-allowed' : '';
 
-    const muteClass = this.args.skin === 'mute' ? 'text-red-700' : '';
+    const muteClass = this.args.skin === 'mute' ? 'text-red-700 rounded' : '';
 
     return `${baseClass} ${primaryClass} ${bgColorClass} ${muteClass} ${disabledClass}`.trim();
   }
