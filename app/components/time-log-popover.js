@@ -33,6 +33,7 @@ export default class WorkLogPopoverComponent extends Component {
       if (workLogEntry) {
         workLogEntry.workLog = workLog;
         workLogEntry.duration = workLog.duration;
+        workLogEntry.note = workLog.note;
       } else {
         workLogEntries.push(new WorkLogEntry('added', task, workLog));
       }

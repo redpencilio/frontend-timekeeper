@@ -10,53 +10,70 @@
           {{#each this.sortedWorkLogEntries as |workLogEntry|}}
             {{#let workLogEntry.task as |task|}}
               <li>
-                <div class="mb-2 mt-2">
-                  <div class="mt-1 flex items-center justify-between">
+                <div class="group mb-2 mt-3 flex items-center justify-between">
                     <div
-                      class="group flex grow items-center
-                      {{if (eq workLogEntry.type "added") "mr-2"}}"
+                      class="flex grow items-center
+                        {{if (eq workLogEntry.type 'added') 'mr-2'}}"
                     >
                       {{#if (eq workLogEntry.type "pinned")}}
                         <TimeLogPopover::Pin
                           @pinned={{true}}
                           @color={{task-color task}}
                           @onClick={{fn this.unpinTask workLogEntry}}
-                          class="h-4 w-4" />
-                        <div class="ml-2 text-sm">{{task-name task}}</div>
+                          class="size-4"
+                        />
                       {{else if (eq workLogEntry.type "recent")}}
                         <TimeLogPopover::Pin
                           @pinned={{false}}
                           @color={{task-color task}}
                           @onClick={{fn this.pinTask workLogEntry}}
-                          class="h-4 w-4">
+                          class="size-4"
+                        >
                           <div {{fill-color (task-color task)}}>
                             {{svg-jar "clock" class="fill-inherit"}}
                           </div>
                         </TimeLogPopover::Pin>
-                        <div class="ml-2 text-sm">{{task-name task}}</div>
                       {{else if (eq workLogEntry.type "added")}}
                         <TimeLogPopover::Pin
                           @pinned={{false}}
                           @color={{task-color task}}
-                          @onClick={{fn this.pinTask workLogEntry}} />
-                        <TaskPowerSelect
-                          {{! class needed for fullcalendar unselectCancel }}
-                          @dropdownClass="work-log-popover"
-                          @excludeTasks={{this.visibleTasks}}
-                          @selectedTask={{task}}
-                          @onChange={{fn this.updateTask workLogEntry}}
-                        />
+                          @onClick={{fn this.pinTask workLogEntry}}
+                          class="size-4"
+                        >
+                          <div class="flex size-4 items-center justify-center">
+                            <div
+                              {{bg-color (task-color task)}}
+                              class="size-2 rounded-full"
+                            ></div>
+                          </div>
+                        </TimeLogPopover::Pin>
                       {{/if}}
+                      <div class="ml-2 mr-1 flex grow flex-col gap-1">
+                        <span class="text-sm">{{task-name task}}</span>
+                        <textarea
+                          {{spellcheck-on-focus}}
+                          {{dynamic-textarea-height}}
+                          {{on
+                            "input"
+                            (with-value (fn (set workLogEntry "note")))
+                          }}
+                          name="Notes"
+                          id="notes"
+                          class="{{if workLogEntry.note 'visible' 'hidden'}}
+                            w-full resize-none rounded border-none p-0 px-0.5 py-0.5 text-xs text-gray-600 placeholder:text-xs placeholder:text-gray-400 hover:bg-gray-100 focus:inline-block focus:bg-white focus:ring-0 group-hover:inline-block"
+                          placeholder="Add notes"
+                          rows="1"
+                        >{{workLogEntry.note}}</textarea>
+                      </div>
                     </div>
-                    {{#let (unique-id) as |inputId|}}
-                      <DurationInput
-                        id={{inputId}}
-                        @value={{workLogEntry.duration}}
-                        @onChange={{fn this.updateDuration workLogEntry}}
-                        {{focus-select (eq this.focusedTaskId task.id)}}
-                      />
-                    {{/let}}
-                  </div>
+                  {{#let (unique-id) as |inputId|}}
+                    <DurationInput
+                      id={{inputId}}
+                      @value={{workLogEntry.duration}}
+                      @onChange={{fn this.updateDuration workLogEntry}}
+                      {{focus-select (eq this.focusedTaskId task.id)}}
+                    />
+                  {{/let}}
                 </div>
               </li>
             {{/let}}
