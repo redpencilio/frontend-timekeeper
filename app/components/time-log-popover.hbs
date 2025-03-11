@@ -10,7 +10,7 @@
           {{#each this.sortedWorkLogEntries as |workLogEntry|}}
             {{#let workLogEntry.task as |task|}}
               <li>
-                <div class="group mb-2 mt-3 flex items-center justify-between">
+                <div class="group my-2 flex items-center justify-between min-h-12">
                     <div
                       class="flex grow items-center
                         {{if (eq workLogEntry.type 'added') 'mr-2'}}"
