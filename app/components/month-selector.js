@@ -13,6 +13,10 @@ export default class MonthSelectComponent extends Component {
     return await this.timesheetsService.getForYear(this.year);
   });
 
+  resetYear = () => {
+    this.year = this.args.year;
+  }
+
   decrementYear = () => {
     this.year -= 1;
   };
