@@ -17,5 +17,5 @@ export default {
   CONCEPT_SCHEMES: {
     HOLIDAY_TYPES: '8d0407eb-36b9-4ef5-b6df-e63df460446d',
   },
-  HOLIDAY_TASK_NAME: 'Holiday', // We use the task name as identifier
+  HOLIDAY_TASK_LABEL: 'Holiday', // We use the task name as identifier
 };
