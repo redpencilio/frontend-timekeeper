@@ -44,8 +44,6 @@ export default class AdminTimesheetsYearMonthRoute extends Route {
     }));
 
     return {
-      year,
-      month: this.humanMonth,
       usersWithTimesheet,
     };
   }
