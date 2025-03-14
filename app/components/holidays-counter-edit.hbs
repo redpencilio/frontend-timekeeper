@@ -3,54 +3,56 @@
 >
   <h3 class="mt-4 text-lg font-normal text-red-700">{{@user.name}}</h3>
   <div class="flex items-center justify-between gap-4 px-6 py-4">
-    <button type="button" {{on "click" (set this "year" (sub this.year 1))}}>
-      {{svg-jar "chevron-left" class="h-5 w-5"}}
+    <button
+      type="button"
+      {{on "click" (fn this.transitionToYear (sub @year 1))}}
+    >
+      {{svg-jar "chevron-left" class="size-5"}}
     </button>
-    <div class="font-medium">{{this.year}}</div>
-    <button type="button" {{on "click" (set this "year" (add this.year 1))}}>
-      {{svg-jar "chevron-right" class="h-5 w-5"}}
+    <div class="font-medium">{{@year}}</div>
+    <button
+      type="button"
+      {{on "click" (fn this.transitionToYear (add @year 1))}}
+    >
+      {{svg-jar "chevron-right" class="size-5"}}
     </button>
   </div>
-  {{#if this.holidayCounters.isLoading}}
-    Loading...
-  {{else if this.holidayCounters.isResolved}}
-    {{#if this.holidayCounters.value.length}}
-      <form {{on "submit" (perform this.submit)}}>
-        {{#each this.holidayCounterEntries as |holidayCounterEntry|}}
-          {{#let (unique-id) as |id|}}
-            <div class="flex"></div>
-            <label
-              for={{id}}
-              class="mb-4 mt-3 flex items-center gap-1 text-sm font-normal"
-            >
-              {{holidayCounterEntry.counter.quantityKind.label}}
-            </label>
-            <DurationInput
-              class="w-full"
-              id={{id}}
-              @value={{holidayCounterEntry.value}}
-              @onChange={{fn this.updateEntry holidayCounterEntry}}
-            />
-          {{/let}}
-        {{/each}}
-
-        <div class="mt-4 flex justify-between">
-          <Button @skin="mute" {{on "click" @onCancel}}>
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            @skin="primary"
-            @isLoading={{this.submit.isRunning}}
+  {{#if @holidayCounters.length}}
+    <form {{on "submit" (perform this.submit)}}>
+      {{#each this.holidayCounterEntries as |holidayCounterEntry|}}
+        {{#let (unique-id) as |id|}}
+          <div class="flex"></div>
+          <label
+            for={{id}}
+            class="mb-4 mt-3 flex items-center gap-1 text-sm font-normal"
           >
-            Save
-          </Button>
-        </div>
-      </form>
-    {{else}}
-      <span class="text-sm italic text-gray-700">
-        Cannot change holidays for this year
-      </span>
-    {{/if}}
+            {{holidayCounterEntry.counter.quantityKind.label}}
+          </label>
+          <DurationInput
+            class="w-full"
+            id={{id}}
+            @value={{holidayCounterEntry.value}}
+            @onChange={{fn this.updateEntry holidayCounterEntry}}
+          />
+        {{/let}}
+      {{/each}}
+
+      <div class="mt-4 flex justify-between">
+        <Button @skin="mute" {{on "click" @onCancel}}>
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          @skin="primary"
+          @isLoading={{this.submit.isRunning}}
+        >
+          Save
+        </Button>
+      </div>
+    </form>
+  {{else}}
+    <span class="text-sm italic text-gray-700">
+      Cannot change holidays for this year
+    </span>
   {{/if}}
 </div>

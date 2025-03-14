@@ -1,6 +1,7 @@
-{{page-title "Holidays Edit"}}
 <HolidaysCounterEdit 
   @user={{@model.user}}
+  @year={{@model.year}}
+  @holidayCounters={{@model.counters}}
   @onCancel={{this.cancel}}
   @onSubmit={{this.editHolidayCounters}}
 />

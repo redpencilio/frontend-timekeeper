@@ -13,7 +13,9 @@ Router.map(function () {
   this.route('admin', function () {
     this.route('users', function () {
       this.route('user', { path: '/:user' }, function () {
-        this.route('holidays');
+        this.route('holidays', function () {
+          this.route('year', { path: '/:year' });
+        });
       });
     });
   });
