@@ -44,6 +44,7 @@ export default class HolidaysOverviewComponent extends Component {
       .slice()
       .sort((counterA, counterB) => counterB.value.cmp(counterA.value));
   }
+
   get holidaysTotal() {
     return (this.args.holidayCounters ?? [])
       .reduce((acc, { value }) => acc.add(value), new Duration())

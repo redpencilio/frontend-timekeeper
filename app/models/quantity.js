@@ -1,6 +1,6 @@
 import Model, { attr, belongsTo } from '@ember-data/model';
 
-export default class HolidayCounterModel extends Model {
+export default class QuantityModel extends Model {
   @attr('duration') value;
   @attr('date') validFrom;
   @attr('date') validTill;
