@@ -2,11 +2,11 @@ import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 
 export default class AdminRoute extends Route {
-  @service store;
+  @service session;
+  @service userProfile;
 
-  async model() {
-    return {
-      users: await this.store.queryAll('person', { sort: 'name' }),
-    };
+  async beforeModel(transition) {
+    this.session.requireAuthentication(transition, 'login');
+    await this.userProfile.waitForUser.perform();
   }
 }

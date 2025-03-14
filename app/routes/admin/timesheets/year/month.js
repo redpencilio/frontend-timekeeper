@@ -17,7 +17,7 @@ export default class AdminTimesheetsYearMonthRoute extends Route {
 
   async model() {
     const { year } = this.modelFor('admin.timesheets.year');
-    const { users } = this.modelFor('admin');
+    const { users } = this.modelFor('admin.timesheets');
 
     const timesheets = await this.store.queryAll('timesheet', {
       'filter[start]': formatDate(
