@@ -5,11 +5,6 @@ export default class AdminUsersUserRoute extends Route {
   @service store;
 
   async model(params) {
-    const user = await this.store.findRecord('person', params.user);
-    return {
-      user,
-    };
+    return await this.store.findRecord('person', params.user);
   }
-
 }
-
