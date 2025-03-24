@@ -304,7 +304,9 @@ export default class FullCalendarComponent extends Component {
     buttonsDiv.appendChild(stickyButton);
     buttonsDiv.appendChild(deleteButton);
     buttonsDiv.style.visibility = 'collapse';
-    container.appendChild(buttonsDiv);
+    if (!this.args.isDisabled) {
+      container.appendChild(buttonsDiv);
+    }
     container.onmouseenter = () => {
       buttonsDiv.style.visibility = 'visible';
     };
@@ -362,7 +364,7 @@ export default class FullCalendarComponent extends Component {
     // Remove the event visually
     this.calendar
       .getEvents()
-      .find(event => event.extendedProps.workLog === workLog)
+      .find((event) => event.extendedProps.workLog === workLog)
       ?.remove();
 
     this.toaster.actionWithUndo({
@@ -378,7 +380,7 @@ export default class FullCalendarComponent extends Component {
           timesheet: await workLog.timesheet,
         };
 
-        await this.args.onDeleteWorkLog?.(workLog)
+        await this.args.onDeleteWorkLog?.(workLog);
         return workLogCopy;
       },
       undoAction: async (workLogCopy) =>
