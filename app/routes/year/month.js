@@ -17,7 +17,7 @@ export default class YearMonthRoute extends Route {
   }
 
   async model() {
-    const { year, holidayCounters} = this.modelFor('year');
+    const { year, holidayCounters } = this.modelFor('year');
     const firstOfMonth = startOfMonth(Date.UTC(year, this.humanMonth - 1));
     const firstOfNextMonth = addMonths(firstOfMonth, 1);
     const workLogs = await this.store.queryAll('work-log', {

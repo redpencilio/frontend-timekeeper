@@ -1,7 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { trackedFunction } from 'reactiveweb/function';
-import PowerSelect from 'ember-power-select/components/power-select';
 import constants from '../constants';
 import { service } from '@ember/service';
 
@@ -50,17 +49,4 @@ export default class UserEditComponent extends Component {
     selectedAccount.person = this.person;
     selectedAccount.save();
   };
-
-  <template>
-    {{#if this.currentAccount.isResolved}}
-      <PowerSelect
-        @selected={{this.selectedAccount}}
-        @options={{this.accountLinkOptions.value}}
-        @onChange={{this.selectNewAccount}}
-        as |account|
-      >
-        {{account.accountName}}
-      </PowerSelect>
-    {{/if}}
-  </template>
 }

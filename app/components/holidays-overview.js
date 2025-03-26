@@ -37,13 +37,14 @@ export default class HolidaysOverviewComponent extends Component {
   @use holidaysUsedLatest = keepLatest({
     value: () => this.holidaysUsed.value,
     when: () => this.holidaysUsed.isLoading,
-  })
+  });
 
   get sortedCounters() {
     return (this.args.holidayCounters ?? [])
       .slice()
       .sort((counterA, counterB) => counterB.value.cmp(counterA.value));
   }
+
   get holidaysTotal() {
     return (this.args.holidayCounters ?? [])
       .reduce((acc, { value }) => acc.add(value), new Duration())

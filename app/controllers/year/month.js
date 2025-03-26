@@ -11,8 +11,10 @@ export default class YearMonthContoller extends Controller {
   @service router;
   @service store;
   @service userProfile;
+  @service('timesheets') timesheetsService;
 
   @tracked timesheet;
+  @tracked showSummary = false;
 
   get firstDayOfMonth() {
     return new Date(this.model.year, this.model.month, 1);
@@ -23,6 +25,13 @@ export default class YearMonthContoller extends Controller {
     if (!Object.values(TIMESHEET_STATUSES).includes(status)) {
       throw new Error(`Invalid status: "${status}"`);
     }
+    // Check if there is a timesheet on the server already
+    // This could have been created in another tab
+    const serverTimesheet = await this.timesheetsService.getForMonth(
+      this.model.year,
+      this.model.month,
+    );
+    this.timesheet = serverTimesheet ?? this.timesheet;
     this.timesheet.status = status;
     await this.timesheet.save();
   }

@@ -9,7 +9,12 @@
   </div>
 {{else}}
   <div ...attributes>
-    <button {{on "click" @onClick}} class="mr-2 hidden group-hover:block" type="button">
+    <button
+      {{on "click" @onClick}}
+      tabindex="-1"
+      class="mr-2 hidden group-hover:block"
+      type="button"
+    >
       <div {{fill-color @color}}>
         {{svg-jar "pin" class="fill-inherit"}}
       </div>

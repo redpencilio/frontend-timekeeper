@@ -1,0 +1,9 @@
+<div class="flex items-center justify-between px-2 py-2">
+  <button type="button" {{on "click" @onDecrementYear}}>
+    {{svg-jar "chevron-left" class="size-4"}}
+  </button>
+  <div class="font-medium">{{@year}}</div>
+  <button type="button" {{on "click" @onIncrementYear}}>
+    {{svg-jar "chevron-right" class="size-4"}}
+  </button>
+</div>

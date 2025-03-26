@@ -1,3 +1,9 @@
-<Button @skin="white" {{on "click" this.logout}}> {{!-- TODO: @skin="white" does not exist but this renders correctly --}}
-  {{svg-jar "box-arrow-right" class="size-4"}}
-</Button>
+<button
+  type="button"
+  class="flex items-center gap-2"
+  {{on "click" this.logout}}
+  ...attributes
+>
+  Log out
+  {{svg-jar "box-arrow-right" class="size-5"}}
+</button>

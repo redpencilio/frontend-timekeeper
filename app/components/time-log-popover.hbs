@@ -89,7 +89,7 @@
           <Button
             type="submit"
             @isLoading={{@onSave.isRunning}}
-            @skin={{if @isOverwrite "error" "primary"}}
+            @skin="primary"
           >
             {{if @isOverwrite "Overwrite" "Save"}}
           </Button>

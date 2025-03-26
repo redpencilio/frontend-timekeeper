@@ -1,0 +1,61 @@
+<div class="box-border flex h-full items-center justify-between gap-4 px-6">
+  <LinkTo
+    @route="year.month"
+    @models={{this.previousMonthRouteModel}}
+    class="group-hover-appear rounded p-2 text-red-700 hover:bg-gray-100"
+  >
+    {{svg-jar "chevron-left" class="size-5"}}
+  </LinkTo>
+  <div class="h-full w-52">
+    <BasicDropdown
+      @onClose={{this.resetYear}}
+      @horizontalPosition="center"
+      as |dd|
+    >
+      <dd.Trigger
+        class="flex h-full select-none items-center justify-center gap-2 text-xl font-medium text-red-700"
+      >
+        {{this.monthYearLabel}}
+        <div class="group-hover-appear">
+          {{svg-jar "chevron-down" class="size-4"}}
+        </div>
+      </dd.Trigger>
+      <dd.Content>
+        <div
+          class="w-56 rounded-lg bg-white p-2 shadow ring-1 ring-black ring-opacity-5"
+        >
+          <YearSelector
+            @year={{this.year}}
+            @onDecrementYear={{this.decrementYear}}
+            @onIncrementYear={{this.incrementYear}}
+          />
+          <ul>
+            {{#each this.months as |month|}}
+              <a href="#" {{on "click" (fn this.closeDropdown dd)}}>
+                <li>
+                  <LinkTo
+                    @route="year.month"
+                    @models={{array this.year month.humanNumber}}
+                    class="flex grow items-center justify-between rounded p-2 text-sm font-light tracking-wide hover:bg-gray-100"
+                  >
+                    {{month.label}}
+                    <span>
+                      <TimesheetStatusIcon @timesheet={{month.timesheet}} />
+                    </span>
+                  </LinkTo>
+                </li>
+              </a>
+            {{/each}}
+          </ul>
+        </div>
+      </dd.Content>
+    </BasicDropdown>
+  </div>
+  <LinkTo
+    @route="year.month"
+    @models={{this.nextMonthRouteModel}}
+    class="group-hover-appear rounded p-2 text-red-700 hover:bg-gray-100"
+  >
+    {{svg-jar "chevron-right" class="size-5"}}
+  </LinkTo>
+</div>
