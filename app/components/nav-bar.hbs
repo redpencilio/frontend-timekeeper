@@ -8,16 +8,23 @@
       Today
     </LinkTo>
     <MonthSelector @year={{@year}} @month={{@month}} />
-    <div class="flex items-center justify-between">
-      <LinkTo
-        class="box-border rounded p-2 text-sm font-medium text-red-700 hover:bg-gray-100"
-        @route="profile"
-      >
-        <div class="flex items-center gap-2">
-          {{svg-jar "person-circle"}}
-          {{person-first-name this.userProfile.user.name}}
-        </div>
-      </LinkTo>
+    <div class="flex flex-row items-center">
+      {{#if (user-may "manage-users")}}
+        <LinkTo @route="admin.users" class="p-2 rounded text-red-700 hover:bg-gray-100">
+          {{svg-jar "gear" class="h-4 w-4"}}
+        </LinkTo>
+      {{/if}}
+      <div class="flex items-center justify-between">
+        <LinkTo
+          class="box-border rounded p-2 text-sm font-medium text-red-700 hover:bg-gray-100"
+          @route="profile"
+        >
+          <div class="flex items-center gap-2">
+            {{svg-jar "person-circle"}}
+            {{person-first-name this.userProfile.user.name}}
+          </div>
+        </LinkTo>
+      </div>
     </div>
   </div>
 </div>
