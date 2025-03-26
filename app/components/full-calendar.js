@@ -115,11 +115,7 @@ export default class FullCalendarComponent extends Component {
       // General calendar settings
       plugins: [interactionPlugin, dayGridPlugin],
       initialView: 'dayGridMonth',
-      headerToolbar: {
-        start: null,
-        center: 'title',
-        end: null,
-      },
+      headerToolbar: false,
       firstDay: 1,
       businessHours: {
         daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday (0=Sunday)
