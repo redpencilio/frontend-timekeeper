@@ -15,7 +15,7 @@ export default class MonthSelectComponent extends Component {
 
   resetYear = () => {
     this.year = this.args.year;
-  }
+  };
 
   decrementYear = () => {
     this.year -= 1;

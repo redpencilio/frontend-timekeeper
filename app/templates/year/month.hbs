@@ -34,11 +34,13 @@
             @holidayCounters={{@model.holidayCounters}}
           />
         </div>
-        <TimesheetActions
-          @timesheet={{this.timesheet}}
-          @onStatusChanged={{this.changeTimesheetStatus}}
-          class="-mb-6 mt-6"
-        />
+        {{#if this.timesheet}}
+          <TimesheetActions
+            @timesheet={{this.timesheet}}
+            @onStatusChanged={{this.changeTimesheetStatus}}
+            class="-mb-6 mt-6"
+            />
+        {{/if}}
         <h1
           class="mb-3 mt-6 px-4 text-xl font-semibold text-red-700"
         >Summary</h1>
