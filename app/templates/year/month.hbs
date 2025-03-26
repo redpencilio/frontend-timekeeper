@@ -1,8 +1,10 @@
 <div class="flex h-full flex-col">
-  <NavBar
-    @month={{@model.month}}
-    @year={{@model.year}}
-  />
+  <div class="shrink-0">
+    <NavBar
+      @month={{@model.month}}
+      @year={{@model.year}}
+      />
+  </div>
   <div class="flex grow">
     <div class="grow p-4">
       <FullCalendar
