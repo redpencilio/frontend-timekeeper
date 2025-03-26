@@ -1,48 +1,23 @@
-<div class="h-full bg-zinc-800 text-white flex flex-col">
-  <div
-    class="px-6 py-4 flex items-center justify-between"
-  >
-    <LinkTo @route="year.month" @models={{array (sub @year 1) 12}}>
-      {{svg-jar "chevron-left" class="h-5 w-5"}}
+<div class="group flex h-12 items-center border-b">
+  <div class="mx-4 flex h-full grow items-center justify-between">
+    <LinkTo
+      @route="year.month"
+      @models={{this.todayRouteModel}}
+      class="box-border rounded px-2 py-1.5 font-normal text-red-700 hover:bg-gray-100"
+    >
+      Today
     </LinkTo>
-    <div class="font-medium text-white">{{@year}}</div>
-    <LinkTo @route="year.month" @models={{array (add @year 1) 1}}>
-      {{svg-jar "chevron-right" class="h-5 w-5"}}
-    </LinkTo>
-  </div>
-
-  <div class="flex-grow px-6 py-4 flex flex-col justify-between">
-    <ul class="space-y-4">
-      {{#each this.months as |month|}}
-        <li class="flex items-center justify-between space-x-12">
-          <LinkTo
-            @route="year.month"
-            @models={{array @year month.humanNumber}}
-            class="text-sm tracking-wide grow"
-          >
-            {{month.label}}
-          </LinkTo>
-          <span>
-            <TimesheetStatusIcon @timesheet={{month.timesheet}} />
-          </span>
-        </li>
-      {{/each}}
-    </ul>
-
-    <div>
-      {{#if (user-may "manage-users")}}
-        <LinkTo @route="admin.users" class="text-sm tracking-wide flex items-center space-x-2">
-          {{svg-jar "people" class="size-4"}}
-          <span>Users</span>
-        </LinkTo>
-      {{/if}}
+    <MonthSelector @year={{@year}} @month={{@month}} />
+    <div class="flex items-center justify-between">
+      <LinkTo
+        class="box-border rounded p-2 text-sm font-medium text-red-700 hover:bg-gray-100"
+        @route="profile"
+      >
+        <div class="flex items-center gap-2">
+          {{svg-jar "person-circle"}}
+          {{person-first-name this.userProfile.user.name}}
+        </div>
+      </LinkTo>
     </div>
-  </div>
-
-  <div class="px-6 py-3 flex items-center justify-between border-red-500 border-t-2">
-    <LinkTo class="text-sm text-white font-medium" @route="profile">
-      {{this.userProfile.user.name}}
-    </LinkTo>
-    <MuLogout />
   </div>
 </div>

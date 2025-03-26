@@ -17,8 +17,8 @@ import {
 } from 'date-fns';
 import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
-import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
 import taskName from 'frontend-timekeeper/helpers/task-name';
+import Duration from '../utils/duration';
 import svgJar from 'ember-svg-jar/helpers/svg-jar';
 
 const sortEvents = (event1, event2) => {
@@ -115,11 +115,7 @@ export default class FullCalendarComponent extends Component {
       // General calendar settings
       plugins: [interactionPlugin, dayGridPlugin],
       initialView: 'dayGridMonth',
-      headerToolbar: {
-        start: null,
-        center: 'title',
-        end: null,
-      },
+      headerToolbar: false,
       firstDay: 1,
       businessHours: {
         daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday (0=Sunday)
@@ -200,15 +196,12 @@ export default class FullCalendarComponent extends Component {
     );
     if (workLogs.length) {
       const totalDuration = workLogs
-        .map((workLog) => workLog.duration)
-        .reduce(
-          (acc, duration) => ({
-            hours: acc.hours + duration.hours,
-            minutes: acc.minutes + duration.minutes,
-          }),
-          { hours: 0, minutes: 0 },
-        );
-      const { hours, minutes } = normalizeDuration(totalDuration);
+      .map((workLog) => workLog.duration)
+      .reduce(
+        (acc, duration) => acc.add(duration),
+        new Duration(),
+      );
+      const { hours, minutes } = totalDuration.normalized();
 
       return {
         html: /*html*/ `

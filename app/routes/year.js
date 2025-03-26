@@ -1,16 +1,14 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
-import { startOfYear, startOfMonth, endOfMonth } from 'date-fns';
-import { monthsInYear } from 'date-fns/constants';
+import { startOfYear } from 'date-fns';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
-import constants from 'frontend-timekeeper/constants';
-const { TIMESHEET_STATUSES } = constants;
 
 export default class YearRoute extends Route {
   @service router;
   @service session;
   @service store;
   @service userProfile;
+  @service('timesheets') timesheetsService;
 
   async beforeModel(transition) {
     this.session.requireAuthentication(transition, 'login');
@@ -26,35 +24,21 @@ export default class YearRoute extends Route {
   }
 
   async model() {
+    const timesheets = await this.timesheetsService.getForYear(this.year);
+
     const firstOfYear = startOfYear(new Date(this.year, 0));
     const firstOfNextYear = startOfYear(new Date(this.year + 1, 0));
-    const timesheets = await this.store.queryAll('timesheet', {
-      sort: 'start',
-      'filter[:gte:start]': formatDate(firstOfYear),
-      'filter[:lt:start]': formatDate(firstOfNextYear),
+    const holidayCounters = await this.store.queryAll('quantity', {
+      'filter[:gte:valid-from]': formatDate(firstOfYear),
+      'filter[:lte:valid-till]': formatDate(firstOfNextYear),
       'filter[person][:id:]': this.userProfile.user.id,
+      include: 'quantity-kind',
     });
-
-    // Create draft records for missing timesheets
-    const draftTimesheets = [];
-    for (let i = 0; i < monthsInYear; i++) {
-      const timesheetForMonth = timesheets.find(
-        (timesheet) => timesheet.start.getMonth() === i,
-      );
-      if (!timesheetForMonth) {
-        const timesheet = this.store.createRecord('timesheet', {
-          status: TIMESHEET_STATUSES.DRAFT,
-          start: startOfMonth(Date.UTC(this.year, i)),
-          end: endOfMonth(Date.UTC(this.year, i)),
-          person: this.userProfile.user,
-        });
-        draftTimesheets.push(timesheet);
-      }
-    }
 
     return {
       year: this.year,
-      timesheets: [...timesheets.toArray(), ...draftTimesheets],
+      timesheets,
+      holidayCounters,
     };
   }
 }

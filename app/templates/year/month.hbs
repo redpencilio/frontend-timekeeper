@@ -1,37 +1,53 @@
-<div class="grow p-4">
-  <FullCalendar
-    @isDisabled={{this.timesheet.isExported}}
-    @onDeleteWorkLog={{this.deleteWorkLog}}
-    @onUndoDeleteWorkLog={{this.undoDeleteWorkLog}}
-    @onSave={{perform this.save}}
-    @workLogs={{@model.workLogs}}
-    @firstDayOfMonth={{this.firstDayOfMonth}}
-  />
-</div>
-<button
-  type="button"
-  class="absolute right-0 top-5 rounded-l-full border bg-white p-2 shadow xl:collapse"
-  {{on "click" (set this "showSummary" true)}}
->{{svg-jar "list" class="size-7"}}</button>
-<div
-  class="absolute right-0 z-10 rounded-l-xl border bg-white shadow-lg transition-transform duration-150 ease-in-out xl:static xl:rounded-none xl:border-none xl:shadow-none xl:transition-none
-    {{if this.showSummary 'translate-0' 'translate-x-full'}}
-    h-full w-96 xl:translate-x-0"
->
-  <button
-    type="button"
-    class="absolute right-3 top-5 rounded-full p-2 hover:bg-gray-100 xl:collapse"
-    {{on "click" (set this "showSummary" false)}}
-  >{{svg-jar "x-lg" class="size-4 fill-gray-600"}}</button>
-  <div
-    class="bg-white-100 mr-2 flex h-full flex-col border-solid border-red-600"
-  >
-    <TimesheetActions
-      @timesheet={{this.timesheet}}
-      @onStatusChanged={{this.changeTimesheetStatus}}
-      class="-mb-6 mt-6"
-    />
-    <h1 class="mb-3 mt-6 px-4 text-xl font-semibold text-red-700">Summary</h1>
-    <Stats @workLogs={{@model.workLogs}} />
+<div class="flex h-full flex-col">
+  <div class="shrink-0">
+    <NavBar
+      @month={{@model.month}}
+      @year={{@model.year}}
+      />
+  </div>
+  <div class="flex grow">
+    <div class="grow p-4">
+      <FullCalendar
+        @isDisabled={{this.timesheet.isExported}}
+        @onDeleteWorkLog={{this.deleteWorkLog}}
+        @onUndoDeleteWorkLog={{this.undoDeleteWorkLog}}
+        @onSave={{perform this.save}}
+        @workLogs={{@model.workLogs}}
+        @firstDayOfMonth={{this.firstDayOfMonth}}
+      />
+    </div>
+    <button
+      type="button"
+      class="absolute right-0 top-12 rounded-l-full border bg-white p-2 shadow xl:collapse"
+      {{on "click" (set this "showSummary" true)}}>
+      {{svg-jar "list" class="size-7"}}
+    </button>
+    <div class="absolute right-0 z-10 border bg-white shadow-lg transition-transform duration-150 ease-in-out xl:static xl:border-none xl:shadow-none xl:transition-none {{if this.showSummary 'translate-0' 'translate-x-full'}} h-full w-96 xl:translate-x-0">
+      <button
+        type="button"
+        class="absolute right-3 top-5 rounded-full p-2 hover:bg-gray-100 xl:collapse"
+        {{on "click" (set this "showSummary" false)}}>
+        {{svg-jar "x-lg" class="size-4 fill-gray-600"}}
+      </button>
+      <div class="bg-white-100 mr-2 flex h-full flex-col border-solid border-red-600">
+        <div class="ml-2 flex h-[82px] items-center justify-start">
+          <HolidaysOverview
+            @year={{@model.year}}
+            @holidayCounters={{@model.holidayCounters}}
+          />
+        </div>
+        {{#if this.timesheet}}
+          <TimesheetActions
+            @timesheet={{this.timesheet}}
+            @onStatusChanged={{this.changeTimesheetStatus}}
+            class="-mb-6 mt-6"
+            />
+        {{/if}}
+        <h1
+          class="mb-3 mt-6 px-4 text-xl font-semibold text-red-700"
+        >Summary</h1>
+        <Stats @workLogs={{@model.workLogs}} />
+      </div>
+    </div>
   </div>
 </div>
