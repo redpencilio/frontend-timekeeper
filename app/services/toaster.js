@@ -53,8 +53,19 @@ export default class ToasterService extends Service {
     this.closeBy((toast) => toast.contextKey === contextKey);
     const actionToast = { message: actionText, contextKey, options: {} };
     this.displayToast.perform(actionToast);
-    // Save the return value to pass it to the undo action
-    const actionReturnValue = await action();
+    let actionReturnValue = null;
+    try {
+      // Save the return value to pass it to the undo action
+      actionReturnValue = await action();
+    } catch (error) {
+      this.close(actionToast);
+      this.displayToast.perform({
+        message: 'Something went wrong. Please retry later.',
+        contextKey,
+        options: {},
+      });
+      return;
+    }
     // If the toast was already closed by someone else
     // we don't show any follow up toasts (sorry, hacky)
     if (!this.toasts.includes(actionToast)) return;
@@ -71,7 +82,17 @@ export default class ToasterService extends Service {
           options: {},
         };
         this.displayToast.perform(undoingToast);
-        await undoAction(actionReturnValue);
+        try {
+          await undoAction(actionReturnValue);
+        } catch (error) {
+          this.close(undoingToast);
+          this.displayToast.perform({
+            message: 'Something went wrong. Could not undo.',
+            contextKey,
+            options: {},
+          });
+          return;
+        }
         // If the toast was already closed by someone else
         // we don't show any follow up toasts (sorry, hacky)
         if (!this.toasts.includes(undoingToast)) return;
