@@ -37,7 +37,7 @@ export default class HolidaysOverviewComponent extends Component {
   @use holidaysUsedLatest = keepLatest({
     value: () => this.holidaysUsed.value,
     when: () => this.holidaysUsed.isLoading,
-  })
+  });
 
   get sortedCounters() {
     return (this.args.holidayCounters ?? [])
