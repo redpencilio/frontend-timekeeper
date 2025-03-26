@@ -1,10 +1,17 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { localCopy } from 'tracked-toolbox';
-import { tracked } from '@glimmer/tracking';
+import { offset } from '@floating-ui/dom';
 
 export default class WorkLogNotesPopoverComponent extends Component {
   @localCopy('args.workLog.note', null) noteContent;
+
+  floatingUIMiddleware = [
+    offset({
+      mainAxis: 8,
+      crossAxis: -8,
+    }),
+  ];
 
   saveNote = (event) => {
     event.preventDefault();

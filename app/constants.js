@@ -14,4 +14,5 @@ export default {
     EMPLOYEE: 'http://mu.semte.ch/user-groups/employee',
   },
   KIMAI_SERVICE_HOMEPAGE: 'http://kimai.redpencil.io',
+  HOLIDAY_TASK_LABEL: 'Holiday', // We use the task name as identifier
 };

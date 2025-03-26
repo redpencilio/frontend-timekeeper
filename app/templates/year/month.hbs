@@ -26,6 +26,12 @@
   <div
     class="bg-white-100 mr-2 flex h-full flex-col border-solid border-red-600"
   >
+    <div class="ml-2 flex h-[82px] items-center justify-start">
+      <HolidaysOverview
+        @year={{@model.year}}
+        @holidayCounters={{@model.holidayCounters}}
+      />
+    </div>
     <TimesheetActions
       @timesheet={{this.timesheet}}
       @onStatusChanged={{this.changeTimesheetStatus}}
@@ -33,5 +39,6 @@
     />
     <h1 class="mb-3 mt-6 px-4 text-xl font-semibold text-red-700">Summary</h1>
     <Stats @workLogs={{@model.workLogs}} />
+
   </div>
 </div>
