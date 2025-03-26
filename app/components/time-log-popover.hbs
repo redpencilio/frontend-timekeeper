@@ -1,7 +1,8 @@
 <Popover
   {{on "keydown" this.handleKeydown}}
-  class="work-log-popover"
+  class="work-log-popover animate-fly-right w-96 shadow-xl"
   @anchorElement={{@anchorElement}}
+  @middleware={{this.floatingUIMiddleware}}
 >
   <div class="mx-4 mb-3">
     <div role="none">
@@ -88,7 +89,7 @@
           <Button
             type="submit"
             @isLoading={{@onSave.isRunning}}
-            @skin={{if @isOverwrite "error" "primary"}}
+            @skin="primary"
           >
             {{if @isOverwrite "Overwrite" "Save"}}
           </Button>

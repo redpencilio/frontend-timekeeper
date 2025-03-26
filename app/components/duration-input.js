@@ -1,10 +1,10 @@
 import Component from '@glimmer/component';
 import { localCopy } from 'tracked-toolbox';
 import { modifier } from 'ember-modifier';
-import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
+import Duration from 'frontend-timekeeper/utils/duration';
 
 const getDurationFromString = (input) => {
-  let result = { hours: 0, minutes: 0 };
+  const result = new Duration({ hours: 0, minutes: 0 });
 
   if (typeof input !== 'string') {
     throw new Error('Input must be a string');
@@ -36,7 +36,7 @@ const getDurationFromString = (input) => {
     }
   }
 
-  return normalizeDuration(result);
+  return result.normalized();
 };
 
 const blurListener = (event) => {

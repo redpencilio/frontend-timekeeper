@@ -14,7 +14,7 @@ module.exports = {
       },
       keyframes: {
         flyInFromLeft: {
-          '0%': { transform: 'translateX(-100%)', opacity: '0' },
+          '0%': { transform: 'translateX(-10%)', opacity: '0' },
           '100%': { transform: 'translateX(0)', opacity: '1' },
         },
         flyInFromRight: {
@@ -22,12 +22,16 @@ module.exports = {
           '100%': { transform: 'translateX(0)', opacity: '1' },
         },
         flyInFromBottom: {
-          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '0%': { transform: 'translateY(10%)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
         flyInFromTop: {
-          '0%': { transform: 'translateY(-100%)', opacity: '0' },
+          '0%': { transform: 'translateY(-10%)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
       animation: {
@@ -35,6 +39,7 @@ module.exports = {
         'fly-right': 'flyInFromRight 0.1s ease-out',
         'fly-bottom': 'flyInFromBottom 0.1s ease-out',
         'fly-top': 'flyInFromTop 0.1s ease-out',
+        'fade-in': 'fadeIn 0.1s ease-in-out',
       },
     },
   },

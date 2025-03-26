@@ -14,10 +14,26 @@
         @firstDayOfMonth={{this.firstDayOfMonth}}
       />
     </div>
-    <div class="h-full w-96">
-      <div
-        class="bg-white-100 mr-2 flex h-full flex-col border-solid border-red-600"
-      >
+    <button
+      type="button"
+      class="absolute right-0 top-12 rounded-l-full border bg-white p-2 shadow xl:collapse"
+      {{on "click" (set this "showSummary" true)}}>
+      {{svg-jar "list" class="size-7"}}
+    </button>
+    <div class="absolute right-0 z-10 border bg-white shadow-lg transition-transform duration-150 ease-in-out xl:static xl:border-none xl:shadow-none xl:transition-none {{if this.showSummary 'translate-0' 'translate-x-full'}} h-full w-96 xl:translate-x-0">
+      <button
+        type="button"
+        class="absolute right-3 top-5 rounded-full p-2 hover:bg-gray-100 xl:collapse"
+        {{on "click" (set this "showSummary" false)}}>
+        {{svg-jar "x-lg" class="size-4 fill-gray-600"}}
+      </button>
+      <div class="bg-white-100 mr-2 flex h-full flex-col border-solid border-red-600">
+        <div class="ml-2 flex h-[82px] items-center justify-start">
+          <HolidaysOverview
+            @year={{@model.year}}
+            @holidayCounters={{@model.holidayCounters}}
+          />
+        </div>
         <TimesheetActions
           @timesheet={{this.timesheet}}
           @onStatusChanged={{this.changeTimesheetStatus}}

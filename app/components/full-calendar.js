@@ -17,8 +17,8 @@ import {
 } from 'date-fns';
 import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
-import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
 import taskName from 'frontend-timekeeper/helpers/task-name';
+import Duration from '../utils/duration';
 import svgJar from 'ember-svg-jar/helpers/svg-jar';
 
 const sortEvents = (event1, event2) => {
@@ -196,15 +196,12 @@ export default class FullCalendarComponent extends Component {
     );
     if (workLogs.length) {
       const totalDuration = workLogs
-        .map((workLog) => workLog.duration)
-        .reduce(
-          (acc, duration) => ({
-            hours: acc.hours + duration.hours,
-            minutes: acc.minutes + duration.minutes,
-          }),
-          { hours: 0, minutes: 0 },
-        );
-      const { hours, minutes } = normalizeDuration(totalDuration);
+      .map((workLog) => workLog.duration)
+      .reduce(
+        (acc, duration) => acc.add(duration),
+        new Duration(),
+      );
+      const { hours, minutes } = totalDuration.normalized();
 
       return {
         html: /*html*/ `
@@ -384,14 +381,15 @@ export default class FullCalendarComponent extends Component {
     });
   }
 
-  @action
-  saveNote(workLog, noteContent) {
+  saveNote = (workLog, noteContent) => {
     const previousContent = workLog.note;
-    workLog.note = noteContent.trim();
+    const trimmedContent = noteContent?.trim();
+    const isDelete = !trimmedContent;
+    workLog.note = trimmedContent;
     this.toaster.actionWithUndo({
-      actionText: 'Updating note…',
-      actionDoneText: 'Note saved.',
-      actionUndoneText: 'Note reverted.',
+      actionText: isDelete ? 'Deleting note…' : 'Updating note…',
+      actionDoneText: isDelete ? 'Note deleted.' : 'Note saved.',
+      actionUndoneText: isDelete ? 'Note restored.' : 'Note reverted.',
       action: async () => await workLog.save(),
       undoAction: async () => {
         workLog.note = previousContent;
@@ -403,7 +401,7 @@ export default class FullCalendarComponent extends Component {
     });
     this.showNotesFor = null;
     this.calendar.render();
-  }
+  };
 
   handleKeydown(event) {
     if (event.key === 'Escape' || event.key === 'Esc') {

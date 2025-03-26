@@ -13,12 +13,9 @@ export default class TimeLogPopoverComponent extends Component {
   @action
   moveToScreenPos() {
     computePosition(this.args.anchorElement, this.elementRef, {
-      placement: 'right-start',
+      placement: this.args.placement ?? 'right-start',
       middleware: [
-        offset({
-          mainAxis: 8,
-          crossAxis: -8,
-        }),
+        ...(this.args.middleware ?? []),
         shift(),
         size({
           apply({ availableWidth, availableHeight, elements }) {
