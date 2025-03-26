@@ -12,7 +12,7 @@ Router.map(function () {
   });
   this.route('admin', function () {
     this.route('users', function () {
-      this.route('user', { path: '/:user' }, function () {
+      this.route('user', { path: '/:user_id' }, function () {
         this.route('holidays', function () {
           this.route('year', { path: '/:year' });
         });
