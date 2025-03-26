@@ -1,5 +1,5 @@
 import Service, { service } from '@ember/service';
-import { startOfMonth, startOfYear, endOfMonth } from 'date-fns';
+import { addMonths, startOfMonth, startOfYear, endOfMonth } from 'date-fns';
 import { monthsInYear } from 'date-fns/constants';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import constants from 'frontend-timekeeper/constants';
@@ -12,15 +12,15 @@ export default class TimesheetsService extends Service {
   async getForYear(year) {
     const firstOfYear = startOfYear(new Date(year, 0));
     const firstOfNextYear = startOfYear(new Date(year + 1, 0));
-    const timesheets = await this.store.queryAll('timesheet', {
+    // Ensure persisted timesheets are loaded in the Ember Data store
+    await this.store.queryAll('timesheet', {
       sort: 'start',
       'filter[:gte:start]': formatDate(firstOfYear),
       'filter[:lt:start]': formatDate(firstOfNextYear),
       'filter[person][:id:]': this.userProfile.user.id,
     });
 
-    // Create draft records for missing timesheets
-    const draftTimesheets = [];
+    const timesheets = [];
     for (let i = 0; i < monthsInYear; i++) {
       const timesheet = this.store
         .peekAll('timesheet')
@@ -29,17 +29,30 @@ export default class TimesheetsService extends Service {
             timesheet.start.getMonth() === i &&
             timesheet.start.getFullYear() === year,
         );
-      if (!timesheet) {
+      if (timesheet) {
+        timesheets.push(timesheet);
+      } else {
+        // Create draft records for missing timesheets
         const draftTimesheet = this.store.createRecord('timesheet', {
           status: TIMESHEET_STATUSES.DRAFT,
           start: startOfMonth(Date.UTC(year, i)),
           end: endOfMonth(Date.UTC(year, i)),
           person: this.userProfile.user,
         });
-        draftTimesheets.push(draftTimesheet);
+        timesheets.push(draftTimesheet);
       }
     }
 
-    return [...timesheets.toArray(), ...draftTimesheets];
+    return timesheets;
+  }
+
+  async getForMonth(year, month) {
+    const firstOfMonth = startOfMonth(Date.UTC(year, month));
+    const firstOfNextMonth = addMonths(firstOfMonth, 1);
+    return await this.store.queryOne('timesheet', {
+      'filter[:gte:start]': formatDate(firstOfMonth),
+      'filter[:lt:start]': formatDate(firstOfNextMonth),
+      'filter[person][:id:]': this.userProfile.user.id,
+    });
   }
 }
