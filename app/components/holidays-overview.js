@@ -42,7 +42,8 @@ export default class HolidaysOverviewComponent extends Component {
   get sortedCounters() {
     return (this.args.holidayCounters ?? [])
       .slice()
-      .sort((counterA, counterB) => counterB.value.cmp(counterA.value));
+      .sort((counterA, counterB) => counterB.value.cmp(counterA.value))
+      .filter((counter) => new Duration(counter.value).asMinutes > 0);
   }
 
   get holidaysTotal() {

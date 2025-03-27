@@ -10,7 +10,8 @@ export default function formatDuration(duration, format = 'hm') {
   } else if (format === 'compact') {
     return `${hours}:${minutes.toString().padStart(2, '0')}`;
   } else if (format === 'dh') {
-    const days = Math.floor(hours / 8);
+    const rounding = hours < 0 ? Math.ceil : Math.floor;
+    const days = rounding(hours / 8);
     const remainingHours = hours % 8;
     return `${days}d ${remainingHours}h`
   } else {
