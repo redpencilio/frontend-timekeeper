@@ -1,47 +1,84 @@
-<div class="py-2 px-8 overflow-auto grow">
-  <div>
-    {{#if @workLogs}}
-      <ul class="space-y-6">
-        {{#each-in this.projectData as |projectId data|}}
-          <li>
-            <div class="flex items-center justify-between space-x-4">
-              <div class="flex items-center space-x-2">
-                <span
-                  class="inline-block w-2 h-2 rounded-full"
-                  {{bg-color data.color}}
-                ></span>
-                <span class="text-sm font-normal">
-                  {{this.getProjectNameById projectId}}
-                </span>
-              </div>
-              <div class="text-sm font-normal">{{data.totalDuration.hours}}h
-                {{data.totalDuration.minutes}}m</div>
-            </div>
+<div class="w-full grow px-8 py-2 overflow-scroll">
+  {{#if this.workLogsWithContext.isResolved}}
+    <ul class="space-y-5">
+      {{#each this.tasksService.groupedTasks as |customerGroup|}}
+        {{#let
+          (this.workedHoursForCustomer customerGroup.customer)
+          as |customerDuration|
+        }}
+          {{#if (gt customerDuration.asMinutes 0)}}
+            <li>
+              <div class="flex w-full items-center justify-between space-x-4">
+                <div class="flex items-center space-x-2">
+                  <span
+                    class="inline-block h-2 w-2 shrink-0 rounded-full"
+                    {{bg-color customerGroup.customer.color}}
+                  ></span>
+                  <span class="shrink text-sm font-normal">
+                    {{customerGroup.customer.name}}
+                  </span>
+                </div>
 
-            {{#if data.subProjects}}
-              {{#unless (this.shouldHide data.subProjects)}}
+                <div class="shrink-0 text-sm font-normal">
+                  {{format-duration customerDuration}}
+                </div>
+              </div>
+              {{#if customerGroup.tasks}}
                 <ul class="ml-4 mt-2 space-y-2">
-                  {{#each-in data.subProjects as |subprojectId subdata|}}
-                    <li class="flex items-center justify-between space-x-2">
-                      <span class="text-sm">
-                        {{this.getSubProjectNameById subprojectId}}
-                      </span>
-                      <span class="text-sm">
-                        {{subdata.totalDuration.hours}}h
-                        {{subdata.totalDuration.minutes}}m
-                      </span>
-                    </li>
-                  {{/each-in}}
+                  {{#each customerGroup.tasks as |taskGroup|}}
+                    {{#let
+                      (this.workedHoursForTask taskGroup.task)
+                      as |taskDuration|
+                    }}
+                      {{#if (gt taskDuration.asMinutes 0)}}
+                        <li class="flex items-center justify-between space-x-2">
+                          <span class="text-sm">
+                            {{task-name taskGroup.task}}
+                          </span>
+                          <span class="shrink-0 text-sm">
+                            {{format-duration taskDuration}}
+                          </span>
+                        </li>
+                        {{#if
+                          (and
+                            (not (this.shouldHide taskGroup)) taskGroup.subTasks
+                          )
+                        }}
+                          <ul class="ml-2 space-y-1">
+                            {{#each taskGroup.subTasks as |subTask|}}
+                              {{#let
+                                (this.workedHoursForSubTask subTask.task)
+                                as |subTaskDuration|
+                              }}
+                                {{#if (gt subTaskDuration.asMinutes 0)}}
+                                  <li
+                                    class="flex items-center justify-between space-x-2 text-sm text-gray-700"
+                                  >
+                                    <span class="text-sm">
+                                      {{task-name subTask.task}}
+                                    </span>
+                                    <span class="shrink-0 text-sm">
+                                      {{format-duration subTaskDuration}}
+                                    </span>
+                                  </li>
+                                {{/if}}
+                              {{/let}}
+                            {{/each}}
+                          </ul>
+                        {{/if}}
+                      {{/if}}
+                    {{/let}}
+                  {{/each}}
                 </ul>
-              {{/unless}}
-            {{/if}}
-          </li>
-        {{/each-in}}
-      </ul>
-    {{else}}
-      <p class="text-gray-500 text-sm italic">No work was logged yet this month.</p>
-    {{/if}}
-  </div>
+              {{/if}}
+            </li>
+          {{/if}}
+        {{/let}}
+      {{/each}}
+    </ul>
+  {{else}}
+    <p class="text-sm italic text-gray-500">No work was logged yet this month.</p>
+  {{/if}}
 </div>
 <div class="pt-2 pb-8 px-8">
   <div class="h-0 mt-2 border-red-800 border-t-2 border-dashed"></div>
