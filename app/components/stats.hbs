@@ -1,4 +1,4 @@
-<div class="w-full grow px-8 py-2 overflow-scroll">
+<div class="w-full grow overflow-scroll px-8 py-2">
   {{#if this.workLogsWithContext.isResolved}}
     <ul class="space-y-5">
       {{#each this.tasksService.groupedTasks as |customerGroup|}}
@@ -8,18 +8,20 @@
         }}
           {{#if (gt customerDuration.asMinutes 0)}}
             <li>
-              <div class="flex w-full items-center justify-between space-x-4">
+              <div
+                class="flex w-full items-center justify-between space-x-4 text-sm font-normal"
+              >
                 <div class="flex items-center space-x-2">
                   <span
-                    class="inline-block h-2 w-2 shrink-0 rounded-full"
+                    class="inline-block size-2 shrink-0 rounded-full"
                     {{bg-color customerGroup.customer.color}}
                   ></span>
-                  <span class="shrink text-sm font-normal">
+                  <span>
                     {{customerGroup.customer.name}}
                   </span>
                 </div>
 
-                <div class="shrink-0 text-sm font-normal">
+                <div class="shrink-0">
                   {{format-duration customerDuration}}
                 </div>
               </div>
@@ -31,11 +33,11 @@
                       as |taskDuration|
                     }}
                       {{#if (gt taskDuration.asMinutes 0)}}
-                        <li class="flex items-center justify-between space-x-2">
-                          <span class="text-sm">
+                        <li class="flex items-center justify-between space-x-2 text-sm">
+                          <span>
                             {{task-name taskGroup.task}}
                           </span>
-                          <span class="shrink-0 text-sm">
+                          <span>
                             {{format-duration taskDuration}}
                           </span>
                         </li>
@@ -54,10 +56,8 @@
                                   <li
                                     class="flex items-center justify-between space-x-2 text-sm text-gray-700"
                                   >
-                                    <span class="text-sm">
-                                      {{task-name subTask.task}}
-                                    </span>
-                                    <span class="shrink-0 text-sm">
+                                    {{task-name subTask.task}}
+                                    <span class="shrink-0">
                                       {{format-duration subTaskDuration}}
                                     </span>
                                   </li>
@@ -82,9 +82,8 @@
 </div>
 <div class="px-8 pb-8 pt-2">
   <div class="mt-2 h-0 border-t-2 border-dashed border-red-700"></div>
-  <div class="mt-4 flex items-center justify-between text-red-700">
-    <span class="text-sm font-normal uppercase tracking-wide">Total</span>
-    <span class="text-sm font-normal">{{this.totalDuration.hours}}h
-      {{this.totalDuration.minutes}}m</span>
+  <div class="mt-4 flex items-center justify-between text-red-700 text-sm font-normal">
+    <span class="uppercase tracking-wide">Total</span>
+    <span>{{format-duration this.totalDuration}}</span>
   </div>
 </div>
