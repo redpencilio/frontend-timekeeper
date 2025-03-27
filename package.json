@@ -13,7 +13,7 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "npm run postcss:build && ember build --environment=production",
+    "build": "cp ./public/assets/favicon-prod.ico ./public/assets/favicon.ico && npm run postcss:build && ember build --environment=production",
     "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\"",
     "lint:css": "stylelint \"**/*.css\"",
     "lint:css:fix": "concurrently \"npm:lint:css -- --fix\"",
@@ -24,7 +24,7 @@
     "lint:js:fix": "eslint . --fix",
     "postcss:build": "postcss ./app/styles/app.css -o ./public/assets/frontend-timekeeper.css",
     "release": "release-it",
-    "start": "ember serve",
+    "start": "cp ./public/assets/favicon-dev.ico ./public/assets/favicon.ico && ember serve",
     "test": "concurrently \"npm:lint\" \"npm:test:*\" --names \"lint,test:\"",
     "test:ember": "ember test"
   },
@@ -53,7 +53,7 @@
     "broccoli-asset-rev": "^3.0.0",
     "concurrently": "^8.2.2",
     "ember-auto-import": "^2.7.4",
-    "ember-basic-dropdown": "^8.3.0",
+    "ember-basic-dropdown": "^8.6.0",
     "ember-cli": "~5.10.0",
     "ember-cli-app-version": "^6.0.1",
     "ember-cli-babel": "^8.2.0",
@@ -72,6 +72,7 @@
     "ember-page-title": "^8.2.3",
     "ember-power-select": "^8.6.0",
     "ember-qunit": "^8.1.0",
+    "ember-ref-bucket": "^5.0.7",
     "ember-resolver": "^11.0.1",
     "ember-set-helper": "^3.0.1",
     "ember-simple-auth": "^6.1.0",

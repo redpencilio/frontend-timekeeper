@@ -6,6 +6,10 @@
  * Full calendar
  */
 
+body {
+  overflow-x: hidden;
+}
+
 :root {
   --fc-highlight-color: rgba(252, 165, 165, 0.2);
 }
@@ -43,7 +47,7 @@
  */
 
 .ember-power-select-trigger {
-  @apply appearance-none py-2 px-1 w-full min-h-9 text-sm border border-red-300 rounded-md bg-white opacity-100;
+  @apply appearance-none py-2 px-1 w-full min-h-9 text-sm border rounded-md bg-white opacity-100;
 }
 
 .ember-power-select-trigger.ember-power-select-multiple-trigger {
@@ -76,11 +80,11 @@
 }
 
 .ember-power-select-option[aria-current="true"] {
-  @apply bg-gray-200 text-red-900;
+  @apply bg-gray-200;
 }
 
 .ember-power-select-option[aria-selected="true"] {
-  @apply bg-indigo-100 text-red-900;
+  @apply bg-indigo-100;
 }
 
 .ember-power-select-clear-btn {
@@ -135,4 +139,16 @@
 
 .active {
   @apply font-medium;
+}
+
+/**
+ * Utility Classes
+ */
+
+.hover-appear {
+  @apply opacity-0 transition-opacity duration-150 ease-in-out hover:opacity-100;
+}
+
+.group-hover-appear {
+  @apply opacity-0 transition-opacity duration-150 ease-in-out group-hover:opacity-100;
 }

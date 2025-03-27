@@ -1,12 +1,10 @@
 import Component from '@glimmer/component';
-import { on } from '@ember/modifier';
 import { localCopy } from 'tracked-toolbox';
-import selectOn from 'frontend-timekeeper/modifiers/select-on';
 import { modifier } from 'ember-modifier';
-import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
+import Duration from 'frontend-timekeeper/utils/duration';
 
 const getDurationFromString = (input) => {
-  let result = { hours: 0, minutes: 0 };
+  const result = new Duration({ hours: 0, minutes: 0 });
 
   if (typeof input !== 'string') {
     throw new Error('Input must be a string');
@@ -38,7 +36,7 @@ const getDurationFromString = (input) => {
     }
   }
 
-  return normalizeDuration(result);
+  return result.normalized();
 };
 
 const blurListener = (event) => {
@@ -53,15 +51,15 @@ const blurListener = (event) => {
   }
 };
 
-const durationInputModifier = modifier((element) => {
-  element.addEventListener('blur', blurListener);
-  return () => {
-    element.removeEventListener('blur', blurListener);
-  };
-});
-
 export default class DurationInput extends Component {
   @localCopy('args.value') value = { hours: 0, minutes: 0 };
+
+  durationInputModifier = modifier((element) => {
+    element.addEventListener('blur', blurListener);
+    return () => {
+      element.removeEventListener('blur', blurListener);
+    };
+  });
 
   get textValue() {
     const { hours, minutes } = this.value;
@@ -78,17 +76,4 @@ export default class DurationInput extends Component {
       this.args.onChange?.(newValue);
     } catch (e) {}
   };
-
-  <template>
-    <input
-      type='text'
-      class='h-10 w-20 mt-1 block border-gray-200 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-      value={{this.textValue}}
-      {{on 'change' this.onChange}}
-      {{selectOn 'click'}}
-      {{durationInputModifier}}
-      required={{this.isRequired}}
-      ...attributes
-    />
-  </template>
 }

@@ -17,8 +17,8 @@ import {
 } from 'date-fns';
 import { task as ecTask } from 'ember-concurrency';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
-import { normalizeDuration } from 'frontend-timekeeper/utils/normalize-duration';
 import taskName from 'frontend-timekeeper/helpers/task-name';
+import Duration from '../utils/duration';
 import svgJar from 'ember-svg-jar/helpers/svg-jar';
 
 const sortEvents = (event1, event2) => {
@@ -115,11 +115,7 @@ export default class FullCalendarComponent extends Component {
       // General calendar settings
       plugins: [interactionPlugin, dayGridPlugin],
       initialView: 'dayGridMonth',
-      headerToolbar: {
-        start: null,
-        center: 'title',
-        end: null,
-      },
+      headerToolbar: false,
       firstDay: 1,
       businessHours: {
         daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday (0=Sunday)
@@ -200,15 +196,12 @@ export default class FullCalendarComponent extends Component {
     );
     if (workLogs.length) {
       const totalDuration = workLogs
-        .map((workLog) => workLog.duration)
-        .reduce(
-          (acc, duration) => ({
-            hours: acc.hours + duration.hours,
-            minutes: acc.minutes + duration.minutes,
-          }),
-          { hours: 0, minutes: 0 },
-        );
-      const { hours, minutes } = normalizeDuration(totalDuration);
+      .map((workLog) => workLog.duration)
+      .reduce(
+        (acc, duration) => acc.add(duration),
+        new Duration(),
+      );
+      const { hours, minutes } = totalDuration.normalized();
 
       return {
         html: /*html*/ `
@@ -304,7 +297,9 @@ export default class FullCalendarComponent extends Component {
     buttonsDiv.appendChild(stickyButton);
     buttonsDiv.appendChild(deleteButton);
     buttonsDiv.style.visibility = 'collapse';
-    container.appendChild(buttonsDiv);
+    if (!this.args.isDisabled) {
+      container.appendChild(buttonsDiv);
+    }
     container.onmouseenter = () => {
       buttonsDiv.style.visibility = 'visible';
     };
@@ -359,34 +354,44 @@ export default class FullCalendarComponent extends Component {
   async deleteWorkLog(workLog) {
     this.clearPopovers();
 
-    const workLogCopy = {
-      date: workLog.date,
-      duration: { ...workLog.duration },
-      task: await workLog.task,
-      person: await workLog.person,
-      timesheet: await workLog.timesheet,
-    };
+    // Remove the event visually
+    this.calendar
+      .getEvents()
+      .find((event) => event.extendedProps.workLog === workLog)
+      ?.remove();
 
     this.toaster.actionWithUndo({
       actionText: 'Deleting work log…',
       actionDoneText: 'Work log deleted.',
       actionUndoneText: 'Work log restored.',
-      action: async () => await this.args.onDeleteWorkLog?.(workLog),
-      undoAction: async () =>
+      action: async () => {
+        const workLogCopy = {
+          date: workLog.date,
+          duration: { ...workLog.duration },
+          task: await workLog.task,
+          person: await workLog.person,
+          timesheet: await workLog.timesheet,
+        };
+
+        await this.args.onDeleteWorkLog?.(workLog);
+        return workLogCopy;
+      },
+      undoAction: async (workLogCopy) =>
         await this.args.onUndoDeleteWorkLog?.(workLogCopy),
       undoTime: 4000,
       contextKey: 'event-edit-actions',
     });
   }
 
-  @action
-  saveNote(workLog, noteContent) {
+  saveNote = (workLog, noteContent) => {
     const previousContent = workLog.note;
-    workLog.note = noteContent.trim();
+    const trimmedContent = noteContent?.trim();
+    const isDelete = !trimmedContent;
+    workLog.note = trimmedContent;
     this.toaster.actionWithUndo({
-      actionText: 'Updating note…',
-      actionDoneText: 'Note saved.',
-      actionUndoneText: 'Note reverted.',
+      actionText: isDelete ? 'Deleting note…' : 'Updating note…',
+      actionDoneText: isDelete ? 'Note deleted.' : 'Note saved.',
+      actionUndoneText: isDelete ? 'Note restored.' : 'Note reverted.',
       action: async () => await workLog.save(),
       undoAction: async () => {
         workLog.note = previousContent;
@@ -398,7 +403,7 @@ export default class FullCalendarComponent extends Component {
     });
     this.showNotesFor = null;
     this.calendar.render();
-  }
+  };
 
   handleKeydown(event) {
     if (event.key === 'Escape' || event.key === 'Esc') {
