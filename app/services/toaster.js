@@ -64,7 +64,7 @@ export default class ToasterService extends Service {
         contextKey,
         options: {},
       });
-      return;
+      throw error;
     }
     // If the toast was already closed by someone else
     // we don't show any follow up toasts (sorry, hacky)
@@ -91,7 +91,7 @@ export default class ToasterService extends Service {
             contextKey,
             options: {},
           });
-          return;
+          throw error;
         }
         // If the toast was already closed by someone else
         // we don't show any follow up toasts (sorry, hacky)
