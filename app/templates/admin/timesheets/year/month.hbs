@@ -8,12 +8,14 @@
     </thead>
     <tbody class="divide-y divide-gray-200 bg-white">
       {{#each this.sortedUsersWithTimesheet as |userWithTimesheet|}}
-        <tr class="hover:bg-gray-100">
+        <tr class="hover:bg-gray-50">
           <td
             class="px-4 py-1 text-gray-900"
           >{{userWithTimesheet.user.name}}</td>
           <td class="border-l px-4 py-1 text-center">
-            <TimesheetStatusIcon @timesheet={{userWithTimesheet.timesheet}} />
+            <span class="inline-block align-middle">
+              <TimesheetStatusIcon @timesheet={{userWithTimesheet.timesheet}} />
+            </span>
           </td>
         </tr>
       {{/each}}
