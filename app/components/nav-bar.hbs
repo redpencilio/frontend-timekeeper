@@ -9,7 +9,7 @@
     </LinkTo>
     <MonthSelector @year={{@year}} @month={{@month}} />
     <div class="flex flex-row items-center">
-      {{#if (user-may "manage-users")}}
+      {{#if (or (user-may "manage-users") (user-may "manage-timesheets"))}}
         <LinkTo @route="admin.users" class="p-2 rounded text-red-700 hover:bg-gray-100">
           {{svg-jar "gear" class="h-4 w-4"}}
         </LinkTo>

@@ -9,21 +9,25 @@
         <span>Back</span>
       </LinkTo>
     </div>
-    <div>
-      <LinkTo
-        @route="admin.users"
-        class="flex items-center space-x-2 text-sm tracking-wide">
-        {{svg-jar "people" class="size-4"}}
-        <span>Users</span>
-      </LinkTo>
-    </div>
-    <div>
-      <LinkTo
-        @route="admin.timesheets"
-        class="flex items-center space-x-2 text-sm tracking-wide">
-        {{svg-jar "calendar" class="size-4"}}
-        <span>Timesheets</span>
-      </LinkTo>
-    </div>
+    {{#if (user-may "manage-users")}}
+      <div>
+        <LinkTo
+          @route="admin.users"
+          class="flex items-center space-x-2 text-sm tracking-wide">
+          {{svg-jar "people" class="size-4"}}
+          <span>Users</span>
+        </LinkTo>
+      </div>
+    {{/if}}
+    {{#if (user-may "manage-timesheets")}}
+      <div>
+        <LinkTo
+          @route="admin.timesheets"
+          class="flex items-center space-x-2 text-sm tracking-wide">
+          {{svg-jar "calendar" class="size-4"}}
+          <span>Timesheets</span>
+        </LinkTo>
+      </div>
+    {{/if}}
   </div>
 </div>
