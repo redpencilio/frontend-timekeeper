@@ -2,28 +2,20 @@
   {{on "mouseenter" (set this "showDetails" true)}}
   {{on "mouseleave" (set this "showDetails" false)}}
   {{create-tracked-ref "holiday-counter"}}
-  class="box-sizing group flex select-none items-center rounded-lg p-2 transition duration-200 ease-in-out hover:bg-gray-50"
+  class="border-box group flex select-none items-center rounded p-2 hover:bg-gray-100"
+  ...attributes
 >
   <div class="flex items-center">
-    {{svg-jar "suitcase" class="size-7 text-red-700"}}
+    {{svg-jar "suitcase" class="size-4 text-red-700"}}
   </div>
-  <div class="flex flex-col pl-2">
-    <span class="font-normal text-gray-900">
-      Holidays
-    </span>
-    {{#if (and (not this.holidaysUsedLatest) this.holidaysUsed.isLoading)}}
-      <div class="flex h-6 w-12 animate-pulse items-center">
-        <div class="h-3 grow rounded bg-gray-200"></div>
-      </div>
-    {{else if this.holidaysUsedLatest}}
-      {{format-duration this.remainingHolidays "dh"}}
-    {{/if}}
+  <div class="flex flex-col pl-1 text-xs font-normal">
+    Holidays
   </div>
 </div>
 
 {{#if (and this.showDetails this.holidayCounterNode)}}
   <Popover
-    class="animate-fade-in shadow-md"
+    class="animate-fade-in shadow-md w-80"
     @placement="bottom"
     @middleware={{this.floatingUIMiddleware}}
     @anchorElement={{this.holidayCounterNode}}
@@ -40,7 +32,7 @@
                       {{holidayCounter.quantityKind.label}}
                     </span>
                   </div>
-                  <div class="text-sm font-normal">
+                  <div class="text-sm">
                     {{format-duration holidayCounter.value "dh"}}
                   </div>
                 </div>
@@ -49,13 +41,13 @@
           </ul>
           <div>
             <div class="mt-4 h-0 border-t border-dashed border-zinc-400"></div>
-            <div class="flex justify-between pt-2 text-sm font-normal">
+            <div class="flex justify-between pt-2 text-sm">
               <span>Total</span>
               <span class="text-sm">
                 {{format-duration this.holidaysTotal "dh"}}
               </span>
             </div>
-            <div class="flex justify-between text-sm font-normal">
+            <div class="flex justify-between text-sm">
               <span>Used</span>
               {{#if this.holidaysUsed.isLoading}}
                 <div class="flex h-5 w-12 animate-pulse items-center">

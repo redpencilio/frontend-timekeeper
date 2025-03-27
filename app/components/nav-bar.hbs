@@ -9,9 +9,17 @@
     </LinkTo>
     <MonthSelector @year={{@year}} @month={{@month}} />
     <div class="flex flex-row items-center">
+        <HolidaysOverview
+          @year={{@year}}
+          @holidayCounters={{@holidayCounters}}
+        />
+        <div class="border-gray-300 border-l h-5 mx-1"></div>
       {{#if (or (user-may "manage-users") (user-may "manage-timesheets"))}}
-        <LinkTo @route="admin.users" class="p-2 rounded text-red-700 hover:bg-gray-100">
-          {{svg-jar "gear" class="h-4 w-4"}}
+        <LinkTo
+          @route="admin.users"
+          class="rounded p-2 text-red-700 hover:bg-gray-100"
+        >
+          {{svg-jar "gear" class="size-4"}}
         </LinkTo>
       {{/if}}
       <div class="flex items-center justify-between">
