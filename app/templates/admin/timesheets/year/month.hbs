@@ -1,0 +1,24 @@
+<div class="h-full overflow-auto grow">
+  <table class="h-full overflow-scroll rounded border border-gray-300 text-sm">
+    <thead class="border-b bg-zinc-100 text-white">
+      <tr>
+        <th class="px-4 py-2 text-left font-semibold text-red-700">Employee</th>
+        <th class="px-4 py-2 text-center font-semibold text-red-700">Status</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 bg-white">
+      {{#each this.sortedUsersWithTimesheet as |userWithTimesheet|}}
+        <tr class="hover:bg-gray-50">
+          <td
+            class="px-4 py-1 text-gray-900"
+          >{{userWithTimesheet.user.name}}</td>
+          <td class="border-l px-4 py-1 text-center">
+            <span class="inline-block align-middle">
+              <TimesheetStatusIcon @timesheet={{userWithTimesheet.timesheet}} />
+            </span>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
