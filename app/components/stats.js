@@ -1,19 +1,27 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
 import Duration from '../utils/duration';
+import { trackedFunction } from 'reactiveweb/function';
 
 export default class StatsComponent extends Component {
   @service store;
+  @service('tasks') tasksService;
 
-  getProjectNameById = (id) => this.store.peekRecord('task', id).name;
-  getSubProjectNameById = (id) => this.store.peekRecord('task', id).name;
-
-  shouldHide = (taskMap) => {
-    const keys = Object.keys(taskMap);
-    return (
-      keys.length === 1 && this.getSubProjectNameById(keys[0]) === 'General'
+  workLogsWithContext = trackedFunction(this, async () => {
+    return await Promise.all(
+      this.args.workLogs.map(async (workLog) => {
+        const subTask = await workLog.task;
+        const task = await subTask.parent;
+        const customer = await task.customer;
+        return {
+          workLog,
+          task,
+          subTask,
+          customer,
+        };
+      }),
     );
-  };
+  });
 
   get totalDuration() {
     if (!this.args.workLogs) {
@@ -26,43 +34,26 @@ export default class StatsComponent extends Component {
     );
   }
 
-  get projectData() {
-    return this.args.workLogs.reduce((acc, workLog) => {
-      const task = workLog.belongsTo('task')?.value();
-      if (task) {
-        const parent = task.belongsTo('parent')?.value() ?? task;
-        const { duration } = workLog;
+  shouldHide = (taskGroup) =>
+    taskGroup.subTasks.filter((subTask) => subTask.task.name === 'General')
+      .length === 1;
 
-        if (Object.hasOwn(acc, parent.id)) {
-          acc[parent.id].totalDuration =
-            acc[parent.id].totalDuration.add(duration);
-        } else {
-          acc[parent.id] = {
-            totalDuration: duration,
-            color: parent?.color,
-            subProjects: {},
-          };
-        }
+  workedHoursForCustomer = (customer) => {
+    return this.workedHoursFor((workLog) => workLog.customer.id, customer.id);
+  };
 
-        acc[parent.id].totalDuration =
-          acc[parent.id].totalDuration.normalized();
+  workedHoursForTask = (task) => {
+    return this.workedHoursFor((workLog) => workLog.task.id, task.id);
+  };
 
-        if (task) {
-          if (Object.hasOwn(acc[parent.id].subProjects, task.id)) {
-            acc[parent.id].subProjects[task.id].totalDuration =
-              acc[parent.id].subProjects[task.id].totalDuration.add(duration);
-          } else {
-            acc[parent.id].subProjects[task.id] = {
-              totalDuration: duration,
-            };
-          }
+  workedHoursForSubTask = (subTask) => {
+    return this.workedHoursFor((workLog) => workLog.subTask.id, subTask.id);
+  };
 
-          acc[parent.id].subProjects[task.id].totalDuration =
-            acc[parent.id].subProjects[task.id].totalDuration.normalized();
-        }
-      }
-
-      return acc;
-    }, {});
-  }
+  workedHoursFor = (cb, id) => {
+    return this.workLogsWithContext.value
+      .filter((workLog) => cb(workLog) === id)
+      .map(({ workLog }) => workLog)
+      .reduce((acc, log) => acc.add(log.duration), new Duration());
+  };
 }
