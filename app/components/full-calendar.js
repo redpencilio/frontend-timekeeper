@@ -365,14 +365,7 @@ export default class FullCalendarComponent extends Component {
       actionDoneText: 'Work log deleted.',
       actionUndoneText: 'Work log restored.',
       action: async () => {
-        const workLogCopy = {
-          date: workLog.date,
-          duration: { ...workLog.duration },
-          task: await workLog.task,
-          person: await workLog.person,
-          timesheet: await workLog.timesheet,
-        };
-
+        const workLogCopy = await workLog.clone();
         await this.args.onDeleteWorkLog?.(workLog);
         return workLogCopy;
       },
