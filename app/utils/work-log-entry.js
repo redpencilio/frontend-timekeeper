@@ -11,12 +11,14 @@ export default class WorkLogEntry {
   @tracked task;
   @tracked workLog;
   @tracked duration;
+  @tracked note;
 
   constructor(type, task, workLog) {
     this.type = type;
     this.task = task;
     this.workLog = workLog;
     this.duration = workLog?.duration || { hours: 0, minutes: 0 }
+    this.note = workLog?.note || null;
   }
 
   get hasDuration() {
