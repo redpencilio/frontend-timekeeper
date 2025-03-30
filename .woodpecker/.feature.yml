@@ -9,5 +9,5 @@ pipeline:
       password:
         from_secret: docker_password
 when:
-  event: push
-  branch: feature/*
+  - event: push
+    branch: feature/*
