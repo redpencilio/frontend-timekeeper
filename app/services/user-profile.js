@@ -7,6 +7,7 @@ export default class UserProfileService extends Service {
   @service session;
   @service store;
   @service taskSuggestion;
+  @service('tasks') tasksService;
 
   @tracked user;
   @tracked userGroups;
@@ -23,11 +24,15 @@ export default class UserProfileService extends Service {
       });
       this.user = await this.account.person;
       this.userGroups = await this.user.userGroups;
-      await this.taskSuggestion.loadTasks(this.user);
+      await Promise.all([
+        this.taskSuggestion.loadTasks(this.user),
+        this.tasksService.setup(),
+      ]);
     } else {
       this.user = null;
       this.userGroups = [];
-      await this.taskSuggestion.reset();
+      this.taskSuggestion.reset();
+      this.tasksService.reset();
     }
   }
 
