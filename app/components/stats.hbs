@@ -1,85 +1,58 @@
 <div class="w-full grow overflow-scroll px-8 py-2">
-  {{#if this.workLogsWithContext.isResolved}}
+  {{#if this.summary.isResolved}}
     <ul class="space-y-5">
-      {{#each this.tasksService.groupedTasks as |customerGroup|}}
-        {{#let
-          (this.workedHoursForCustomer customerGroup.customer)
-          as |customerDuration|
-        }}
-          {{#if (gt customerDuration.asMinutes 0)}}
-            <li>
-              <div
-                class="flex w-full items-center justify-between space-x-4 text-sm font-normal"
-              >
-                <div class="flex items-center space-x-2">
-                  <span
-                    class="inline-block size-2 shrink-0 rounded-full"
-                    {{bg-color customerGroup.customer.color}}
-                  ></span>
-                  <span>
-                    {{customerGroup.customer.name}}
-                  </span>
-                </div>
-
-                <div class="shrink-0">
-                  {{format-duration customerDuration}}
-                </div>
-              </div>
-              {{#if customerGroup.tasks}}
-                <ul class="ml-4 mt-2 space-y-2">
-                  {{#each customerGroup.tasks as |taskGroup|}}
-                    {{#let
-                      (this.workedHoursForTask taskGroup.task)
-                      as |taskDuration|
-                    }}
-                      {{#if (gt taskDuration.asMinutes 0)}}
-                        <li class="flex items-center justify-between space-x-2 text-sm">
-                          <span>
-                            {{task-name taskGroup.task}}
-                          </span>
-                          <span>
-                            {{format-duration taskDuration}}
-                          </span>
-                        </li>
-                        {{#if
-                          (and
-                            (not (this.shouldHide taskGroup)) taskGroup.subTasks
-                          )
-                        }}
-                          <ul class="ml-2 space-y-1">
-                            {{#each taskGroup.subTasks as |subTask|}}
-                              {{#let
-                                (this.workedHoursForSubTask subTask.task)
-                                as |subTaskDuration|
-                              }}
-                                {{#if (gt subTaskDuration.asMinutes 0)}}
-                                  <li
-                                    class="flex items-center justify-between space-x-2 text-sm text-gray-700"
-                                  >
-                                    {{task-name subTask.task}}
-                                    <span class="shrink-0">
-                                      {{format-duration subTaskDuration}}
-                                    </span>
-                                  </li>
-                                {{/if}}
-                              {{/let}}
-                            {{/each}}
-                          </ul>
-                        {{/if}}
-                      {{/if}}
-                    {{/let}}
+      {{#each this.summary.value as |summaryEntry|}}
+        <li>
+          <div
+            class="flex w-full items-center justify-between space-x-4 text-sm font-normal"
+          >
+            <div class="flex items-center space-x-2">
+              <span
+                class="inline-block size-2 shrink-0 rounded-full"
+                {{bg-color summaryEntry.customer.color}}
+              ></span>
+              <span>
+                {{summaryEntry.customer.name}}
+              </span>
+            </div>
+            <div class="shrink-0">
+              {{format-duration summaryEntry.duration}}
+            </div>
+          </div>
+          <ul class="ml-4 mt-2 space-y-2">
+            {{#each summaryEntry.tasks as |taskEntry|}}
+              <li class="flex items-center justify-between space-x-2 text-sm">
+                <span>
+                  {{task-name taskEntry.task}}
+                </span>
+                <span>
+                  {{format-duration taskEntry.duration}}
+                </span>
+              </li>
+              {{#if taskEntry.showSubTasks}}
+                <ul class="ml-2 space-y-1">
+                  {{#each taskEntry.subTasks as |subTaskEntry|}}
+                    <li
+                      class="flex items-center justify-between space-x-2 text-sm text-gray-700"
+                    >
+                      {{task-name subTaskEntry.task}}
+                      <span class="shrink-0">
+                        {{format-duration subTaskEntry.duration}}
+                      </span>
+                    </li>
                   {{/each}}
                 </ul>
               {{/if}}
-            </li>
-          {{/if}}
-        {{/let}}
+            {{/each}}
+          </ul>
+        </li>
       {{/each}}
     </ul>
   {{else}}
     <p class="text-sm italic text-gray-500">No work was logged yet this month.</p>
   {{/if}}
 </div>
+
 <div class="px-8 pb-8 pt-2">
   <div class="mt-2 h-0 border-t-2 border-dashed border-red-700"></div>
   <div class="mt-4 flex items-center justify-between text-red-700 text-sm font-normal">

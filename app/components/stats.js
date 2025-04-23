@@ -1,59 +1,69 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
-import Duration from '../utils/duration';
+import { sumDurations } from '../utils/duration';
 import { trackedFunction } from 'reactiveweb/function';
 
 export default class StatsComponent extends Component {
-  @service store;
   @service('tasks') tasksService;
 
-  workLogsWithContext = trackedFunction(this, async () => {
-    return await Promise.all(
+  summary = trackedFunction(this, async () => {
+    const workLogsWithContext = await Promise.all(
       this.args.workLogs.map(async (workLog) => {
         const subTask = await workLog.task;
-        const task = await subTask.parent;
-        const customer = await task.customer;
-        return {
-          workLog,
-          task,
-          subTask,
-          customer,
-        };
+        return { workLog, subTask };
       }),
     );
+
+    const summary = this.tasksService.taskHierarchy
+      .map(({ customer, tasks }) => {
+        const tasksWithDuration = tasks
+          .map(({ task, subTasks }) => {
+            const subTasksWithDuration = subTasks
+              .map((subTask) => {
+                const workLogs = workLogsWithContext
+                  .filter((workLog) => workLog.subTask.id == subTask.id)
+                  .map(({ workLog }) => workLog);
+                const duration = sumDurations(workLogs);
+                if (duration.isEmpty) {
+                  return null; // no working hours logged. Must not be part of summary.
+                } else {
+                  return { task: subTask, duration };
+                }
+              })
+              .filter((i) => i);
+
+            if (subTasksWithDuration.length) {
+              const duration = sumDurations(subTasksWithDuration);
+              const showSubTasks =
+                subTasksWithDuration.length > 1 ||
+                subTasksWithDuration[0].task.name !== 'General';
+              return {
+                task,
+                duration,
+                showSubTasks,
+                subTasks: subTasksWithDuration,
+              };
+            } else {
+              // No working hours logged on subtasks. Parent must be discarded.
+              return null;
+            }
+          })
+          .filter((i) => i);
+
+        if (tasksWithDuration.length) {
+          const duration = sumDurations(tasksWithDuration);
+          return { customer, duration, tasks: tasksWithDuration };
+        } else {
+          // No working hours logged on any of the tasks. Customer must be discarded.
+          return null;
+        }
+      })
+      .filter((i) => i);
+
+    return summary;
   });
 
   get totalDuration() {
-    if (!this.args.workLogs) {
-      return 0;
-    }
-
-    return this.args.workLogs.reduce(
-      (acc, workLog) => acc.add(workLog.duration),
-      new Duration(),
-    );
+    return sumDurations(this.summary.value || []);
   }
-
-  shouldHide = (taskGroup) =>
-    taskGroup.subTasks.filter((subTask) => subTask.task.name === 'General')
-      .length === 1;
-
-  workedHoursForCustomer = (customer) => {
-    return this.workedHoursFor((workLog) => workLog.customer.id, customer.id);
-  };
-
-  workedHoursForTask = (task) => {
-    return this.workedHoursFor((workLog) => workLog.task.id, task.id);
-  };
-
-  workedHoursForSubTask = (subTask) => {
-    return this.workedHoursFor((workLog) => workLog.subTask.id, subTask.id);
-  };
-
-  workedHoursFor = (cb, id) => {
-    return this.workLogsWithContext.value
-      .filter((workLog) => cb(workLog) === id)
-      .map(({ workLog }) => workLog)
-      .reduce((acc, log) => acc.add(log.duration), new Duration());
-  };
 }
