@@ -1,28 +1,39 @@
-<div class="flex grow flex-col border-l p-4">
-  <div class="self-start text-lg">
-    <span class="font-semibold">
-      {{@model.user.name}}
-    </span>
+<div class="flex grow flex-col border-l py-8">
+  <div class="self-start flex items-center">
+    <div class="pl-4 text-lg font-semibold">
+      {{@model.name}}
+    </div>
+    <div class="ml-4 mt-1">
+      <LinkTo
+        @route="admin.users"
+        class="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-600">
+        {{svg-jar "x" class="size-5"}}
+      </LinkTo>
+    </div>
   </div>
-  <ul class="mt-4 flex gap-3 font-normal text-gray-900 border-b">
-    {{#each
-      (array
+
+  <div class="mt-4">
+    <div class="border-b border-gray-300">
+      <nav class="ml-4 -mb-px flex space-x-8" aria-label="Tabs">
+        {{#each
+          (array
         (hash name="Holidays" route="holidays")
-        (hash name="Visible Tasks" route="visible-tasks")
+        (hash name="Projects" route="visible-tasks")
       )
-      as |tabInfo|
-    }}
-      <li>
-        <LinkTo
-          @route="admin.users.user.{{tabInfo.route}}"
-          @model={{@model.user.id}}
-          @activeClass="border-b-2 border-red-600"
-          class="p-2 block"
-        >
-          {{tabInfo.name}}
-        </LinkTo>
-      </li>
-    {{/each}}
-  </ul>
+          as |tabInfo|
+          }}
+          <LinkTo
+            @route="admin.users.user.{{tabInfo.route}}"
+            @model={{@model.id}}
+            @activeClass="!border-red-600 text-red-600 hover:!text-red-600"
+            class="whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+          >
+            {{tabInfo.name}}
+          </LinkTo>
+        {{/each}}
+      </nav>
+    </div>
+  </div>
+
   {{outlet}}
 </div>
