@@ -1,68 +1,69 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
-import Duration from '../utils/duration';
+import { sumDurations } from '../utils/duration';
+import { trackedFunction } from 'reactiveweb/function';
 
 export default class StatsComponent extends Component {
-  @service store;
+  @service('tasks') tasksService;
 
-  getProjectNameById = (id) => this.store.peekRecord('task', id).name;
-  getSubProjectNameById = (id) => this.store.peekRecord('task', id).name;
-
-  shouldHide = (taskMap) => {
-    const keys = Object.keys(taskMap);
-    return (
-      keys.length === 1 && this.getSubProjectNameById(keys[0]) === 'General'
+  summary = trackedFunction(this, async () => {
+    const workLogsWithContext = await Promise.all(
+      this.args.workLogs.map(async (workLog) => {
+        const subTask = await workLog.task;
+        return { workLog, subTask };
+      }),
     );
-  };
+
+    const summary = this.tasksService.taskHierarchy
+      .map(({ customer, tasks }) => {
+        const tasksWithDuration = tasks
+          .map(({ task, subTasks }) => {
+            const subTasksWithDuration = subTasks
+              .map((subTask) => {
+                const workLogs = workLogsWithContext
+                  .filter((workLog) => workLog.subTask.id == subTask.id)
+                  .map(({ workLog }) => workLog);
+                const duration = sumDurations(workLogs);
+                if (duration.isEmpty) {
+                  return null; // no working hours logged. Must not be part of summary.
+                } else {
+                  return { task: subTask, duration };
+                }
+              })
+              .filter((i) => i);
+
+            if (subTasksWithDuration.length) {
+              const duration = sumDurations(subTasksWithDuration);
+              const showSubTasks =
+                subTasksWithDuration.length > 1 ||
+                subTasksWithDuration[0].task.name !== 'General';
+              return {
+                task,
+                duration,
+                showSubTasks,
+                subTasks: subTasksWithDuration,
+              };
+            } else {
+              // No working hours logged on subtasks. Parent must be discarded.
+              return null;
+            }
+          })
+          .filter((i) => i);
+
+        if (tasksWithDuration.length) {
+          const duration = sumDurations(tasksWithDuration);
+          return { customer, duration, tasks: tasksWithDuration };
+        } else {
+          // No working hours logged on any of the tasks. Customer must be discarded.
+          return null;
+        }
+      })
+      .filter((i) => i);
+
+    return summary;
+  });
 
   get totalDuration() {
-    if (!this.args.workLogs) {
-      return 0;
-    }
-
-    return this.args.workLogs.reduce(
-      (acc, workLog) => acc.add(workLog.duration),
-      new Duration(),
-    );
-  }
-
-  get projectData() {
-    return this.args.workLogs.reduce((acc, workLog) => {
-      const task = workLog.belongsTo('task')?.value();
-      if (task) {
-        const parent = task.belongsTo('parent')?.value() ?? task;
-        const { duration } = workLog;
-
-        if (Object.hasOwn(acc, parent.id)) {
-          acc[parent.id].totalDuration =
-            acc[parent.id].totalDuration.add(duration);
-        } else {
-          acc[parent.id] = {
-            totalDuration: duration,
-            color: parent?.color,
-            subProjects: {},
-          };
-        }
-
-        acc[parent.id].totalDuration =
-          acc[parent.id].totalDuration.normalized();
-
-        if (task) {
-          if (Object.hasOwn(acc[parent.id].subProjects, task.id)) {
-            acc[parent.id].subProjects[task.id].totalDuration =
-              acc[parent.id].subProjects[task.id].totalDuration.add(duration);
-          } else {
-            acc[parent.id].subProjects[task.id] = {
-              totalDuration: duration,
-            };
-          }
-
-          acc[parent.id].subProjects[task.id].totalDuration =
-            acc[parent.id].subProjects[task.id].totalDuration.normalized();
-        }
-      }
-
-      return acc;
-    }, {});
+    return sumDurations(this.summary.value || []);
   }
 }

@@ -1,53 +1,62 @@
-<div class="py-2 px-8 overflow-auto grow">
-  <div>
-    {{#if @workLogs}}
-      <ul class="space-y-6">
-        {{#each-in this.projectData as |projectId data|}}
-          <li>
-            <div class="flex items-center justify-between space-x-4">
-              <div class="flex items-center space-x-2">
-                <span
-                  class="inline-block w-2 h-2 rounded-full"
-                  {{bg-color data.color}}
-                ></span>
-                <span class="text-sm font-normal">
-                  {{this.getProjectNameById projectId}}
-                </span>
-              </div>
-              <div class="text-sm font-normal">{{data.totalDuration.hours}}h
-                {{data.totalDuration.minutes}}m</div>
+<div class="w-full grow overflow-scroll px-8 py-2">
+  {{#if this.summary.isResolved}}
+    <ul class="space-y-5">
+      {{#each this.summary.value as |summaryEntry|}}
+        <li>
+          <div
+            class="flex w-full items-center justify-between space-x-4 text-sm font-normal"
+          >
+            <div class="flex items-center space-x-2">
+              <span
+                class="inline-block size-2 shrink-0 rounded-full"
+                {{bg-color summaryEntry.customer.color}}
+              ></span>
+              <span>
+                {{summaryEntry.customer.name}}
+              </span>
             </div>
-
-            {{#if data.subProjects}}
-              {{#unless (this.shouldHide data.subProjects)}}
-                <ul class="ml-4 mt-2 space-y-2">
-                  {{#each-in data.subProjects as |subprojectId subdata|}}
-                    <li class="flex items-center justify-between space-x-2">
-                      <span class="text-sm">
-                        {{this.getSubProjectNameById subprojectId}}
-                      </span>
-                      <span class="text-sm">
-                        {{subdata.totalDuration.hours}}h
-                        {{subdata.totalDuration.minutes}}m
+            <div class="shrink-0">
+              {{format-duration summaryEntry.duration}}
+            </div>
+          </div>
+          <ul class="ml-4 mt-2 space-y-2">
+            {{#each summaryEntry.tasks as |taskEntry|}}
+              <li class="flex items-center justify-between space-x-2 text-sm">
+                <span>
+                  {{task-name taskEntry.task}}
+                </span>
+                <span>
+                  {{format-duration taskEntry.duration}}
+                </span>
+              </li>
+              {{#if taskEntry.showSubTasks}}
+                <ul class="ml-2 space-y-1">
+                  {{#each taskEntry.subTasks as |subTaskEntry|}}
+                    <li
+                      class="flex items-center justify-between space-x-2 text-sm text-gray-700"
+                    >
+                      {{task-name subTaskEntry.task}}
+                      <span class="shrink-0">
+                        {{format-duration subTaskEntry.duration}}
                       </span>
                     </li>
-                  {{/each-in}}
+                  {{/each}}
                 </ul>
-              {{/unless}}
-            {{/if}}
-          </li>
-        {{/each-in}}
-      </ul>
-    {{else}}
-      <p class="text-gray-500 text-sm italic">No work was logged yet this month.</p>
-    {{/if}}
-  </div>
+              {{/if}}
+            {{/each}}
+          </ul>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p class="text-sm italic text-gray-500">No work was logged yet this month.</p>
+  {{/if}}
 </div>
-<div class="pt-2 pb-8 px-8">
-  <div class="h-0 mt-2 border-red-800 border-t-2 border-dashed"></div>
-  <div class="text-red-800 mt-4 flex items-center justify-between">
-    <span class="text-sm font-normal uppercase tracking-wide">Total</span>
-    <span class="text-sm font-normal">{{this.totalDuration.hours}}h
-      {{this.totalDuration.minutes}}m</span>
+
+<div class="px-8 pb-8 pt-2">
+  <div class="mt-2 h-0 border-t-2 border-dashed border-red-700"></div>
+  <div class="mt-4 flex items-center justify-between text-red-700 text-sm font-normal">
+    <span class="uppercase tracking-wide">Total</span>
+    <span>{{format-duration this.totalDuration}}</span>
   </div>
 </div>
