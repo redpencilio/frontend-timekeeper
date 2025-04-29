@@ -1,22 +1,33 @@
-<div class="flex h-full flex-col bg-zinc-800 text-white w-44">
-  <div class="flex flex-grow flex-col justify-between px-6 py-4">
+<div class="flex h-full w-44 flex-col bg-zinc-800 text-white">
+  <div class="px-6 py-4 space-y-4">
     <div>
       <LinkTo
-        @route="admin.users"
-        class="flex items-center space-x-2 text-sm tracking-wide"
-      >
-        {{svg-jar "people" class="size-4"}}
-        <span>Users</span>
+        @route="year.month"
+        @models={{array this.currentYear this.currentMonth}}
+        class="flex items-center space-x-2 text-sm tracking-wide">
+        {{svg-jar "chevron-left" class="size-4"}}
+        <span>Back</span>
       </LinkTo>
     </div>
-  </div>
-
-  <div
-    class="flex items-center justify-between border-t-2 border-red-500 px-6 py-3"
-  >
-    <LinkTo class="text-sm font-medium text-white" @route="profile">
-      {{this.userProfile.user.name}}
-    </LinkTo>
-    <MuLogout />
+    {{#if (user-may "manage-users")}}
+      <div>
+        <LinkTo
+          @route="admin.users"
+          class="flex items-center space-x-2 text-sm tracking-wide">
+          {{svg-jar "people" class="size-4"}}
+          <span>Users</span>
+        </LinkTo>
+      </div>
+    {{/if}}
+    {{#if (user-may "manage-timesheets")}}
+      <div>
+        <LinkTo
+          @route="admin.timesheets"
+          class="flex items-center space-x-2 text-sm tracking-wide">
+          {{svg-jar "calendar" class="size-4"}}
+          <span>Timesheets</span>
+        </LinkTo>
+      </div>
+    {{/if}}
   </div>
 </div>

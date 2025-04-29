@@ -13,6 +13,10 @@ export default class Duration {
     return this.hours * 60 + this.minutes;
   }
 
+  get isEmpty() {
+    return this.asMinutes === 0;
+  }
+
   add(other) {
     return new Duration({
       hours: this.hours + other.hours,
@@ -40,4 +44,15 @@ export default class Duration {
   normalized() {
     return new Duration({ ...this });
   }
+}
+
+export function sumDurations(durations) {
+  return durations.reduce((acc, duration) => acc.add(duration), new Duration());
+}
+
+export function sumDurationAttributes(intervals) {
+  return intervals.reduce(
+    (acc, interval) => acc.add(interval.duration),
+    new Duration(),
+  );
 }

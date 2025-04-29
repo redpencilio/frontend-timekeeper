@@ -1,33 +1,12 @@
 import Service, { service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
 
 export default class TasksService extends Service {
   @service store;
 
-  tasks = null;
-
-  async setup() {
-    const [tasks, customers] = await Promise.all([
-      this.store.queryAll('task', {
-        'filter[:has:parent]': true,
-        sort: 'parent.customer.name,parent.name',
-        include: 'parent,parent.customer',
-      }),
-      await this.store.queryAll('customer'),
-    ]);
-    this.tasks = tasks;
-    this.customerIdMap = Object.fromEntries(
-      customers.slice().map((customer) => [customer.id, customer]),
-    );
-    this.parentTaskIdMap = Object.fromEntries(
-      this.tasks.slice().map((task) => {
-        const parent = task.belongsTo('parent')?.value();
-        return [parent?.id, parent];
-      }),
-    );
-  }
-
   /**
-   * Group all task to the following format
+   * Hierarchy of customer > project > tasks
+   *
    * {
    *  customer: Customer,
    *  tasks: [
@@ -35,32 +14,47 @@ export default class TasksService extends Service {
    *  ]
    * }
    */
-  get groupedTasks() {
-    if (!this.tasks) {
-      return null;
-    }
+  @tracked taskHierarchy;
 
-    const groupedCustomer = Object.entries(
-      Object.groupBy(this.tasks.slice(), (task) =>
-        task.belongsTo('parent')?.value()?.belongsTo('customer')?.id(),
-      ),
-    ).map(([customerId, tasks]) => ({
-      customer: this.customerIdMap[customerId],
-      tasks,
-    }));
-
-    return groupedCustomer.map(({ customer, tasks }) => {
-      const groupedParent = Object.entries(
-        Object.groupBy(tasks, (task) => task.belongsTo('parent')?.id()),
-      ).map(([parentId, tasks]) => ({
-        task: this.parentTaskIdMap[parentId],
-        subTasks: tasks,
-      }));
-
-      return {
-        customer,
-        tasks: groupedParent,
-      };
+  async setup() {
+    const leafTasks = await this.store.queryAll('task', {
+      'filter[:has:parent]': true,
+      sort: 'parent.customer.name,parent.name',
+      include: 'parent,parent.customer',
     });
+
+    const flattenedLeafTasks = await Promise.all(
+      leafTasks.map(async (task) => {
+        const parent = await task.parent;
+        const customer = await parent.customer;
+        return { task, parent, customer };
+      }),
+    );
+
+    this.taskHierarchy = this.groupTasksByCustomerAndParent(flattenedLeafTasks);
+  }
+
+  reset() {
+    this.taskHierarchy = [];
+  }
+
+  groupTasksByCustomerAndParent(tasksWithContext) {
+    const customers = new Set(tasksWithContext.map((task) => task.customer));
+    const groups = [...customers].map((customer) => {
+      const tasks = tasksWithContext.filter(
+        (task) => task.customer == customer,
+      );
+      const parents = new Set(tasks.map((task) => task.parent));
+      const taskHierarchies = [...parents].map((parent) => {
+        const subTasks = tasks
+          .filter((taskWithContext) => taskWithContext.parent == parent)
+          .map((taskWithContext) => taskWithContext.task);
+        return { task: parent, subTasks };
+      });
+
+      return { customer, tasks: taskHierarchies };
+    });
+
+    return groups;
   }
 }

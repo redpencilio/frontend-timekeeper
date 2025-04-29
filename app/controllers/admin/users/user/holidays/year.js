@@ -1,10 +1,8 @@
 import Controller from '@ember/controller';
 import { service } from '@ember/service';
-import Duration from 'frontend-timekeeper/utils/duration';
 
-export default class AdminUsersUserHolidaysController extends Controller {
+export default class AdminUsersUserHolidaysYearController extends Controller {
   @service router;
-
 
   editHolidayCounters = async (holidayCounterEntries) => {
     await Promise.all(

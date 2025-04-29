@@ -11,8 +11,10 @@ export default class YearMonthContoller extends Controller {
   @service router;
   @service store;
   @service userProfile;
+  @service('timesheets') timesheetsService;
 
   @tracked timesheet;
+  @tracked showSummary = false;
 
   get firstDayOfMonth() {
     return new Date(this.model.year, this.model.month, 1);
@@ -23,6 +25,13 @@ export default class YearMonthContoller extends Controller {
     if (!Object.values(TIMESHEET_STATUSES).includes(status)) {
       throw new Error(`Invalid status: "${status}"`);
     }
+    // Check if there is a timesheet on the server already
+    // This could have been created in another tab
+    const serverTimesheet = await this.timesheetsService.getForMonth(
+      this.model.year,
+      this.model.month,
+    );
+    this.timesheet = serverTimesheet ?? this.timesheet;
     this.timesheet.status = status;
     await this.timesheet.save();
   }
@@ -31,7 +40,7 @@ export default class YearMonthContoller extends Controller {
     // Selection only contains one date, we don't want to overwrite
     if (dates.length === 1) {
       await Promise.all(
-        workLogEntries.map(async ({ duration, task, workLog }) => {
+        workLogEntries.map(async ({ duration, task, workLog, note }) => {
           if (workLog) {
             if (duration.hours === 0 && duration.minutes === 0) {
               // An existing worklog was set to 0, remove it
@@ -41,6 +50,7 @@ export default class YearMonthContoller extends Controller {
               // Properties of an existing workLog have changed
               workLog.duration = duration;
               workLog.task = task;
+              workLog.note = note;
               await workLog.save();
             }
           } else {
@@ -50,6 +60,7 @@ export default class YearMonthContoller extends Controller {
               duration,
               task,
               date,
+              note,
               person: this.userProfile.user,
             });
             await newWorkLog.save();
@@ -75,11 +86,12 @@ export default class YearMonthContoller extends Controller {
               .filter(
                 ({ duration: { hours, minutes } }) => hours > 0 || minutes > 0,
               )
-              .map(async ({ duration, task }) => {
+              .map(async ({ duration, task, note }) => {
                 // A new workLog has to be created
                 const newWorkLog = this.store.createRecord('work-log', {
                   duration,
                   task,
+                  note,
                   date,
                   person: this.userProfile.user,
                 });
@@ -97,8 +109,8 @@ export default class YearMonthContoller extends Controller {
 
   @action
   async deleteWorkLog(workLog) {
-    await workLog.destroyRecord();
     this.model.workLogs.removeObject(workLog);
+    await workLog.destroyRecord();
     this.router.refresh(this.router.currentRouteName);
   }
 

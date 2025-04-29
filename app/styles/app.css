@@ -6,6 +6,10 @@
  * Full calendar
  */
 
+body {
+  overflow-x: hidden;
+}
+
 :root {
   --fc-highlight-color: rgba(252, 165, 165, 0.2);
 }
@@ -52,7 +56,7 @@
 
 .ember-power-select-trigger:focus,
 .ember-power-select-trigger--active {
-  @apply ring-blue-200 border-2 border-blue-200 outline-none;
+  @apply ring-red-200 border-2 border-red-200 outline-none;
 }
 
 .ember-power-select-selected-item {
@@ -135,4 +139,16 @@
 
 .active {
   @apply font-medium;
+}
+
+/**
+ * Utility Classes
+ */
+
+.hover-appear {
+  @apply opacity-0 transition-opacity duration-150 ease-in-out hover:opacity-100;
+}
+
+.group-hover-appear {
+  @apply opacity-0 transition-opacity duration-150 ease-in-out group-hover:opacity-100;
 }

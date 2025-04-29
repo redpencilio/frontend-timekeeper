@@ -9,6 +9,7 @@ import { startOfYear } from 'date-fns';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { use } from 'ember-resources';
 import constants from 'frontend-timekeeper/constants';
+
 const { HOLIDAY_TASK_LABEL } = constants;
 
 export default class HolidaysOverviewComponent extends Component {
@@ -37,13 +38,15 @@ export default class HolidaysOverviewComponent extends Component {
   @use holidaysUsedLatest = keepLatest({
     value: () => this.holidaysUsed.value,
     when: () => this.holidaysUsed.isLoading,
-  })
+  });
 
   get sortedCounters() {
     return (this.args.holidayCounters ?? [])
       .slice()
-      .sort((counterA, counterB) => counterB.value.cmp(counterA.value));
+      .sort((counterA, counterB) => counterB.value.cmp(counterA.value))
+      .filter((counter) => new Duration(counter.value).asMinutes > 0);
   }
+
   get holidaysTotal() {
     return (this.args.holidayCounters ?? [])
       .reduce((acc, { value }) => acc.add(value), new Duration())
