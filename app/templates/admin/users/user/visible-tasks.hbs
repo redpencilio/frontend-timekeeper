@@ -1,1 +1,3 @@
-<Admin::TaskVisibility @person={{@model.user}}/>
+<Admin::TaskVisibility
+  @visibleTasks={{@model.visibleTasks}}
+  @onChange={{this.updateTasks}} />

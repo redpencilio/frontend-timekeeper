@@ -3,18 +3,18 @@
   class="flex w-full items-center rounded border-b p-1.5
     {{if
       (eq @level 0)
-      'gap-2 font-semibold text-base'
-      (if (eq @level 1) 'gap-4 font-normal text-sm' 'gap-6 font-light text-sm')
+      "gap-2 font-semibold text-base"
+      (if (eq @level 1) "gap-4 font-normal text-sm" "gap-6 font-light text-sm")
     }}
     hover:bg-gray-100"
-  {{on "click" (if @taskIsVisible @onHide @onShow)}}
+  {{on "click" @onToggle}}
 >
-  {{#if @taskIsVisible}}
+  {{#if @isVisible}}
     {{svg-jar "eye"}}
   {{else}}
     {{svg-jar "eye-slash"}}
   {{/if}}
-  <span class="{{unless @taskIsVisible 'text-gray-500'}}">
+  <span class="{{unless @isVisible "text-gray-500"}}">
     {{yield}}
   </span>
 </button>
