@@ -6,5 +6,5 @@ export default class QuantityModel extends Model {
   @attr('date') validTill;
 
   @belongsTo('person', { async: true, inverse: 'quantities' }) person;
-  @belongsTo('concept', { async: true }) quantityKind;
+  @belongsTo('concept', { async: true, inverse: null }) quantityKind;
 }
