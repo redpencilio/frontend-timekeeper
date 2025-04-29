@@ -18,24 +18,49 @@
     </button>
   </div>
   {{#if @holidayCounters.length}}
-    <form {{on "submit" (perform this.submit)}}>
+    <form {{on "submit" (perform this.submit)}} class="flex flex-col space-y-4">
       {{#each this.holidayCounterEntries as |holidayCounterEntry|}}
-        {{#let (unique-id) as |id|}}
-          <div class="flex"></div>
-          <label
-            for={{id}}
-            class="mb-4 mt-3 flex items-center gap-1 text-sm font-normal"
-          >
-            {{holidayCounterEntry.counter.quantityKind.label}}
-          </label>
-          <DurationInput
-            class="w-full"
-            id={{id}}
-            @value={{holidayCounterEntry.value}}
-            @onChange={{fn this.updateEntry holidayCounterEntry}}
-          />
-        {{/let}}
+        <div>
+          {{#let (unique-id) as |id|}}
+            <label
+              for={{id}}
+              class="mb-1 flex items-center gap-1 text-sm font-normal"
+            >
+              {{holidayCounterEntry.counter.quantityKind.label}}
+            </label>
+            <DurationInput
+              class="w-full"
+              id={{id}}
+              @value={{holidayCounterEntry.value}}
+              @onChange={{fn this.updateEntry holidayCounterEntry}}
+              />
+          {{/let}}
+        </div>
       {{/each}}
+
+      <div>
+        <label
+          for="consumed-holiday-counter"
+          class="mb-1 flex items-center gap-1 text-sm font-normal"
+        >
+          Consumed holidays
+        </label>
+        <div class="text-sm">
+          {{this.consumedHolidays.hours}}h{{this.consumedHolidays.minutes}}m
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="remaining-holiday-counter"
+          class="mb-1 flex items-center gap-1 text-sm font-normal"
+        >
+          Remaining holidays
+        </label>
+        <div class="text-sm">
+          {{this.remainingHolidays.hours}}h{{this.remainingHolidays.minutes}}m
+        </div>
+      </div>
 
       <div class="mt-4 flex justify-between">
         <Button @skin="mute" {{on "click" @onCancel}}>

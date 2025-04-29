@@ -1,7 +1,9 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
 import { trackedReset } from 'tracked-toolbox';
+import { TrackedObject } from 'tracked-built-ins';
 import { task } from 'ember-concurrency';
+import { sumDurations, sumDurationAttributes } from '../utils/duration';
 
 export default class HolidaysCounterEditComponent extends Component {
   @service store;
@@ -14,13 +16,24 @@ export default class HolidaysCounterEditComponent extends Component {
   @trackedReset({
     memo: 'args.holidayCounters',
     update() {
-      return this.args.holidayCounters.slice().map((counter) => ({
-        counter,
-        value: counter.value,
-      }));
+      return this.args.holidayCounters.slice().map((counter) => {
+        return new TrackedObject({
+          counter,
+          value: counter.value,
+        });
+      });
     },
   })
   holidayCounterEntries;
+
+  get consumedHolidays() {
+    return sumDurationAttributes(this.args.workLogs);
+  }
+
+  get remainingHolidays() {
+    const counters = this.holidayCounterEntries.map((entry) => entry.value);
+    return sumDurations(counters).subtract(this.consumedHolidays);
+  }
 
   updateEntry = (holidayCounterEntry, value) => {
     holidayCounterEntry.value = value;

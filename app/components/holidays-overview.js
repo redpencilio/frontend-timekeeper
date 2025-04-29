@@ -9,6 +9,7 @@ import { startOfYear } from 'date-fns';
 import { formatDate } from 'frontend-timekeeper/utils/format-date';
 import { use } from 'ember-resources';
 import constants from 'frontend-timekeeper/constants';
+
 const { HOLIDAY_TASK_LABEL } = constants;
 
 export default class HolidaysOverviewComponent extends Component {
