@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
-import { sumDurations } from '../utils/duration';
+import { sumDurationAttributes } from '../utils/duration';
 import { trackedFunction } from 'reactiveweb/function';
 
 export default class StatsComponent extends Component {
@@ -23,7 +23,7 @@ export default class StatsComponent extends Component {
                 const workLogs = workLogsWithContext
                   .filter((workLog) => workLog.subTask.id == subTask.id)
                   .map(({ workLog }) => workLog);
-                const duration = sumDurations(workLogs);
+                const duration = sumDurationAttributes(workLogs);
                 if (duration.isEmpty) {
                   return null; // no working hours logged. Must not be part of summary.
                 } else {
@@ -33,7 +33,7 @@ export default class StatsComponent extends Component {
               .filter((i) => i);
 
             if (subTasksWithDuration.length) {
-              const duration = sumDurations(subTasksWithDuration);
+              const duration = sumDurationAttributes(subTasksWithDuration);
               const showSubTasks =
                 subTasksWithDuration.length > 1 ||
                 subTasksWithDuration[0].task.name !== 'General';
@@ -51,7 +51,7 @@ export default class StatsComponent extends Component {
           .filter((i) => i);
 
         if (tasksWithDuration.length) {
-          const duration = sumDurations(tasksWithDuration);
+          const duration = sumDurationAttributes(tasksWithDuration);
           return { customer, duration, tasks: tasksWithDuration };
         } else {
           // No working hours logged on any of the tasks. Customer must be discarded.
@@ -64,6 +64,6 @@ export default class StatsComponent extends Component {
   });
 
   get totalDuration() {
-    return sumDurations(this.summary.value || []);
+    return sumDurationAttributes(this.summary.value || []);
   }
 }

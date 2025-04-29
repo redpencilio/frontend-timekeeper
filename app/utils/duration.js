@@ -46,7 +46,7 @@ export default class Duration {
   }
 }
 
-export function sumDurations(intervals) {
+export function sumDurationAttributes(intervals) {
   return intervals.reduce(
     (acc, interval) => acc.add(interval.duration),
     new Duration(),
