@@ -4,6 +4,8 @@ import { tracked } from '@glimmer/tracking';
 export default class TasksService extends Service {
   @service store;
 
+  @tracked leafTasks;
+
   /**
    * Hierarchy of customer > project > tasks
    *
@@ -17,14 +19,14 @@ export default class TasksService extends Service {
   @tracked taskHierarchy;
 
   async setup() {
-    const leafTasks = await this.store.queryAll('task', {
+    this.leafTasks = await this.store.queryAll('task', {
       'filter[:has:parent]': true,
       sort: 'parent.customer.name,parent.name',
       include: 'parent,parent.customer',
     });
 
     const flattenedLeafTasks = await Promise.all(
-      leafTasks.map(async (task) => {
+      this.leafTasks.map(async (task) => {
         const parent = await task.parent;
         const customer = await parent.customer;
         return { task, parent, customer };
@@ -35,7 +37,7 @@ export default class TasksService extends Service {
   }
 
   reset() {
-    this.tasks = [];
+    this.taskHierarchy = [];
   }
 
   groupTasksByCustomerAndParent(tasksWithContext) {

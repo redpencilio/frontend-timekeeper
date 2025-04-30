@@ -1,0 +1,51 @@
+<div class="mt-2 overflow-auto" ...attributes>
+  <div class="flex justify-end">
+    <Button
+      {{on "click" this.hideAllTasks}}
+      @skin="mute"
+    >Hide all</Button>
+    <Button
+      {{on "click" this.showAllTasks}}
+      @skin="mute"
+    >Show all</Button>
+  </div>
+  <ul>
+    {{#each this.visibilityHierarchy as |customerEntry|}}
+      <Admin::TaskVisibility::TaskRow
+        @level={{0}}
+        @isVisible={{customerEntry.isVisible}}
+        @onToggle={{perform this.toggleVisibility customerEntry}}
+      >
+        {{customerEntry.customer.name}}
+      </Admin::TaskVisibility::TaskRow>
+      <ul>
+        {{#each customerEntry.tasks as |taskEntry|}}
+          <li>
+            <Admin::TaskVisibility::TaskRow
+              @level={{1}}
+              @isVisible={{taskEntry.isVisible}}
+              @onToggle={{perform this.toggleVisibility taskEntry}}
+            >
+              {{task-name taskEntry.task}}
+            </Admin::TaskVisibility::TaskRow>
+            {{#if taskEntry.showSubTasks}}
+              <ul>
+                {{#each taskEntry.subTasks as |subTaskEntry|}}
+                  <li>
+                    <Admin::TaskVisibility::TaskRow
+                      @level={{2}}
+                      @isVisible={{subTaskEntry.isVisible}}
+                      @onToggle={{perform this.toggleVisibility subTaskEntry}}
+                    >
+                      {{task-name subTaskEntry.task}}
+                    </Admin::TaskVisibility::TaskRow>
+                  </li>
+                {{/each}}
+            </ul>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ul>
+    {{/each}}
+  </ul>
+</div>

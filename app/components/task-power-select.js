@@ -3,11 +3,13 @@ import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { task } from 'ember-concurrency';
-import taskName from 'frontend-timekeeper/helpers/task-name';
 
 export default class TaskPowerSelectComponent extends Component {
   @service store;
-  @tracked _fetchedTasks = [];
+  @service('tasks') tasksService;
+  @service userProfile;
+
+  @tracked options = [];
 
   constructor() {
     super(...arguments);
@@ -15,57 +17,51 @@ export default class TaskPowerSelectComponent extends Component {
   }
 
   loadData = task(async () => {
-    const leafTasks = await this.store.queryAll('task', {
-      'filter[:has:parent]': 't',
-      include: 'parent,parent.customer',
-      sort: 'parent.customer.name,parent.name',
+    const visibleTasks = await this.store.queryAll('task', {
+      'filter[visible-to][:id:]': this.userProfile.user.id,
     });
 
-    this._fetchedTasks = leafTasks;
+    const taskIsVisible = (task) => visibleTasks.includes(task);
+
+    const options = [];
+    this.tasksService.taskHierarchy.map(({ customer, tasks }) => {
+      const isVisible = tasks.some((task) => task.subTasks.some(taskIsVisible));
+      if (isVisible) {
+        const customerOption = { groupName: customer.name, options: [] };
+
+        tasks.forEach(({ task, subTasks }) => {
+          const isVisible = subTasks.some(taskIsVisible);
+          if (isVisible) {
+            const showSubTasks =
+              subTasks.length > 1 || subTasks[0].name !== 'General';
+
+            if (showSubTasks) {
+              customerOption.options.push({
+                groupName: task.name,
+                options: subTasks.filter(taskIsVisible),
+              });
+            } else {
+              customerOption.options.push(task);
+            }
+          }
+          // else: project is not visible to user
+        });
+
+        options.push(customerOption);
+      }
+      // else: customer is not visible to user
+    });
+
+    this.options = options;
   });
-
-  get options() {
-    const tasks = this._fetchedTasks.filter(
-      (task) =>
-        !this.args.excludeTasks?.map((task) => task.id)?.includes(task.id),
-    );
-
-    const groupedCustomer = Object.entries(
-      Object.groupBy(tasks, (task) => task.get('parent')?.get('customer')?.id),
-    );
-
-    const groups = groupedCustomer
-      .map(([customerId, tasks]) => {
-        const groupedParent = Object.entries(
-          Object.groupBy(tasks, (task) => task.get('parent')?.id),
-        );
-        const groups = groupedParent.filter(([_, tasks]) => tasks.length > 1);
-        const singletons = groupedParent
-          .filter(([_, tasks]) => tasks.length === 1)
-          .map(([_, tasks]) => tasks[0]);
-        return [customerId, singletons, groups];
-      });
-
-    return [
-      ...groups.map(([customerId, singletons, groups]) => ({
-        groupName: this.store.peekRecord('customer', customerId)?.name,
-        options: [
-          ...singletons,
-          ...groups.map(([parentId, tasks]) => ({
-            groupName: this.store.peekRecord('task', parentId)?.name,
-            options: tasks,
-          })),
-        ],
-      })),
-    ];
-  }
 
   matcher(option, searchTerm) {
     const searchStrings = [
       option.name,
       option.parent?.get('name'),
+      option.get('customer')?.get('name'),
       option.parent?.get('customer')?.get('name'),
-    ];
+    ].filter((s) => s);
     return searchStrings.some((string) =>
       string.toLowerCase().includes(searchTerm.toLowerCase()),
     )
@@ -92,12 +88,12 @@ export default class TaskPowerSelectComponent extends Component {
   }
 
   @action
-  onFocus(api, event) {
+  onFocus(api, _event) {
     api.actions.open();
   }
 
   @action
-  onBlur(api, event) {
+  onBlur(api, _event) {
     api.actions.close();
   }
 }

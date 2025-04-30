@@ -16,6 +16,7 @@ Router.map(function () {
         this.route('holidays', function () {
           this.route('year', { path: '/:year' });
         });
+        this.route('visible-tasks');
       });
     });
     this.route('timesheets', function () {

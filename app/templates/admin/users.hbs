@@ -1,74 +1,62 @@
-{{page-title "User Management"}}
+{{page-title "Users"}}
 
-<div class="overflow-auto rounded-lg bg-white p-8">
-  <h1 class="text-2xl font-semibold text-red-700">User Management</h1>
-  <div class="mt-6 overflow-hidden rounded-lg border border-gray-200">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th
-            scope="col"
-            class="py-3 pl-6 pr-3 text-left text-sm font-semibold text-gray-700 sm:pl-8"
-          >
-            Name
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-sm font-semibold text-gray-700"
-          >
-            Kimai Account
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-sm font-semibold text-gray-700"
-          >
-            User Groups
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-sm font-semibold text-gray-700"
-          >
-            Holidays
-          </th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-200 bg-white">
-        {{#each @model as |person|}}
-          <tr class="hover:bg-gray-50">
-            <td
-              class="whitespace-nowrap py-2 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-8"
-            >
-              {{person.name}}
-            </td>
-            <td class="whitespace-nowrap px-6 py-2 text-sm text-gray-700">
-              <div class="w-64">
-                <KimaiAccountSelect @person={{person}} />
-              </div>
-            </td>
-            <td class="whitespace-nowrap px-6 py-2 text-sm text-gray-700">
-              <div class="flex flex-wrap gap-2">
-                {{#each person.userGroups as |userGroup|}}
-                  <span
-                    class="select-none rounded-full bg-red-100 px-2 py-2 text-xs font-medium text-red-700"
-                  >
-                    {{userGroup.name}}
-                  </span>
-                {{/each}}
-              </div>
-            </td>
-            <td class="whitespace-nowrap px-6 py-1 text-sm text-gray-700">
-              <div>
-                <LinkTo
-                  @route="admin.users.user.holidays"
-                  @model={{person.id}}
-                  class="font-normal text-red-700 hover:text-red-600"
-                >Manage</LinkTo>
-              </div>
-            </td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
+<div class="overflow-auto p-8 pr-0">
+  <h1 class="text-2xl font-semibold text-red-700">Users</h1>
+  <div class="mt-4 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead>
+            <tr>
+              {{#each (array "Name" "Kimai account" "User groups" "") as |header|}}
+                <th
+                  scope="col"
+                  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
+                  {{header}}
+                </th>
+              {{/each}}
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            {{#each @model as |person|}}
+              <tr class="hover:bg-gray-50">
+                <td
+                  class="whitespace-nowrap py-4 px-3 text-sm font-medium text-gray-900"
+                >
+                  {{person.name}}
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <div class="w-64">
+                    <KimaiAccountSelect @person={{person}} />
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <div class="flex flex-wrap gap-2">
+                    {{#each person.userGroups as |userGroup|}}
+                      <span
+                        class="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600"
+                      >
+                        {{userGroup.name}}
+                      </span>
+                    {{/each}}
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <div>
+                    <LinkTo
+                      @route="admin.users.user"
+                      @model={{person.id}}
+                      class="font-normal text-red-700 hover:text-red-600"
+                    >Manage</LinkTo>
+                  </div>
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 {{outlet}}
