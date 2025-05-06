@@ -32,16 +32,16 @@ export default class TaskPowerSelectComponent extends Component {
         tasks.forEach(({ task, subTasks }) => {
           const isVisible = subTasks.some(taskIsVisible);
           if (isVisible) {
-            const showSubTasks =
-              subTasks.length > 1 || subTasks[0].name !== 'General';
+            const hideSubTasks =
+              subTasks.length === 1 || subTasks[0].name === 'General';
 
-            if (showSubTasks) {
+            if (hideSubTasks) {
+              customerOption.options.push(subTasks[0]);
+            } else {
               customerOption.options.push({
                 groupName: task.name,
                 options: subTasks.filter(taskIsVisible),
               });
-            } else {
-              customerOption.options.push(task);
             }
           }
           // else: project is not visible to user
