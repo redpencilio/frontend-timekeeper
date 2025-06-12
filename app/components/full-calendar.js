@@ -228,7 +228,8 @@ export default class FullCalendarComponent extends Component {
 
     const container = document.createElement('div');
     container.className =
-      'w-full truncate flex items-center pl-[0.188rem] pt-[0.188rem] pb-0.5 pr-0.5 cursor-pointer';
+      'w-full truncate flex items-center pl-[0.188rem] pt-[0.188rem] pb-0.5 pr-0.5' +
+      `${this.args.isDisabled ? ' cursor-default' : ' cursor-pointer'}`;
 
     const eventTitleContainer = document.createElement('div');
     eventTitleContainer.classList = 'flex items-center grow truncate';
@@ -303,16 +304,14 @@ export default class FullCalendarComponent extends Component {
     buttonsDiv.style.visibility = 'collapse';
     if (!this.args.isDisabled) {
       container.appendChild(buttonsDiv);
+      container.onmouseenter = () => {
+        buttonsDiv.style.visibility = 'visible';
+      };
+      container.onmouseleave = () => {
+        buttonsDiv.style.visibility = 'collapse';
+      };
     }
-    container.onmouseenter = () => {
-      buttonsDiv.style.visibility = 'visible';
-    };
-    container.onmouseleave = () => {
-      buttonsDiv.style.visibility = 'collapse';
-    };
-    return {
-      domNodes: [container],
-    };
+    return { domNodes: [container] };
   }
 
   @action
