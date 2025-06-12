@@ -243,6 +243,10 @@ export default class FullCalendarComponent extends Component {
       colorNote.style.color = info.backgroundColor;
       colorNote.innerHTML = stickyIcon;
       statusIndicatorContainer.appendChild(colorNote);
+      if (this.args.isDisabled) {
+        // if disabled, button to show note is note present. Show note as hoover instead.
+        container.title = note;
+      }
     } else {
       const colorDot = document.createElement('div');
       colorDot.className = 'size-2 rounded-full';
