@@ -150,5 +150,5 @@ body {
 }
 
 .group-hover-appear {
-  @apply opacity-50 transition-opacity duration-150 ease-in-out group-hover:opacity-100;
+  @apply opacity-100 transition-opacity duration-150 ease-in-out group-hover:opacity-100;
 }

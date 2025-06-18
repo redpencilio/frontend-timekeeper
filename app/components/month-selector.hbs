@@ -2,7 +2,7 @@
   <LinkTo
     @route="year.month"
     @models={{this.previousMonthRouteModel}}
-    class="group-hover-appear rounded p-2 text-red-700 hover:bg-gray-100"
+    class="rounded p-2 text-red-700 hover:bg-gray-100"
   >
     {{svg-jar "chevron-left" class="size-5"}}
   </LinkTo>
@@ -16,7 +16,7 @@
         class="flex h-full select-none items-center justify-center gap-2 text-xl font-medium text-red-700"
       >
         {{this.monthYearLabel}}
-        <div class="group-hover-appear">
+        <div>
           {{svg-jar "chevron-down" class="size-4"}}
         </div>
       </dd.Trigger>
@@ -54,7 +54,7 @@
   <LinkTo
     @route="year.month"
     @models={{this.nextMonthRouteModel}}
-    class="group-hover-appear rounded p-2 text-red-700 hover:bg-gray-100"
+    class="rounded p-2 text-red-700 hover:bg-gray-100"
   >
     {{svg-jar "chevron-right" class="size-5"}}
   </LinkTo>
