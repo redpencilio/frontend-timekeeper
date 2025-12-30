@@ -27,7 +27,7 @@ export default class HolidaysOverviewComponent extends Component {
       'filter[:gte:date]': formatDate(firstOfYear),
       'filter[:lt:date]': formatDate(firstOfNextYear),
       'filter[person][:id:]': this.userProfile.user.id,
-      'filter[task][:exact:name]': HOLIDAY_TASK_LABEL,
+      'filter[task][parent][:exact:name]': HOLIDAY_TASK_LABEL,
     });
 
     return workLogs

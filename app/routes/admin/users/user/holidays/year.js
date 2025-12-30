@@ -36,7 +36,7 @@ export default class AdminUsersUserHolidaysYearRoute extends Route {
       'filter[:gte:date]': formatDate(firstOfYear),
       'filter[:lt:date]': formatDate(firstOfNextYear),
       'filter[person][:id:]': user.id,
-      'filter[task][:exact:name]': HOLIDAY_TASK_LABEL,
+      'filter[task][parent][:exact:name]': HOLIDAY_TASK_LABEL,
     });
 
     return { year: this.year, user, counters, workLogs };
