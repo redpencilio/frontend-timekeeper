@@ -27,16 +27,22 @@ export default class WorkLogPopoverComponent extends Component {
   }
 
   async initWorkLogEntries() {
-    const pinnedWorkLogEntries = this.taskSuggestion.pinnedTasks
-      .map((task) => new WorkLogEntry('pinned', task));
+    const pinnedWorkLogEntries = this.taskSuggestion.pinnedTasks.map(
+      (task) => new WorkLogEntry('pinned', task),
+    );
     const mostUsedWorkLogEntries = this.taskSuggestion.mostUsedTasks
-      .filter((mostUsedTask) => !this.taskSuggestion.pinnedTasks.includes(mostUsedTask))
+      .filter(
+        (mostUsedTask) =>
+          !this.taskSuggestion.pinnedTasks.includes(mostUsedTask),
+      )
       .map((task) => new WorkLogEntry('recent', task));
     const workLogEntries = [...pinnedWorkLogEntries, ...mostUsedWorkLogEntries];
 
     for (const workLog of this.args.workLogs) {
       const task = await workLog.task;
-      const workLogEntry = workLogEntries.find((entry) => entry.task.id == task.id);
+      const workLogEntry = workLogEntries.find(
+        (entry) => entry.task.id == task.id,
+      );
       if (workLogEntry) {
         workLogEntry.workLog = workLog;
         workLogEntry.duration = workLog.duration;
@@ -58,7 +64,9 @@ export default class WorkLogPopoverComponent extends Component {
   }
 
   get sortedWorkLogEntries() {
-    return this.workLogEntries.slice(0).sort((a, b) => compare(a.priority, b.priority));
+    return this.workLogEntries
+      .slice(0)
+      .sort((a, b) => compare(a.priority, b.priority));
   }
 
   get visibleTasks() {
@@ -80,7 +88,9 @@ export default class WorkLogPopoverComponent extends Component {
   unpinTask(workLogEntry) {
     if (workLogEntry.type == 'pinned') {
       const { task } = workLogEntry;
-      workLogEntry.type = this.taskSuggestion.mostUsedTasks.includes(task) ? 'recent' : 'added';
+      workLogEntry.type = this.taskSuggestion.mostUsedTasks.includes(task)
+        ? 'recent'
+        : 'added';
       this.taskSuggestion.unpinTask(task);
     } else {
       // not pinned. Nothing must happen.
@@ -89,7 +99,9 @@ export default class WorkLogPopoverComponent extends Component {
 
   @action
   addWorkLogEntry(task) {
-    const workLogEntry = this.workLogEntries.find((workLogEntry) => workLogEntry.task == task);
+    const workLogEntry = this.workLogEntries.find(
+      (workLogEntry) => workLogEntry.task == task,
+    );
     if (!workLogEntry) {
       this.workLogEntries.push(new WorkLogEntry('added', task));
     }
@@ -114,7 +126,7 @@ export default class WorkLogPopoverComponent extends Component {
     // - an existing workLog record (existing workLog that needs to be updated)
     // - a duration that is > 0 (new workLog that need to be created)
     const changedWorkLogEntries = this.workLogEntries.filter(
-      (workLogEntry) => workLogEntry.workLog || workLogEntry.hasDuration
+      (workLogEntry) => workLogEntry.workLog || workLogEntry.hasDuration,
     );
     this.args.onSave?.perform(changedWorkLogEntries);
   }
