@@ -37,75 +37,63 @@ export default class YearMonthContoller extends Controller {
   }
 
   save = ecTask(async (workLogEntries, dates) => {
-    // Selection only contains one date, we don't want to overwrite
-    if (dates.length === 1) {
-      await Promise.all(
-        workLogEntries.map(async ({ duration, task, workLog, note }) => {
-          if (workLog) {
-            if (duration.hours === 0 && duration.minutes === 0) {
-              // An existing worklog was set to 0, remove it
-              await workLog.destroyRecord();
-              this.model.workLogs.removeObject(workLog);
-            } else {
-              // Properties of an existing workLog have changed
-              workLog.duration = duration;
-              workLog.task = task;
-              workLog.note = note;
-              await workLog.save();
+    // This list is needed because otherwise UI will update
+    // After every delete
+    const workLogsToRemove = [];
+    await Promise.all([
+      ...dates.map(async (date) => {
+        await Promise.all(
+          workLogEntries.map(async ({ duration, task, note }) => {
+            if (!duration) {
+              return;
             }
-          } else {
-            // A new workLog has to be created
-            const [date] = dates;
-            const newWorkLog = this.store.createRecord('work-log', {
-              duration,
-              task,
-              date,
-              note,
-              person: this.userProfile.user,
-            });
-            await newWorkLog.save();
-          }
-        }),
-      );
-    } else {
-      // This list is needed because otherwise UI will update
-      // After every delete
-      const workLogsToRemove = [];
-      await Promise.all([
-        // Clear existing workLogs
-        ...this.model.workLogs.map(async (workLog) => {
-          if (dates.some((date) => isSameDay(date, workLog.date))) {
-            await workLog.destroyRecord();
-            workLogsToRemove.push(workLog);
-          }
-        }),
-        // Insert new workLogs
-        ...dates.map(async (date) => {
-          await Promise.all(
-            workLogEntries
-              .filter(
-                ({ duration: { hours, minutes } }) => hours > 0 || minutes > 0,
-              )
-              .map(async ({ duration, task, note }) => {
-                // A new workLog has to be created
-                const newWorkLog = this.store.createRecord('work-log', {
-                  duration,
-                  task,
-                  note,
-                  date,
-                  person: this.userProfile.user,
-                });
-                await newWorkLog.save();
-              }),
-          );
-        }),
-      ]);
-      workLogsToRemove.forEach((workLog) =>
-        this.model.workLogs.removeObject(workLog),
-      );
-    }
+            const workLog = await this.findWorkLog(task.id, date);
+            if (workLog) {
+              if (duration.isEmpty) {
+                await workLog.destroyRecord();
+                workLogsToRemove.push(workLog);
+              } else {
+                workLog.duration = duration;
+                await workLog.save();
+              }
+            } else if (!duration.isEmpty) {
+              const newWorkLog = this.store.createRecord('work-log', {
+                duration,
+                task,
+                note,
+                date,
+                person: this.userProfile.user,
+              });
+              await newWorkLog.save();
+            }
+          }),
+        );
+      }),
+    ]);
+    workLogsToRemove.forEach((workLog) =>
+      this.model.workLogs.removeObject(workLog),
+    );
     this.router.refresh(this.router.currentRouteName);
   });
+
+  /**
+   * Finds a WorkLog by taskId and date by which it is uniquely defined
+   * @param {string} taskId
+   * @param {Date} date
+   * @returns WorkLog
+   */
+  async findWorkLog(taskId, date) {
+    const workLogsWithTasks = await Promise.all(
+      this.model.workLogs.map(async (workLog) => ({
+        workLog,
+        task: await workLog.task,
+      })),
+    );
+    return workLogsWithTasks.find(
+      ({ workLog, task }) =>
+        isSameDay(workLog.date, date) && taskId === task.id,
+    )?.workLog;
+  }
 
   @action
   async deleteWorkLog(workLog) {

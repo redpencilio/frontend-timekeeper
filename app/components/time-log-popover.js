@@ -5,6 +5,7 @@ import { tracked } from '@glimmer/tracking';
 import { TrackedArray } from 'tracked-built-ins';
 import { compare } from '@ember/utils';
 import WorkLogEntry from '../utils/work-log-entry';
+import Duration from '../utils/duration';
 import { offset } from '@floating-ui/dom';
 
 export default class WorkLogPopoverComponent extends Component {
@@ -28,14 +29,14 @@ export default class WorkLogPopoverComponent extends Component {
 
   async initWorkLogEntries() {
     const pinnedWorkLogEntries = this.taskSuggestion.pinnedTasks.map(
-      (task) => new WorkLogEntry('pinned', task),
+      (task) => new WorkLogEntry('pinned', task, new Duration()),
     );
     const mostUsedWorkLogEntries = this.taskSuggestion.mostUsedTasks
       .filter(
         (mostUsedTask) =>
           !this.taskSuggestion.pinnedTasks.includes(mostUsedTask),
       )
-      .map((task) => new WorkLogEntry('recent', task));
+      .map((task) => new WorkLogEntry('recent', task, new Duration()));
     const workLogEntries = [...pinnedWorkLogEntries, ...mostUsedWorkLogEntries];
 
     for (const workLog of this.args.workLogs) {
@@ -44,11 +45,12 @@ export default class WorkLogPopoverComponent extends Component {
         (entry) => entry.task.id == task.id,
       );
       if (workLogEntry) {
-        workLogEntry.workLog = workLog;
-        workLogEntry.duration = workLog.duration;
-        workLogEntry.note = workLog.note;
+        workLogEntry.duration = this.args.isMultiDaySelection
+          ? null
+          : workLog.duration;
+        workLogEntry.note = this.args.isMultiDaySelection ? null : workLog.note;
       } else {
-        workLogEntries.push(new WorkLogEntry('added', task, workLog));
+        workLogEntries.push(new WorkLogEntry('added', task, workLog.duration));
       }
     }
 
@@ -103,7 +105,7 @@ export default class WorkLogPopoverComponent extends Component {
       (workLogEntry) => workLogEntry.task == task,
     );
     if (!workLogEntry) {
-      this.workLogEntries.push(new WorkLogEntry('added', task));
+      this.workLogEntries.push(new WorkLogEntry('added', task, new Duration()));
     }
     this.focusedTaskId = task.id;
   }
@@ -122,13 +124,7 @@ export default class WorkLogPopoverComponent extends Component {
   @action
   submitWorkLogs(event) {
     event.preventDefault();
-    // Only pass workLogEntries that have either:
-    // - an existing workLog record (existing workLog that needs to be updated)
-    // - a duration that is > 0 (new workLog that need to be created)
-    const changedWorkLogEntries = this.workLogEntries.filter(
-      (workLogEntry) => workLogEntry.workLog || workLogEntry.hasDuration,
-    );
-    this.args.onSave?.perform(changedWorkLogEntries);
+    this.args.onSave?.perform(this.workLogEntries);
   }
 
   @action

@@ -11,7 +11,7 @@ const getDurationFromString = (input) => {
   }
 
   if (!input) {
-    return result;
+    return null;
   }
 
   // Check for fractional hours (e.g., "1.5")
@@ -42,9 +42,14 @@ const getDurationFromString = (input) => {
 const blurListener = (event) => {
   const element = event.target;
   try {
-    const { hours, minutes } = getDurationFromString(element.value);
-    element.value = `${hours}h${minutes}m`;
-    element.setCustomValidity('');
+    const duration = getDurationFromString(element.value);
+    if (!duration) {
+      return;
+    } else {
+      const { hours, minutes } = getDurationFromString(element.value);
+      element.value = `${hours}h${minutes}m`;
+      element.setCustomValidity('');
+    }
   } catch (e) {
     element.setCustomValidity(e.message);
     element.reportValidity(false);
@@ -62,6 +67,10 @@ export default class DurationInput extends Component {
   });
 
   get textValue() {
+    if (!this.value) {
+      return '';
+    }
+
     const { hours, minutes } = this.value;
     return `${hours}h${minutes}m`;
   }
@@ -74,6 +83,8 @@ export default class DurationInput extends Component {
     try {
       const newValue = getDurationFromString(value);
       this.args.onChange?.(newValue);
-    } catch (e) {}
+    } catch (e) {
+      /* No problem */
+    }
   };
 }
