@@ -1,6 +1,6 @@
 <Popover
   {{on "keydown" this.handleKeydown}}
-  class="work-log-popover animate-fly-right w-96 shadow-xl"
+  class="work-log-popover w-96 animate-fly-right shadow-xl"
   @anchorElement={{@anchorElement}}
   @middleware={{this.floatingUIMiddleware}}
 >
@@ -54,20 +54,22 @@
                     <div class="ml-2 mr-1 flex grow flex-col gap-1">
                       <span class="text-sm">{{task-name task}}</span>
                       {{#let (unique-id) as |textAreaId|}}
-                        <textarea
-                          {{spellcheck-on-focus}}
-                          {{dynamic-textarea-height}}
-                          {{on
-                            "input"
-                            (with-value (fn (set workLogEntry "note")))
-                          }}
-                          name="Notes"
-                          id={{textAreaId}}
-                          class="{{if workLogEntry.note 'visible' 'hidden'}}
-                            w-full resize-none rounded border-none p-0 px-0.5 py-0.5 text-xs text-gray-600 placeholder:text-xs placeholder:text-gray-400 hover:bg-gray-100 focus:inline-block focus:bg-white focus:ring-0 group-hover:inline-block"
-                          placeholder="Add notes"
-                          rows="1"
-                        >{{workLogEntry.note}}</textarea>
+                        {{#unless @isMultiDaySelection}}
+                          <textarea
+                            {{spellcheck-on-focus}}
+                            {{dynamic-textarea-height}}
+                            {{on
+                              "input"
+                              (with-value (fn (set workLogEntry "note")))
+                            }}
+                            name="Notes"
+                            id={{textAreaId}}
+                            class="{{if workLogEntry.note 'visible' 'hidden'}}
+                              w-full resize-none rounded border-none p-0 px-0.5 py-0.5 text-xs text-gray-600 placeholder:text-xs placeholder:text-gray-400 hover:bg-gray-100 focus:inline-block focus:bg-white focus:ring-0 group-hover:inline-block"
+                            placeholder="Add notes"
+                            rows="1"
+                          >{{workLogEntry.note}}</textarea>
+                        {{/unless}}
                       {{/let}}
                     </div>
                   </div>
@@ -77,6 +79,7 @@
                       @value={{workLogEntry.duration}}
                       @onChange={{fn this.updateDuration workLogEntry}}
                       {{focus-select (eq this.focusedTaskId task.id)}}
+                      @isRequired={{false}}
                     />
                   {{/let}}
                 </div>
@@ -112,7 +115,7 @@
             @isLoading={{@onSave.isRunning}}
             @skin="primary"
           >
-            {{if @isOverwrite "Overwrite" "Save"}}
+            Save
           </Button>
         </div>
       </form>

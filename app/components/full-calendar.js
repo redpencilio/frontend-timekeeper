@@ -196,11 +196,8 @@ export default class FullCalendarComponent extends Component {
     );
     if (workLogs.length) {
       const totalDuration = workLogs
-      .map((workLog) => workLog.duration)
-      .reduce(
-        (acc, duration) => acc.add(duration),
-        new Duration(),
-      );
+        .map((workLog) => workLog.duration)
+        .reduce((acc, duration) => acc.add(duration), new Duration());
       const { hours, minutes } = totalDuration.normalized();
 
       return {

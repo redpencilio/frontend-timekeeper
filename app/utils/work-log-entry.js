@@ -7,18 +7,18 @@ import { tracked } from '@glimmer/tracking';
  * Its task and duration properties are not kept in sync with the task/duration of this object.
  */
 export default class WorkLogEntry {
+  ALLOWED_TYPES = ['pinned', 'recent', 'added'];
   @tracked type; // one of 'pinned', 'recent', 'added'
   @tracked task;
-  @tracked workLog;
   @tracked duration;
   @tracked note;
 
-  constructor(type, task, workLog) {
+  constructor(type, task, duration = null, note = null) {
+    this._checkType(type);
     this.type = type;
     this.task = task;
-    this.workLog = workLog;
-    this.duration = workLog?.duration || { hours: 0, minutes: 0 }
-    this.note = workLog?.note || null;
+    this.duration = duration;
+    this.note = note;
   }
 
   get hasDuration() {
@@ -27,5 +27,13 @@ export default class WorkLogEntry {
 
   get priority() {
     return this.type == 'pinned' ? 1 : this.type == 'recent' ? 2 : 3;
+  }
+
+  _checkType(type) {
+    if (!this.ALLOWED_TYPES.includes(type)) {
+      throw new Error(
+        `Type must be one of: ${JSON.stringify(this.ALLOWED_TYPES)}`,
+      );
+    }
   }
 }
