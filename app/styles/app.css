@@ -68,7 +68,7 @@ body {
 }
 
 .ember-power-select-search-input {
-  @apply font-light border border-gray-300 ring-0 text-sm rounded;
+  @apply py-2 px-3 font-light border border-gray-300 ring-0 text-sm rounded;
 }
 
 .ember-power-select-search-input:focus {
