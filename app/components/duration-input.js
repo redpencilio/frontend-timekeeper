@@ -43,10 +43,8 @@ const blurListener = (event) => {
   const element = event.target;
   try {
     const duration = getDurationFromString(element.value);
-    if (!duration) {
-      return;
-    } else {
-      const { hours, minutes } = getDurationFromString(element.value);
+    if (duration) {
+      const { hours, minutes } = duration;
       element.value = `${hours}h${minutes}m`;
       element.setCustomValidity('');
     }
