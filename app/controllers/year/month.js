@@ -53,6 +53,7 @@ export default class YearMonthContoller extends Controller {
                 await workLog.destroyRecord();
                 workLogsToRemove.push(workLog);
               } else {
+                workLog.note = note;
                 workLog.duration = duration;
                 await workLog.save();
               }
