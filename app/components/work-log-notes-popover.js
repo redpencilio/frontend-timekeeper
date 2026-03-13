@@ -20,7 +20,7 @@ export default class WorkLogNotesPopoverComponent extends Component {
 
   deleteNote = (event) => {
     event.preventDefault();
-    this.args.onSaveNote?.(this.args.workLog, null);
+    this.args.onSaveNote?.(this.args.workLog, "");
   }
 
   get saveDisabled() {
